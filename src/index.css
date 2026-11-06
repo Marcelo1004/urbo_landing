@@ -1,0 +1,392 @@
+@import 'glisse/styles.css';
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'SD Dystopian';
+  src: url('/fonts/SD-Dystopian.woff2') format('woff2'),
+       url('/fonts/SD-Dystopian.otf') format('opentype');
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --navy-bg: #070B14;
+  --navy-base: #0B1426;
+  --navy-surface: #0F1C35;
+  --navy-elevated: #162444;
+  
+  --teal-primary: #00C9A7;
+  --teal-bright: #00E5BE;
+  --teal-deep: #008F77;
+  --amber-accent: #F4C430;
+  --radioactive-green: #A6FF00;
+  
+  --text-primary: #FFFFFF;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  
+  --glass-fill: rgba(11, 20, 38, 0.45);
+  --glass-fill-elevated: rgba(15, 28, 53, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-border-bright: rgba(0, 201, 167, 0.35);
+  --glass-highlight: rgba(255, 255, 255, 0.18);
+  --glass-blur: 24px;
+}
+
+/* Ensure all target sections clear the fixed floating navbar with generous space */
+section {
+  scroll-margin-top: 7rem;
+}
+
+/* Base body typography and smooth rendering */
+body {
+  background-color: var(--navy-bg);
+  color: var(--text-primary);
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  selection-background-color: rgba(0, 201, 167, 0.3);
+}
+
+::selection {
+  background: rgba(0, 201, 167, 0.25);
+  color: #FFFFFF;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #070B14;
+}
+::-webkit-scrollbar-thumb {
+  background: #162444;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00C9A7;
+}
+
+/* ==========================================================================
+   LIQUID GLASS MATERIAL SYSTEM V3 (PHYSICAL REFRACTION & SPECULAR SHEEN)
+   ========================================================================== */
+
+/* Level 1: Liquid Glass Navigation Pill */
+.liquid-glass-nav {
+  background: rgba(8, 14, 28, 0.65);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.4),
+    0 20px 45px -12px rgba(0, 0, 0, 0.8),
+    0 0 30px -10px rgba(0, 201, 167, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Level 2: Liquid Glass Standard Surface */
+.liquid-glass-surface {
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(15, 28, 53, 0.42) 40%,
+    rgba(11, 20, 38, 0.65) 100%
+  );
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 0 20px 0 rgba(0, 201, 167, 0.02),
+    0 24px 50px -15px rgba(0, 0, 0, 0.65);
+  position: relative;
+}
+
+/* Level 3: Elevated Liquid Glass Panel */
+.liquid-glass-elevated {
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(18, 33, 62, 0.55) 45%,
+    rgba(11, 20, 38, 0.8) 100%
+  );
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.22),
+    inset 0 0 25px 0 rgba(0, 201, 167, 0.05),
+    0 30px 60px -15px rgba(0, 0, 0, 0.75),
+    0 0 40px -15px rgba(0, 201, 167, 0.15);
+  position: relative;
+}
+
+/* Level 4: Amber Attention Glass (for Voice Alerts & Driver Callouts) */
+.liquid-glass-amber {
+  background: linear-gradient(
+    140deg,
+    rgba(244, 196, 48, 0.1) 0%,
+    rgba(18, 30, 52, 0.55) 50%,
+    rgba(11, 20, 38, 0.7) 100%
+  );
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(244, 196, 48, 0.3);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 0 20px 0 rgba(244, 196, 48, 0.08),
+    0 24px 50px -12px rgba(0, 0, 0, 0.7),
+    0 0 35px -10px rgba(244, 196, 48, 0.2);
+}
+
+/* Ultra Subtle Glass (for chips, telemetry bars, and secondary layers) */
+.liquid-glass-subtle {
+  background: rgba(15, 28, 53, 0.28);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    0 10px 25px -8px rgba(0, 0, 0, 0.5);
+}
+
+/* Dynamic Cursor Mouse-Follow Highlight */
+.glass-glow-mouse {
+  position: relative;
+}
+.glass-glow-mouse::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(0, 201, 167, 0.15),
+    transparent 60%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--mouse-opacity, 0);
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+/* Tactile Glass Hover */
+.liquid-glass-interactive {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.liquid-glass-interactive:hover {
+  border-color: rgba(0, 201, 167, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.24),
+    inset 0 0 25px 0 rgba(0, 201, 167, 0.1),
+    0 30px 60px -15px rgba(0, 0, 0, 0.75),
+    0 0 35px -8px rgba(0, 201, 167, 0.25);
+}
+
+/* Specular Light Bar Highlight (Top Edge Reflection) */
+.specular-highlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Atmospheric Santa Cruz Urban Transit Lines (Background Layer) */
+.scz-transit-grid {
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(0, 201, 167, 0.05) 0%, transparent 60%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 60px 60px, 60px 60px;
+}
+
+/* Pure Apple-inspired Pill Button */
+.apple-pill-primary {
+  background: linear-gradient(135deg, #00E5BE 0%, #00C9A7 60%, #009E85 100%);
+  color: #070B14;
+  font-weight: 700;
+  border-radius: 9999px;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4),
+    0 8px 24px -6px rgba(0, 201, 167, 0.45),
+    0 0 35px -8px rgba(0, 201, 167, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apple-pill-primary:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+    0 12px 30px -6px rgba(0, 201, 167, 0.6),
+    0 0 45px -5px rgba(0, 201, 167, 0.4);
+}
+
+.apple-pill-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apple-pill-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(0, 201, 167, 0.35);
+  color: #00E5BE;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   RADIOACTIVE TEST TUBE PROGRESS SYSTEM (URBO V3 ROADMAP)
+   ========================================================================== */
+
+.test-tube-glass {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.05) 12%,
+    rgba(15, 28, 53, 0.3) 50%,
+    rgba(255, 255, 255, 0.05) 88%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  box-shadow: 
+    inset 0 0 15px rgba(255, 255, 255, 0.12),
+    inset -4px 0 8px rgba(0, 0, 0, 0.5),
+    inset 4px 0 8px rgba(255, 255, 255, 0.18),
+    0 20px 40px rgba(0, 0, 0, 0.7);
+}
+
+.radioactive-liquid {
+  background: linear-gradient(
+    180deg,
+    #B8FF21 0%,
+    #A6FF00 25%,
+    #7CFF00 70%,
+    #52B800 100%
+  );
+  box-shadow: 
+    0 0 35px rgba(166, 255, 0, 0.65),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8),
+    inset 0 -4px 12px rgba(0, 80, 0, 0.6);
+}
+
+/* Rising radioactive bubbles */
+@keyframes bubbleFloat {
+  0% {
+    transform: translateY(100%) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-40px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.bubble-fast { animation: bubbleFloat 2.2s infinite ease-in; }
+.bubble-mid { animation: bubbleFloat 3.4s infinite ease-in 0.8s; }
+.bubble-slow { animation: bubbleFloat 4.6s infinite ease-in 1.6s; }
+
+/* Meniscus surface pulse */
+@keyframes meniscusWave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.15); }
+}
+
+.animate-meniscus {
+  animation: meniscusWave 2.8s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   3D LIQUID GLASS BUSINESS CARD FLIP SYSTEM
+   ========================================================================== */
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Specular diagonal sheen sweep */
+@keyframes lightSweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-light-sweep {
+  animation: lightSweep 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* MapLibre dark theme overrides */
+.maplibregl-map {
+  font-family: inherit !important;
+}
+.maplibregl-ctrl-attrib {
+  background: rgba(8, 14, 28, 0.7) !important;
+  color: #94A3B8 !important;
+  font-size: 10px !important;
+  backdrop-filter: blur(8px) !important;
+  border-top-left-radius: 8px !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: #00E5BE !important;
+}
+
+/* WhatsApp custom chat wallpaper pattern */
+.whatsapp-chat-bg {
+  background-color: #08111e;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(0, 201, 167, 0.03) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(0, 201, 167, 0.03) 0%, transparent 20%),
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 24px 24px;
+}
+
+/* Reduced Motion Safety */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
