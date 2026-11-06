@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ArrowUpRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 
 export const Navbar: React.FC = () => {
+  const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -93,22 +95,22 @@ export const Navbar: React.FC = () => {
             </div>
             
             <div className="flex flex-col">
-              <span className="font-tech text-lg sm:text-xl font-extrabold tracking-wider text-white leading-none group-hover:text-urbo-teal2 transition-colors">
+              <span className="font-tech text-lg sm:text-xl font-extrabold tracking-wider text-slate-900 dark:text-white leading-none group-hover:text-urbo-teal2 transition-colors">
                 URBO
               </span>
-              <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400 leading-tight mt-0.5">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
                 Santa Cruz · SCZ
               </span>
             </div>
           </a>
 
           {/* Desktop Navigation Links */}
-          <ul className="hidden md:flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-medium text-slate-300">
+          <ul className="hidden md:flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-medium text-slate-700 dark:text-slate-300">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="hover:text-white py-1 transition-colors duration-200 relative group"
+                  className="hover:text-slate-900 dark:hover:text-white py-1 transition-colors duration-200 relative group"
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-urbo-teal2 group-hover:w-full transition-all duration-200 rounded-full" />
@@ -117,8 +119,22 @@ export const Navbar: React.FC = () => {
             ))}
           </ul>
 
-          {/* Primary Action Button (PILOTO LÍNEA 30 completely eliminated per specification) */}
+          {/* Primary Action Button & Theme Toggle */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Real Light / Dark Mode Toggle */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-white/5 border border-white/15 hover:border-urbo-teal2/50 text-slate-300 hover:text-white transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-urbo-teal"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-urbo-amber transition-transform hover:rotate-45" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-700 transition-transform hover:-rotate-12" />
+              )}
+            </button>
+
             <a
               href="#contacto"
               className="apple-pill-primary px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"

@@ -29,9 +29,10 @@ export default {
       },
       fontFamily: {
         sans: ['Outfit', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-        tech: ['SD Dystopian', 'Syne', 'Space Grotesk', 'Outfit', 'sans-serif'],
-        dystopian: ['SD Dystopian', 'Syne', 'sans-serif'],
+        mono: ['Space Grotesk', 'JetBrains Mono', 'monospace'],
+        tech: ['"SD Dystopian"', 'Syne', 'Space Grotesk', 'Outfit', 'sans-serif'],
+        dystopian: ['"SD Dystopian"', 'Syne', 'sans-serif'],
+        display: ['"SD Dystopian"', 'Syne', 'sans-serif'],
       },
       boxShadow: {
         'glow-teal': '0 0 50px -10px rgba(0, 201, 167, 0.35)',

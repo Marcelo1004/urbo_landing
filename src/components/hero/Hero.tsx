@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowUpRight, Volume2, Navigation, Compass, Sparkles, MapPin } from 'lucide-react';
-import { GlassSurface, GlassBadge, GlassButton } from '@/components/ui/Glass';
+import { GlassBadge } from '@/components/ui/Glass';
 import { CascoViejoMap } from '@/components/map/CascoViejoMap';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
@@ -11,23 +11,55 @@ export const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
   const textColRef = useRef<HTMLDivElement>(null);
   const mapColRef = useRef<HTMLDivElement>(null);
+  const primaryBtnRef = useRef<HTMLAnchorElement>(null);
 
   const triggerVoiceDemo = () => {
     setIsPlayingVoice(true);
     setTimeout(() => setIsPlayingVoice(false), 2400);
   };
 
-  // Cinematic GSAP Entrance Timeline
+  // Cinematic GSAP Entrance Timeline & Magnetic Micro-interactions
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      tl.from('.hero-badge', { y: 20, opacity: 0, duration: 0.8, delay: 0.2 })
-        .from('.hero-headline', { y: 30, opacity: 0, duration: 0.9 }, '-=0.5')
-        .from('.hero-subhead', { y: 20, opacity: 0, duration: 0.8 }, '-=0.6')
-        .from('.hero-buttons', { y: 20, opacity: 0, duration: 0.7 }, '-=0.5')
-        .from('.hero-metrics', { y: 20, opacity: 0, duration: 0.7 }, '-=0.4')
-        .from(mapColRef.current, { scale: 0.95, opacity: 0, duration: 1.1, ease: 'power2.out' }, '-=0.8');
+      // Step-by-step cinematic entrance sequence with explicit fromTo
+      tl.fromTo('.hero-badge', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, delay: 0.1 })
+        .fromTo('.hero-line-1', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.75 }, '-=0.4')
+        .fromTo('.hero-line-2', { y: 35, opacity: 0, scale: 0.95 }, { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.2)' }, '-=0.5')
+        .fromTo('.hero-subhead', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.65 }, '-=0.45')
+        .fromTo('.hero-buttons a', { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.6 }, '-=0.35')
+        .fromTo('.hero-metrics-item', { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.55 }, '-=0.35')
+        .fromTo(mapColRef.current, { scale: 0.94, y: 30, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 0.85, ease: 'power2.out' }, '-=0.7')
+        .fromTo('.hero-map-overlay', { opacity: 0, y: 12 }, { opacity: 1, y: 0, stagger: 0.12, duration: 0.5 }, '-=0.3');
+
+      // Magnetic hover on primary action button
+      const btn = primaryBtnRef.current;
+      if (btn) {
+        const xTo = gsap.quickTo(btn, 'x', { duration: 0.35, ease: 'power2.out' });
+        const yTo = gsap.quickTo(btn, 'y', { duration: 0.35, ease: 'power2.out' });
+
+        const handleBtnMouseMove = (e: MouseEvent) => {
+          const rect = btn.getBoundingClientRect();
+          const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
+          const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
+          xTo(x);
+          yTo(y);
+        };
+
+        const handleBtnMouseLeave = () => {
+          xTo(0);
+          yTo(0);
+        };
+
+        btn.addEventListener('mousemove', handleBtnMouseMove);
+        btn.addEventListener('mouseleave', handleBtnMouseLeave);
+
+        return () => {
+          btn.removeEventListener('mousemove', handleBtnMouseMove);
+          btn.removeEventListener('mouseleave', handleBtnMouseLeave);
+        };
+      }
     }, heroRef);
 
     return () => ctx.revert();
@@ -38,14 +70,14 @@ export const Hero: React.FC = () => {
       ref={heroRef}
       className="relative min-h-[720px] lg:min-h-[820px] pt-28 sm:pt-36 pb-16 lg:pb-24 flex items-center justify-center overflow-hidden scz-transit-grid"
     >
-      {/* Ambient Lighting Orbs */}
+      {/* Ambient Lighting Orbs with continuous gentle breathing */}
       <div
         aria-hidden="true"
-        className="absolute top-1/4 -right-32 w-[600px] h-[600px] rounded-full bg-urbo-teal/15 blur-[170px] pointer-events-none"
+        className="absolute top-1/4 -right-32 w-[600px] h-[600px] rounded-full bg-urbo-teal/15 blur-[170px] pointer-events-none animate-pulse-subtle"
       />
       <div
         aria-hidden="true"
-        className="absolute -bottom-24 -left-32 w-[500px] h-[500px] rounded-full bg-urbo-amber/10 blur-[160px] pointer-events-none"
+        className="absolute -bottom-24 -left-32 w-[500px] h-[500px] rounded-full bg-radioactive/10 blur-[160px] pointer-events-none animate-float-slow"
       />
       <div
         aria-hidden="true"
@@ -67,25 +99,26 @@ export const Hero: React.FC = () => {
               </GlassBadge>
             </div>
 
-            {/* Main Headline */}
-            <h1 className="hero-headline text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05] text-white mb-6">
-              Tu micro.<br className="sm:hidden" />{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
+            {/* Main Headline (Multi-line cinematic entrance) */}
+            <h1 className="hero-headline text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05] text-slate-900 dark:text-white mb-6">
+              <span className="hero-line-1 block">Tu micro.</span>
+              <span className="hero-line-2 block text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
                 En tiempo real.
               </span>
             </h1>
 
-            {/* Subtitle / Truth */}
-            <p className="hero-subhead text-sm sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-2xl mb-8 font-normal">
+            {/* Subtitle / Truth (Updated Copy: "tiempos de llegada") */}
+            <p className="hero-subhead text-sm sm:text-lg lg:text-xl text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl mb-8 font-normal">
               La primera plataforma de transporte público con GPS en vivo, aviso por voz
-              manos libres para el chofer y tiempos exactos de llegada para Santa Cruz de la Sierra.
+              manos libres para el chofer y tiempos de llegada para Santa Cruz de la Sierra.
             </p>
 
-            {/* Apple Pill Actions */}
+            {/* Apple Pill Actions with magnetic hover */}
             <div className="hero-buttons flex flex-wrap items-center gap-3 sm:gap-4 mb-10 w-full sm:w-auto">
               <a
+                ref={primaryBtnRef}
                 href="#solucion"
-                className="apple-pill-primary px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-base flex items-center justify-center gap-2 sm:gap-2.5 w-full sm:w-auto text-slate-950 font-bold"
+                className="apple-pill-primary px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-base flex items-center justify-center gap-2 sm:gap-2.5 w-full sm:w-auto text-slate-950 font-bold shadow-[0_0_30px_rgba(0,201,167,0.35)] hover:shadow-[0_0_40px_rgba(0,201,167,0.55)] transition-shadow"
               >
                 <span>Explorar la tecnología</span>
                 <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
@@ -93,30 +126,30 @@ export const Hero: React.FC = () => {
 
               <a
                 href="#audiencias"
-                className="apple-pill-secondary px-6 sm:px-7 py-3.5 sm:py-4 text-xs sm:text-base flex items-center justify-center gap-2 w-full sm:w-auto"
+                className="apple-pill-secondary px-6 sm:px-7 py-3.5 sm:py-4 text-xs sm:text-base flex items-center justify-center gap-2 w-full sm:w-auto text-slate-800 dark:text-white"
               >
                 <span>Soy Chofer / Línea</span>
               </a>
             </div>
 
             {/* Telemetry Baseline Proof Bar */}
-            <div className="hero-metrics pt-6 border-t border-white/10 w-full max-w-xl">
+            <div className="hero-metrics pt-6 border-t border-slate-200 dark:border-white/10 w-full max-w-xl">
               <div className="grid grid-cols-3 gap-2 sm:gap-4 text-left">
-                <div>
-                  <div className="text-sm sm:text-xl font-bold font-mono text-white">5 meses</div>
-                  <div className="text-[9px] sm:text-[11px] text-slate-400 uppercase font-mono tracking-wider">
+                <div className="hero-metrics-item">
+                  <div className="text-sm sm:text-xl font-bold font-mono text-slate-900 dark:text-white">5 meses</div>
+                  <div className="text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider">
                     En calle
                   </div>
                 </div>
-                <div>
+                <div className="hero-metrics-item">
                   <div className="text-sm sm:text-xl font-bold font-mono text-urbo-teal2">140</div>
-                  <div className="text-[9px] sm:text-[11px] text-slate-400 uppercase font-mono tracking-wider">
+                  <div className="text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider">
                     Pilotos
                   </div>
                 </div>
-                <div>
+                <div className="hero-metrics-item">
                   <div className="text-sm sm:text-xl font-bold font-mono text-urbo-amber">Línea 30</div>
-                  <div className="text-[9px] sm:text-[11px] text-slate-400 uppercase font-mono tracking-wider">
+                  <div className="text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider">
                     SCZ Norte
                   </div>
                 </div>
@@ -131,10 +164,10 @@ export const Hero: React.FC = () => {
           <div ref={mapColRef} className="lg:col-span-5 relative w-full flex flex-col items-center">
             
             {/* Real Map Canvas Container with Floating Liquid Glass Controls */}
-            <div className="w-full max-w-[460px] aspect-[4/5] rounded-[36px] p-2 sm:p-2.5 liquid-glass-surface border-white/20 shadow-glass-edge relative">
+            <div className="w-full max-w-[460px] aspect-[4/5] rounded-[36px] p-2 sm:p-2.5 liquid-glass-surface border border-white/20 shadow-glass-edge relative">
               
               {/* Vehicle Selector Pills Floating Bar */}
-              <div className="absolute top-5 right-5 z-20 flex items-center bg-slate-950/80 border border-white/15 rounded-full p-1 backdrop-blur-xl shadow-lg">
+              <div className="hero-map-overlay absolute top-5 right-5 z-20 flex items-center bg-slate-950/80 border border-white/15 rounded-full p-1 backdrop-blur-xl shadow-lg">
                 <button
                   type="button"
                   onClick={() => setActiveBus('32')}
@@ -167,7 +200,7 @@ export const Hero: React.FC = () => {
               {/* Hands-Free Voice Alert Demo Pill (Interactive Test Button) */}
               <div
                 onClick={triggerVoiceDemo}
-                className="absolute top-16 left-5 z-20 cursor-pointer select-none max-w-[260px] liquid-glass-amber p-2.5 rounded-2xl border-urbo-amber/40 shadow-lg hover:border-urbo-amber transition-all"
+                className="hero-map-overlay absolute top-16 left-5 z-20 cursor-pointer select-none max-w-[260px] liquid-glass-amber p-2.5 rounded-2xl border-urbo-amber/40 shadow-lg hover:border-urbo-amber transition-all"
               >
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <div className="flex items-center gap-1.5 text-[10px] font-mono text-urbo-amber font-bold uppercase">
@@ -181,7 +214,7 @@ export const Hero: React.FC = () => {
                     <span className={cn('w-0.5 bg-urbo-amber rounded-full', isPlayingVoice ? 'audio-bar-3' : 'h-1.5')} />
                   </div>
                 </div>
-                <div className="text-[11px] font-semibold text-white leading-tight">
+                <div className="text-[11px] font-semibold text-slate-900 dark:text-white leading-tight">
                   &ldquo;Pasajero esperando, mano derecha.&rdquo;
                 </div>
                 <div className="text-[9px] text-urbo-amber font-mono mt-1">

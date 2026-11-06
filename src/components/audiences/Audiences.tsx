@@ -4,7 +4,7 @@ import { GlassSurface, GlassBadge } from '@/components/ui/Glass';
 
 export const Audiences: React.FC = () => {
   return (
-    <section id="audiencias" className="relative py-28 lg:py-36 overflow-hidden">
+    <section id="audiencias" className="relative py-20 lg:py-28 overflow-hidden">
       {/* Anchor alias */}
       <span id="para-quien" className="absolute -top-32" />
 
@@ -15,25 +15,25 @@ export const Audiences: React.FC = () => {
       />
       <div
         aria-hidden="true"
-        className="absolute bottom-10 -left-32 w-[550px] h-[550px] rounded-full bg-slate-800/50 blur-[160px] pointer-events-none"
+        className="absolute bottom-10 -left-32 w-[550px] h-[550px] rounded-full bg-slate-800/40 blur-[160px] pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-16 sm:mb-20">
-          <GlassBadge variant="teal" className="mb-6">
+        <div className="max-w-3xl mb-14 sm:mb-16">
+          <GlassBadge variant="teal" className="mb-5">
             ECOSISTEMA DE MOVILIDAD
           </GlassBadge>
 
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] mb-6 font-tech">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.08] mb-5 font-tech">
             Una plataforma.{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
               Tres experiencias creadas a medida.
             </span>
           </h2>
 
-          <p className="text-base sm:text-xl text-slate-300 leading-relaxed font-normal">
+          <p className="text-base sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
             No adaptamos una solución genérica. Diseñamos interfaces y dinámicas específicas para quien viaja, quien conduce y quien administra la línea.
           </p>
         </div>
@@ -41,13 +41,13 @@ export const Audiences: React.FC = () => {
         {/* =================================================================
             EXPERIENCIAS DIFERENCIADAS (PASAJERO, CHOFER, DIRECTIVA)
             ================================================================= */}
-        <div className="space-y-12">
+        <div className="space-y-10 lg:space-y-12">
           
           {/* 1. PASAJERO: Large Asymmetric Row (App Experience) */}
           <GlassSurface
             variant="surface"
             specular
-            className="p-8 sm:p-12 border-urbo-teal/20"
+            className="p-6 sm:p-10 border-urbo-teal/20"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
@@ -57,20 +57,20 @@ export const Audiences: React.FC = () => {
                     <Smartphone className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
                       Pasajeros
                     </h3>
-                    <div className="text-xs font-mono text-urbo-teal2 tracking-wider uppercase">
+                    <div className="text-xs font-mono text-urbo-teal2 tracking-wider uppercase font-semibold">
                       1,6M DE PERSONAS EN SANTA CRUZ
                     </div>
                   </div>
                 </div>
 
-                <p className="text-base sm:text-lg text-slate-300 leading-relaxed mb-6 font-normal">
+                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-6 font-normal">
                   Saber exactamente cuándo salir de casa transforma el día. Elimina la ansiedad de esperar en paradas solitarias y ahorra entre 20 y 30 minutos por viaje.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-300 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-700 dark:text-slate-300 mb-6">
                   <div className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-urbo-teal2 flex-shrink-0 mt-0.5" />
                     <span>Mapa en vivo con micros acercándose</span>
@@ -92,24 +92,24 @@ export const Audiences: React.FC = () => {
 
               {/* Passenger Interactive Glass Phone Frame */}
               <div className="lg:col-span-5 flex justify-center">
-                <div className="w-full max-w-[320px] rounded-3xl p-5 liquid-glass-elevated border-white/15">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-3 pb-2 border-b border-white/10 font-mono">
+                <div className="w-full max-w-[320px] rounded-3xl p-5 liquid-glass-elevated border-slate-200 dark:border-white/15 shadow-xl">
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-3 pb-2 border-b border-slate-200 dark:border-white/10 font-mono">
                     <span>TU PARADA HABITUAL</span>
                     <span className="text-urbo-teal2 font-bold">LÍNEA 30</span>
                   </div>
 
                   <div className="mb-4">
-                    <div className="text-xs text-slate-400">Micro más cercano</div>
-                    <div className="text-3xl font-black font-mono text-white mt-1">3 min</div>
-                    <div className="text-xs text-urbo-teal2 font-mono mt-0.5">Interno 32 · 350 metros</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">Micro más cercano</div>
+                    <div className="text-3xl font-black font-mono text-slate-900 dark:text-white mt-1">3 min</div>
+                    <div className="text-xs text-urbo-teal2 font-mono mt-0.5 font-semibold">Interno 32 · 350 metros</div>
                   </div>
 
                   {/* Progress bar */}
-                  <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden mb-4">
+                  <div className="w-full bg-slate-200 dark:bg-white/10 h-2 rounded-full overflow-hidden mb-4">
                     <div className="bg-urbo-teal2 h-full w-4/5 rounded-full" />
                   </div>
 
-                  <div className="p-3 rounded-xl bg-urbo-teal/15 border border-urbo-teal/25 text-xs text-center text-urbo-teal2 font-semibold">
+                  <div className="p-3 rounded-xl bg-urbo-teal/15 border border-urbo-teal/25 text-xs text-center text-teal-700 dark:text-urbo-teal2 font-semibold">
                     ✓ Esperar Aquí confirmado
                   </div>
                 </div>
@@ -119,13 +119,13 @@ export const Audiences: React.FC = () => {
           </GlassSurface>
 
           {/* 2 & 3: CHOFER & DIRECTIVA (Two Editorial Balanced Glass Suites) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
             
             {/* 2. CHOFER (Hands-Free Safety & Route Efficiency) */}
             <GlassSurface
               variant="amber"
               specular
-              className="p-8 sm:p-10 flex flex-col justify-between"
+              className="p-6 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center gap-3 mb-6">
@@ -133,31 +133,31 @@ export const Audiences: React.FC = () => {
                     <Navigation className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
                       Choferes
                     </h3>
-                    <div className="text-xs font-mono text-urbo-amber tracking-wider uppercase">
+                    <div className="text-xs font-mono text-amber-700 dark:text-urbo-amber tracking-wider uppercase font-semibold">
                       AVISO POR VOZ · CERO DISTRACCIONES
                     </div>
                   </div>
                 </div>
 
-                <p className="text-sm sm:text-base text-slate-200 leading-relaxed mb-6 font-normal">
+                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-200 leading-relaxed mb-6 font-normal">
                   Diseñado para conductores profesionales. No requiere tocar la pantalla ni leer textos mientras manejan por el tráfico caótico de Santa Cruz.
                 </p>
 
                 {/* Voice Callout Banner */}
-                <div className="p-4 rounded-2xl bg-black/30 border border-urbo-amber/30 mb-6">
-                  <div className="flex items-center gap-2 text-xs font-mono text-urbo-amber font-bold mb-1">
+                <div className="p-4 rounded-2xl bg-slate-100 dark:bg-black/30 border border-amber-500/30 dark:border-urbo-amber/30 mb-6">
+                  <div className="flex items-center gap-2 text-xs font-mono text-amber-700 dark:text-urbo-amber font-bold mb-1">
                     <Volume2 className="w-4 h-4" />
                     <span>AVISO POR VOZ A 300 METROS</span>
                   </div>
-                  <div className="text-base font-bold text-white font-sans">
+                  <div className="text-base font-bold text-slate-900 dark:text-white font-sans">
                     &ldquo;Pasajero esperando, mano derecha.&rdquo;
                   </div>
                 </div>
 
-                <ul className="space-y-3 text-xs sm:text-sm text-slate-200">
+                <ul className="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-urbo-amber flex-shrink-0" />
                     <span>Anticipación de frenada sin maniobras bruscas</span>
@@ -173,7 +173,7 @@ export const Audiences: React.FC = () => {
                 </ul>
               </div>
 
-              <div className="pt-6 mt-6 border-t border-white/10 text-xs font-mono text-slate-300">
+              <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/10 text-xs font-mono text-slate-500 dark:text-slate-300">
                 PROBADO Y APROBADO POR CHOFERES DE LA LÍNEA 30
               </div>
             </GlassSurface>
@@ -182,7 +182,7 @@ export const Audiences: React.FC = () => {
             <GlassSurface
               variant="elevated"
               specular
-              className="p-8 sm:p-10 flex flex-col justify-between"
+              className="p-6 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center gap-3 mb-6">
@@ -190,36 +190,36 @@ export const Audiences: React.FC = () => {
                     <BarChart3 className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
                       Líneas y Directivas
                     </h3>
-                    <div className="text-xs font-mono text-urbo-teal2 tracking-wider uppercase">
+                    <div className="text-xs font-mono text-urbo-teal2 tracking-wider uppercase font-semibold">
                       CONTROL Y EVIDENCIA TÉCNICA
                     </div>
                   </div>
                 </div>
 
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-6 font-normal">
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-6 font-normal">
                   Control total de la flota sin necesidad de comprar equipos costosos. Monitoreo de puntualidad, cumplimiento de frecuencias y datos para defender recorridos.
                 </p>
 
                 {/* Simulated Metrics Console */}
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10 mb-6 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+                <div className="p-4 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 mb-6 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
                     <span>FLOTA MONITOREADA EN VIVO</span>
                     <span className="text-urbo-teal2 font-bold">100% ACTIVA</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-300">
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-700 dark:text-slate-300">
                     <span>Regularidad de frecuencias</span>
-                    <span className="text-white font-bold">94,2%</span>
+                    <span className="text-slate-900 dark:text-white font-bold">94,2%</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-300">
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-700 dark:text-slate-300">
                     <span>Reportes para Alcaldía / Tránsito</span>
                     <span className="text-urbo-teal2 font-bold">AUTOMÁTICOS</span>
                   </div>
                 </div>
 
-                <ul className="space-y-3 text-xs sm:text-sm text-slate-300">
+                <ul className="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-urbo-teal2 flex-shrink-0" />
                     <span>Mapa de calor de demanda real de pasajeros</span>
@@ -235,7 +235,7 @@ export const Audiences: React.FC = () => {
                 </ul>
               </div>
 
-              <div className="pt-6 mt-6 border-t border-white/10 text-xs font-mono text-slate-400">
+              <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/10 text-xs font-mono text-slate-500 dark:text-slate-400">
                 DISPONIBLE PARA ASOCIACIONES Y SINDICATOS DE SCZ
               </div>
             </GlassSurface>

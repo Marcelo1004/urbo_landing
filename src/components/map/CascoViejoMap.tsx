@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Map, NavigationControl, Marker } from 'maplibre-gl';
+import { Map, NavigationControl, Marker, setWorkerUrl } from 'maplibre-gl';
+import maplibreWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import { Radio, Navigation, Volume2, ShieldCheck, MapPin, Compass } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+if (typeof window !== 'undefined') {
+  setWorkerUrl(maplibreWorker);
+}
 
 interface CascoViejoMapProps {
   activeBus: '32' | '58';
@@ -68,45 +73,10 @@ export const CascoViejoMap: React.FC<CascoViejoMapProps> = ({
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    // OpenStreetMap & CARTO Dark high-performance vector-raster tiles (No watermark, clean dark streets)
+    // Official OpenFreeMap Dark Vector Style (100% Free, No API Key, No Watermark)
     const map = new Map({
       container: mapContainerRef.current,
-      style: {
-        version: 8,
-        sources: {
-          'osm-tiles': {
-            type: 'raster',
-            tiles: [
-              'https://a.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}@2x.png',
-              'https://b.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}@2x.png',
-              'https://c.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}@2x.png',
-              'https://d.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}@2x.png',
-            ],
-            tileSize: 256,
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-          },
-          'carto-dark': {
-            type: 'raster',
-            tiles: [
-              'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
-              'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
-              'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
-              'https://d.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
-            ],
-            tileSize: 256,
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-          },
-        },
-        layers: [
-          {
-            id: 'carto-dark-layer',
-            type: 'raster',
-            source: 'carto-dark',
-            minzoom: 0,
-            maxzoom: 20,
-          },
-        ],
-      },
+      style: 'https://tiles.openfreemap.org/styles/dark',
       center: PLAZA_24_SEPT,
       zoom: 15.3,
       pitch: 35,

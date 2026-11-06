@@ -29,7 +29,7 @@ export const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-urbo-navy text-white flex flex-col">
+    <div className="min-h-screen bg-[var(--navy-bg)] text-[var(--text-primary)] transition-colors duration-300 flex flex-col selection:bg-urbo-teal/30">
       <Navbar />
       <main className="flex-1">
         <Hero />

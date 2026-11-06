@@ -66,16 +66,16 @@ export const GlassBadge: React.FC<GlassBadgeProps> = ({
 }) => {
   const badgeConfig = {
     teal: {
-      container: 'bg-urbo-teal/10 border-urbo-teal/25 text-urbo-teal2',
-      dot: 'bg-urbo-teal2',
+      container: 'bg-teal-500/10 dark:bg-urbo-teal/10 border-teal-500/25 dark:border-urbo-teal/25 text-teal-700 dark:text-urbo-teal2',
+      dot: 'bg-teal-600 dark:bg-urbo-teal2',
     },
     amber: {
-      container: 'bg-urbo-amber/10 border-urbo-amber/30 text-urbo-amber',
-      dot: 'bg-urbo-amber',
+      container: 'bg-amber-500/10 dark:bg-urbo-amber/10 border-amber-500/30 dark:border-urbo-amber/30 text-amber-700 dark:text-urbo-amber',
+      dot: 'bg-amber-500 dark:bg-urbo-amber',
     },
     neutral: {
-      container: 'bg-white/5 border-white/10 text-slate-300',
-      dot: 'bg-slate-300',
+      container: 'bg-slate-200/60 dark:bg-white/5 border-slate-300/80 dark:border-white/10 text-slate-700 dark:text-slate-300',
+      dot: 'bg-slate-600 dark:bg-slate-300',
     },
   }[variant];
 
@@ -121,34 +121,33 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
   children,
   ...props
 }) => {
+  const baseStyles =
+    'relative inline-flex items-center justify-center font-medium font-mono transition-all duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-urbo-teal active:scale-[0.98] select-none';
+
   const sizeStyles = {
-    sm: 'px-4 py-2 text-xs gap-1.5',
-    md: 'px-6 py-3 text-sm gap-2',
-    lg: 'px-8 py-4 text-base gap-2.5',
+    sm: 'text-xs px-3.5 py-1.5 gap-1.5',
+    md: 'text-sm px-5 py-2.5 gap-2',
+    lg: 'text-base px-7 py-3.5 gap-2.5',
   }[size];
 
   const variantStyles = {
-    primary: 'apple-pill-primary',
-    secondary: 'apple-pill-secondary',
+    primary:
+      'bg-urbo-teal text-slate-950 font-bold hover:bg-urbo-teal2 shadow-[0_0_20px_rgba(0,201,167,0.3)] hover:shadow-[0_0_30px_rgba(0,229,190,0.5)]',
+    secondary:
+      'liquid-glass-subtle text-slate-900 dark:text-white hover:text-urbo-teal2 border-slate-300/60 dark:border-white/10 hover:border-urbo-teal/40',
     amber:
-      'bg-gradient-to-r from-amber-500 via-amber-400 to-amber-300 text-slate-950 font-bold rounded-full shadow-[0_8px_24px_-6px_rgba(244,196,48,0.4)] hover:brightness-105 transition-all',
+      'bg-urbo-amber text-slate-950 font-bold hover:bg-amber-300 shadow-[0_0_20px_rgba(244,196,48,0.3)]',
     ghost:
-      'bg-transparent hover:bg-white/5 text-slate-300 hover:text-white rounded-full transition-all border border-transparent hover:border-white/10',
+      'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5',
   }[variant];
 
   return (
     <button
-      className={cn(
-        'inline-flex items-center justify-center font-medium tracking-wide cursor-pointer transition-all duration-200 select-none active:scale-95',
-        sizeStyles,
-        variantStyles,
-        className
-      )}
+      className={cn(baseStyles, sizeStyles, variantStyles, className)}
       {...props}
     >
-      {children}
       {icon && <span className="flex-shrink-0">{icon}</span>}
+      <span>{children}</span>
     </button>
   );
 };
-

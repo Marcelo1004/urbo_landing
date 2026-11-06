@@ -5,7 +5,7 @@ import { ShieldCheck, Users, MessageSquare, TrendingUp, CheckCircle2 } from 'luc
 
 export const MetricsProof: React.FC = () => {
   return (
-    <section id="piloto" className="relative py-20 sm:py-28 overflow-hidden">
+    <section id="metricas" className="relative py-16 sm:py-24 overflow-hidden">
       {/* Subtle atmospheric ambient glow */}
       <div
         aria-hidden="true"
@@ -15,16 +15,16 @@ export const MetricsProof: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Context Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 pb-6 border-b border-white/10 gap-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-5 border-b border-slate-200 dark:border-white/10 gap-4">
           <div>
-            <GlassBadge variant="teal" className="mb-4">
+            <GlassBadge variant="teal" className="mb-3.5">
               TRACCIÓN VERIFICADA EN CALLE
             </GlassBadge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-tech">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight font-tech">
               Evidencia real del piloto en Santa Cruz
             </h2>
           </div>
-          <div className="text-xs sm:text-sm font-mono text-slate-400">
+          <div className="text-xs sm:text-sm font-mono text-slate-500 dark:text-slate-400">
             Zona Norte · Línea 30 · Validación 100% orgánica en calle
           </div>
         </div>
@@ -37,10 +37,10 @@ export const MetricsProof: React.FC = () => {
               variant={metric.isAmber ? 'amber' : 'surface'}
               interactive
               specular
-              className="p-6 sm:p-8 flex flex-col justify-between"
+              className="p-6 sm:p-7 flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between mb-6">
-                <span className="text-[11px] font-mono tracking-wider uppercase text-slate-400">
+              <div className="flex items-center justify-between mb-5">
+                <span className="text-[11px] font-mono tracking-wider uppercase text-slate-500 dark:text-slate-400">
                   METRICA 0{idx + 1}
                 </span>
                 <span className="relative flex h-2 w-2">
@@ -55,15 +55,15 @@ export const MetricsProof: React.FC = () => {
               <div>
                 <div
                   className={`text-4xl sm:text-5xl font-extrabold tracking-tight font-mono mb-2 ${
-                    metric.isAmber ? 'text-urbo-amber' : 'text-white'
+                    metric.isAmber ? 'text-amber-600 dark:text-urbo-amber' : 'text-slate-900 dark:text-white'
                   }`}
                 >
                   {metric.value}
                 </div>
-                <div className="text-base font-bold text-slate-100 mb-1.5 font-sans">
+                <div className="text-base font-bold text-slate-900 dark:text-slate-100 mb-1.5 font-sans">
                   {metric.label}
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                   {metric.detail}
                 </p>
               </div>
@@ -72,7 +72,7 @@ export const MetricsProof: React.FC = () => {
         </div>
 
         {/* Supporting Institutional Proof Strip */}
-        <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-300">
+        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-600 dark:text-slate-300">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-urbo-teal2" />
             <span>92 encuestas presenciales completadas en parada</span>

@@ -1,22 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mail, MessageCircle, MapPin, ArrowUpRight, RotateCw, Sparkles, Shield, Cpu, ExternalLink } from 'lucide-react';
-import { GlassSurface, GlassBadge } from '@/components/ui/Glass';
+import { Mail, MessageCircle, MapPin, ArrowUpRight, Sparkles, ExternalLink, RefreshCw, Send } from 'lucide-react';
+import { GlassBadge } from '@/components/ui/Glass';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 
 export const FinalCta: React.FC = () => {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const sheenRef = useRef<HTMLDivElement>(null);
+  // 'brand' (State A) vs 'contact' (State B)
+  const [activeView, setActiveView] = useState<'brand' | 'contact'>('brand');
+  const [animating, setAnimating] = useState(false);
 
-  // 3D Tilt and Mouse Light Sheen Tracking with GSAP QuickTo
+  const cardRef = useRef<HTMLDivElement>(null);
+  const stateARef = useRef<HTMLDivElement>(null);
+  const stateBRef = useRef<HTMLDivElement>(null);
+  const sheenRef = useRef<HTMLDivElement>(null);
+  const glowBurstRef = useRef<HTMLDivElement>(null);
+
+  // 1. Interactive 3D Mouse Tilt Tracking (Physical Liquid Glass Object feel)
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
 
-    const xTo = gsap.quickTo(card, 'rotationY', { duration: 0.6, ease: 'power2.out' });
-    const yTo = gsap.quickTo(card, 'rotationX', { duration: 0.6, ease: 'power2.out' });
+    const xTo = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power2.out' });
+    const yTo = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power2.out' });
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = card.getBoundingClientRect();
@@ -26,31 +31,17 @@ export const FinalCta: React.FC = () => {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      // Subtle tilt max +- 8 degrees
-      const rotY = ((x - centerX) / centerX) * 8;
-      const rotX = -((y - centerY) / centerY) * 8;
+      // Subtle tilt max +- 6 degrees
+      const rotY = ((x - centerX) / centerX) * 6;
+      const rotX = -((y - centerY) / centerY) * 6;
 
       xTo(rotY);
       yTo(rotX);
-
-      // Move sheen highlight
-      if (sheenRef.current) {
-        gsap.to(sheenRef.current, {
-          x: (x - centerX) * 1.2,
-          y: (y - centerY) * 1.2,
-          opacity: 0.7,
-          duration: 0.3,
-          ease: 'power1.out',
-        });
-      }
     };
 
     const handleMouseLeave = () => {
       xTo(0);
       yTo(0);
-      if (sheenRef.current) {
-        gsap.to(sheenRef.current, { opacity: 0, duration: 0.6 });
-      }
     };
 
     card.addEventListener('mousemove', handleMouseMove);
@@ -62,142 +53,262 @@ export const FinalCta: React.FC = () => {
     };
   }, []);
 
+  // 2. Elegant Content Morph Transition via GSAP (Crossfade, Blur, Shimmer, Stagger)
+  const toggleView = () => {
+    if (animating) return;
+    setAnimating(true);
+
+    const isGoingToContact = activeView === 'brand';
+    const outgoing = isGoingToContact ? stateARef.current : stateBRef.current;
+    const incoming = isGoingToContact ? stateBRef.current : stateARef.current;
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setActiveView(isGoingToContact ? 'contact' : 'brand');
+        setAnimating(false);
+      },
+    });
+
+    // Momentary glow burst through glass
+    if (glowBurstRef.current) {
+      tl.to(glowBurstRef.current, {
+        opacity: 0.8,
+        scale: 1.1,
+        duration: 0.3,
+        ease: 'power2.out',
+      }, 0);
+    }
+
+    // Glass Shimmer sweep across surface
+    if (sheenRef.current) {
+      tl.fromTo(
+        sheenRef.current,
+        { x: '-120%', opacity: 0 },
+        { x: '180%', opacity: 0.8, duration: 0.65, ease: 'power2.inOut' },
+        0
+      );
+    }
+
+    // Outgoing content: fade, slight slide & blur
+    if (outgoing) {
+      tl.to(
+        outgoing,
+        {
+          opacity: 0,
+          y: isGoingToContact ? -12 : 12,
+          filter: 'blur(8px)',
+          duration: 0.35,
+          ease: 'power2.in',
+        },
+        0
+      );
+    }
+
+    // Incoming content: slide in with stagger & de-blur
+    if (incoming) {
+      tl.fromTo(
+        incoming,
+        {
+          opacity: 0,
+          y: isGoingToContact ? 14 : -14,
+          filter: 'blur(8px)',
+        },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.5,
+          ease: 'power2.out',
+        },
+        '-=0.15'
+      );
+    }
+
+    // Reset glow burst
+    if (glowBurstRef.current) {
+      tl.to(glowBurstRef.current, { opacity: 0, scale: 1, duration: 0.4 }, '-=0.2');
+    }
+  };
+
   return (
-    <section id="contacto" className="relative py-28 lg:py-36 overflow-hidden">
+    <section id="contacto" className="relative py-20 lg:py-28 overflow-hidden">
       {/* Ambient background light */}
       <div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[550px] rounded-full bg-urbo-teal/15 blur-[190px] pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[520px] rounded-full bg-urbo-teal/15 blur-[180px] pointer-events-none"
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         
         {/* Section Headline */}
-        <div className="mb-12">
-          <GlassBadge variant="teal" className="mb-4">
+        <div className="mb-10 sm:mb-12">
+          <GlassBadge variant="teal" className="mb-3.5">
             ALIANZAS & INVERSIÓN
           </GlassBadge>
 
-          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-4">
+          <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-3">
             El futuro del transporte en Santa Cruz{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
               se construye hoy.
             </span>
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
-            Gira la tarjeta para acceder a los canales de contacto directo con el equipo fundador.
+          <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto">
+            Haz clic en la tarjeta para alternar entre la visión tecnológica y los canales de contacto directo.
           </p>
         </div>
 
         {/* =================================================================
-            LIQUID GLASS BUSINESS CARD (3D TILT & FLIP)
+            HORIZONTAL LIQUID GLASS BUSINESS CARD (ASPECT ~1.75:1)
+            Single Plane Content Morph with 3D Mouse Tracking
             ================================================================= */}
-        <div ref={containerRef} className="perspective-1000 flex justify-center mb-8">
+        <div className="perspective-1000 flex justify-center mb-8">
           <div
             ref={cardRef}
-            className={cn(
-              'relative w-full max-w-[540px] aspect-[1.65/1] rounded-[36px] transition-transform duration-700 preserve-3d cursor-pointer select-none',
-              isFlipped && 'rotate-y-180'
-            )}
-            onClick={() => setIsFlipped(!isFlipped)}
+            tabIndex={0}
+            role="button"
+            aria-label={
+              activeView === 'brand'
+                ? 'Tarjeta URBO, mostrando identidad. Haz clic para ver canales de contacto.'
+                : 'Tarjeta URBO, mostrando canales de contacto. Haz clic para volver a la identidad.'
+            }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleView();
+              }
+            }}
+            onClick={toggleView}
+            className="relative w-full max-w-[580px] aspect-[1.75/1] min-h-[300px] rounded-[32px] p-6 sm:p-8 liquid-glass-elevated border border-white/25 shadow-2xl overflow-hidden cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-urbo-teal transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(0,201,167,0.2)]"
+            style={{ transformStyle: 'preserve-3d' }}
           >
-            {/* Specular Dynamic Sheen Overlay */}
+            {/* Momentary Glow Burst during morph */}
             <div
-              ref={sheenRef}
-              className="absolute -inset-10 bg-gradient-to-tr from-transparent via-white/15 to-transparent rounded-full blur-xl pointer-events-none opacity-0 z-30"
+              ref={glowBurstRef}
+              className="absolute -inset-10 rounded-[40px] bg-urbo-teal/20 blur-2xl pointer-events-none opacity-0 z-0"
             />
 
+            {/* Specular Shimmer Light Bar */}
+            <div
+              ref={sheenRef}
+              className="absolute -inset-y-10 w-28 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-[-20deg] pointer-events-none opacity-0 z-30"
+            />
+
+            {/* Subtle Line 30 Vector Wave Watermark in Background */}
+            <svg
+              className="absolute inset-0 w-full h-full opacity-15 pointer-events-none z-0"
+              viewBox="0 0 580 330"
+              fill="none"
+            >
+              <circle cx="290" cy="165" r="140" stroke="#00C9A7" strokeWidth="1" strokeDasharray="4 6" />
+              <path d="M 0,220 Q 180,60 380,210 T 580,110" stroke="#00E5BE" strokeWidth="2" />
+            </svg>
+
             {/* =============================================================
-                CARD FRONT: BRAND IDENTITY, CHIP & WATERMARK ROUTE
+                STATE A: URBO BRANDING & PROTAGONIST CENTERED LOGO
                 ============================================================= */}
-            <div className="absolute inset-0 w-full h-full rounded-[36px] p-7 sm:p-9 liquid-glass-elevated border-white/25 shadow-2xl flex flex-col justify-between backface-hidden overflow-hidden">
-              {/* Santa Cruz Route Line Watermark in Background */}
-              <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" viewBox="0 0 500 300" fill="none">
-                <circle cx="250" cy="150" r="120" stroke="#00C9A7" strokeWidth="1.5" strokeDasharray="4 4" />
-                <path d="M 0,200 Q 150,50 350,180 T 500,80" stroke="#00E5BE" strokeWidth="2.5" />
-              </svg>
-
-              {/* Card Top: Brand & Smart Chip */}
-              <div className="flex items-center justify-between z-10">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-slate-900 border border-white/20 p-1.5 flex items-center justify-center shadow-lg">
-                    <img src="/urbo-logo.png" alt="URBO" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="text-left">
-                    <span className="font-tech text-xl font-black text-white tracking-wider block leading-none">
-                      URBO
-                    </span>
-                    <span className="text-[9px] font-mono uppercase tracking-widest text-urbo-teal2">
-                      MOBILITY PROTOCOL
-                    </span>
-                  </div>
-                </div>
-
-                {/* Futuristic NFC Smart Chip Graphic */}
+            <div
+              ref={stateARef}
+              className={cn(
+                'absolute inset-0 p-6 sm:p-8 flex flex-col justify-between z-10 transition-none',
+                activeView === 'brand' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+              )}
+            >
+              {/* Top Row: Protocol Tag & Smart NFC Chip */}
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-8 rounded-lg bg-gradient-to-br from-amber-200/30 to-amber-500/20 border border-amber-300/40 p-1 flex flex-col justify-between shadow-inner">
-                    <div className="w-full h-[1px] bg-amber-200/50" />
-                    <div className="w-1/2 h-[1px] bg-amber-200/50" />
-                    <div className="w-full h-[1px] bg-amber-200/50" />
+                  <span className="w-2 h-2 rounded-full bg-urbo-teal2 animate-pulse" />
+                  <span className="text-[10px] font-mono tracking-widest text-slate-500 dark:text-slate-300 uppercase font-semibold">
+                    URBO MOBILITY PROTOCOL
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="w-9 h-6.5 rounded-md bg-gradient-to-br from-amber-200/40 via-amber-400/20 to-amber-600/30 border border-amber-300/50 p-1 flex flex-col justify-between shadow-inner">
+                    <div className="w-full h-[1px] bg-amber-200/70" />
+                    <div className="w-2/3 h-[1px] bg-amber-200/70" />
+                    <div className="w-full h-[1px] bg-amber-200/70" />
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400">NFC</span>
+                  <span className="text-[9px] font-mono text-slate-400 font-bold">NFC</span>
                 </div>
               </div>
 
-              {/* Card Center: Tagline & Proof */}
-              <div className="text-left z-10 my-auto">
-                <p className="text-xs font-mono uppercase tracking-widest text-slate-400 mb-1">
-                  INFRAESTRUCTURA DE TRANSPORTE PÚBLICO
-                </p>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-tech">
-                  Tu micro. En tiempo real.
+              {/* Center: Prominent Official Logo & Identity */}
+              <div className="my-auto flex flex-col items-center justify-center py-2">
+                <div className="relative group flex items-center justify-center">
+                  <div className="absolute -inset-4 rounded-full bg-urbo-teal/20 blur-xl group-hover:bg-urbo-teal/35 transition-all duration-500" />
+                  <img
+                    src="/urbo-logo.png"
+                    alt="URBO Logo"
+                    className="relative w-20 h-20 sm:w-24 sm:h-24 object-contain filter drop-shadow-[0_0_20px_rgba(0,201,167,0.6)] transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+
+                <h3 className="font-tech text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-[0.2em] uppercase mt-2 leading-none">
+                  URBO
                 </h3>
+                <p className="text-[10px] sm:text-[11px] font-mono tracking-[0.25em] text-urbo-teal2 uppercase mt-1">
+                  SANTA CRUZ · BOLIVIA
+                </p>
               </div>
 
-              {/* Card Bottom: Region & Flip Prompt */}
-              <div className="flex items-center justify-between z-10 pt-4 border-t border-white/10 text-xs font-mono text-slate-300">
+              {/* Bottom Row: Location & Morph Toggle Prompt */}
+              <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-white/10 text-xs font-mono text-slate-500 dark:text-slate-300">
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-urbo-teal2" />
-                  <span>Santa Cruz de la Sierra, Bolivia</span>
+                  <span className="text-[11px]">Casco Viejo & Red Troncal</span>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-urbo-teal2 font-bold animate-pulse">
-                  <RotateCw className="w-3.5 h-3.5" />
-                  <span>Toca para ver contacto</span>
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span className="text-[11px]">Toca para ver contacto</span>
                 </div>
               </div>
             </div>
 
             {/* =============================================================
-                CARD BACK: DIRECT CONTACT INFORMATION & CHANNELS
+                STATE B: REAL DIRECT CONTACT & CHANNELS (SAME PLANE MORPH)
                 ============================================================= */}
-            <div className="absolute inset-0 w-full h-full rounded-[36px] p-7 sm:p-9 liquid-glass-elevated border-urbo-teal/30 shadow-2xl flex flex-col justify-between backface-hidden rotate-y-180 overflow-hidden text-left">
+            <div
+              ref={stateBRef}
+              className={cn(
+                'absolute inset-0 p-6 sm:p-8 flex flex-col justify-between z-10 transition-none text-left',
+                activeView === 'contact' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+              )}
+            >
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <span className="text-xs font-mono font-bold tracking-wider text-urbo-teal2 uppercase">
-                  CANALES DIRECTOS DE CONTACTO
-                </span>
-                <span className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
-                  <RotateCw className="w-3 h-3" />
-                  Volver al frente
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg bg-slate-900 border border-white/15 p-1 flex items-center justify-center">
+                    <img src="/urbo-logo.png" alt="URBO" className="w-full h-full object-contain" />
+                  </div>
+                  <span className="text-xs font-mono font-bold tracking-wider text-urbo-teal2 uppercase">
+                    CANALES DIRECTOS · URBO
+                  </span>
+                </div>
+
+                <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                  <RefreshCw className="w-3 h-3 text-urbo-teal2" />
+                  <span>Volver al resumen</span>
                 </span>
               </div>
 
-              {/* Contact Data Items */}
-              <div className="space-y-3.5 my-auto" onClick={(e) => e.stopPropagation()}>
+              {/* Direct Channels (Stops propagation to allow clicking link directly) */}
+              <div className="space-y-2.5 my-auto" onClick={(e) => e.stopPropagation()}>
                 {/* Email */}
                 <a
                   href="mailto:josemariorc@urbocorp.com"
-                  className="p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-urbo-teal/40 transition-colors flex items-center justify-between group"
+                  className="p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-urbo-teal/40 transition-colors flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-urbo-teal/15 text-urbo-teal2 flex items-center justify-center">
                       <Mail className="w-4 h-4" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-mono text-slate-400 block uppercase">Correo Oficial</span>
-                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-urbo-teal2 transition-colors font-mono">
+                      <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400 block uppercase">
+                        Correo Oficial Fundadores
+                      </span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-urbo-teal2 transition-colors font-mono">
                         josemariorc@urbocorp.com
                       </span>
                     </div>
@@ -210,15 +321,17 @@ export const FinalCta: React.FC = () => {
                   href="https://wa.me/59178556677"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-urbo-teal/40 transition-colors flex items-center justify-between group"
+                  className="p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-urbo-teal/40 transition-colors flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
                       <MessageCircle className="w-4 h-4" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-mono text-slate-400 block uppercase">WhatsApp Directo</span>
-                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-urbo-teal2 transition-colors font-mono">
+                      <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400 block uppercase">
+                        WhatsApp Directo · Coordinación
+                      </span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-urbo-teal2 transition-colors font-mono">
                         +591 78556677 · Comunidad URBO
                       </span>
                     </div>
@@ -227,10 +340,10 @@ export const FinalCta: React.FC = () => {
                 </a>
               </div>
 
-              {/* Card Footer */}
-              <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span>Alianzas con directivas de líneas e inversores</span>
-                <span className="text-urbo-teal2 font-bold">RESPUESTA EN 24H</span>
+              {/* Footer */}
+              <div className="pt-2.5 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                <span className="truncate">Santa Cruz de la Sierra, Bolivia</span>
+                <span className="text-urbo-teal2 font-bold flex-shrink-0">RESPUESTA &lt; 24H</span>
               </div>
             </div>
 
@@ -238,10 +351,10 @@ export const FinalCta: React.FC = () => {
         </div>
 
         {/* Quick Action Pill Controls */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           <a
             href="mailto:josemariorc@urbocorp.com"
-            className="apple-pill-primary px-7 py-3.5 text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-950"
+            className="apple-pill-primary px-6 sm:px-7 py-3.5 text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-950 shadow-[0_0_25px_rgba(0,201,167,0.3)] hover:shadow-[0_0_35px_rgba(0,201,167,0.5)] transition-shadow"
           >
             <span>Escribir al equipo fundador</span>
             <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
@@ -251,7 +364,7 @@ export const FinalCta: React.FC = () => {
             href="https://wa.me/59178556677"
             target="_blank"
             rel="noopener noreferrer"
-            className="apple-pill-secondary px-6 py-3.5 text-xs sm:text-sm flex items-center gap-2"
+            className="apple-pill-secondary px-5 sm:px-6 py-3.5 text-xs sm:text-sm flex items-center gap-2"
           >
             <MessageCircle className="w-4 h-4 text-emerald-400" />
             <span>Hablar por WhatsApp</span>
@@ -259,11 +372,13 @@ export const FinalCta: React.FC = () => {
 
           <button
             type="button"
-            onClick={() => setIsFlipped(!isFlipped)}
-            className="px-4 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
+            onClick={toggleView}
+            className="px-5 py-3.5 rounded-full bg-black/5 dark:bg-white/5 border border-slate-200 dark:border-white/15 text-xs font-mono text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white hover:border-urbo-teal2/50 transition-all flex items-center gap-2 shadow-sm"
           >
-            <RotateCw className="w-3.5 h-3.5" />
-            <span>Girar tarjeta</span>
+            <RefreshCw className={cn('w-3.5 h-3.5 text-urbo-teal2', animating && 'animate-spin')} />
+            <span>
+              {activeView === 'brand' ? 'Ver canales de contacto' : 'Volver a la tarjeta'}
+            </span>
           </button>
         </div>
 
