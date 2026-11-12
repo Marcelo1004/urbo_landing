@@ -132,6 +132,8 @@ export const FinalCta: React.FC = () => {
 
   return (
     <section id="contacto" className="relative py-20 lg:py-28 overflow-hidden">
+      {/* Anchor alias */}
+      <span id="unirse" className="absolute -top-32" />
       {/* Ambient background light */}
       <div
         aria-hidden="true"
@@ -159,39 +161,31 @@ export const FinalCta: React.FC = () => {
         </div>
 
         {/* =================================================================
-            HORIZONTAL LIQUID GLASS BUSINESS CARD (ASPECT ~1.75:1)
-            Single Plane Content Morph with 3D Mouse Tracking
+            HORIZONTAL OPTICAL LIQUID GLASS BUSINESS CARD (ASPECT ~1.75:1)
+            Single Plane Content Morph with 3D Mouse Tracking & Refractive Edge
             ================================================================= */}
         <div className="perspective-1000 flex justify-center mb-8">
           <div
             ref={cardRef}
-            tabIndex={0}
-            role="button"
-            aria-label={
-              activeView === 'brand'
-                ? 'Tarjeta URBO, mostrando identidad. Haz clic para ver canales de contacto.'
-                : 'Tarjeta URBO, mostrando canales de contacto. Haz clic para volver a la identidad.'
-            }
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggleView();
-              }
-            }}
-            onClick={toggleView}
-            className="relative w-full max-w-[580px] aspect-[1.75/1] min-h-[300px] rounded-[32px] p-6 sm:p-8 liquid-glass-elevated border border-white/25 shadow-2xl overflow-hidden cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-urbo-teal transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(0,201,167,0.2)]"
+            className="relative w-full max-w-[580px] aspect-[1.75/1] min-h-[300px] rounded-[32px] p-6 sm:p-8 optical-glass-surface border border-white/30 shadow-glass-volumetric overflow-hidden select-none transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(0,201,167,0.25)]"
             style={{ transformStyle: 'preserve-3d' }}
           >
+            {/* Dynamic Glass Reflection Highlight */}
+            <span
+              aria-hidden="true"
+              className="glass-cursor-glow pointer-events-none absolute inset-0 z-0"
+            />
+
             {/* Momentary Glow Burst during morph */}
             <div
               ref={glowBurstRef}
-              className="absolute -inset-10 rounded-[40px] bg-urbo-teal/20 blur-2xl pointer-events-none opacity-0 z-0"
+              className="absolute -inset-10 rounded-[40px] bg-radioactive/25 blur-2xl pointer-events-none opacity-0 z-0"
             />
 
             {/* Specular Shimmer Light Bar */}
             <div
               ref={sheenRef}
-              className="absolute -inset-y-10 w-28 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-[-20deg] pointer-events-none opacity-0 z-30"
+              className="absolute -inset-y-10 w-32 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-22deg] pointer-events-none opacity-0 z-30"
             />
 
             {/* Subtle Line 30 Vector Wave Watermark in Background */}
@@ -259,10 +253,14 @@ export const FinalCta: React.FC = () => {
                   <span className="text-[11px]">Casco Viejo & Red Troncal</span>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-urbo-teal2 font-bold animate-pulse">
+                <button
+                  type="button"
+                  onClick={toggleView}
+                  className="flex items-center gap-1.5 text-urbo-teal2 hover:text-white font-bold transition-colors bg-urbo-teal/10 hover:bg-urbo-teal/20 px-3 py-1 rounded-full border border-urbo-teal/30 cursor-pointer"
+                >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  <span className="text-[11px]">Toca para ver contacto</span>
-                </div>
+                  <span className="text-[11px]">Ver canales de contacto</span>
+                </button>
               </div>
             </div>
 
@@ -287,10 +285,14 @@ export const FinalCta: React.FC = () => {
                   </span>
                 </div>
 
-                <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={toggleView}
+                  className="text-[10px] font-mono text-slate-500 dark:text-slate-400 hover:text-urbo-teal2 flex items-center gap-1 transition-colors cursor-pointer bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-full border border-white/10"
+                >
                   <RefreshCw className="w-3 h-3 text-urbo-teal2" />
-                  <span>Volver al resumen</span>
-                </span>
+                  <span>Volver a la tarjeta</span>
+                </button>
               </div>
 
               {/* Direct Channels (Stops propagation to allow clicking link directly) */}

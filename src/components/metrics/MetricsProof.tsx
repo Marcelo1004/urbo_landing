@@ -1,11 +1,88 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { GlassSurface, GlassBadge } from '@/components/ui/Glass';
 import { URBO_METRICS } from '@/data/urboData';
 import { ShieldCheck, Users, MessageSquare, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const MetricsProof: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sec = sectionRef.current;
+    if (!sec) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    const ctx = gsap.context(() => {
+      // Header entrance
+      gsap.fromTo(
+        '.metrics-header',
+        { opacity: 0, y: 25, filter: 'blur(6px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sec,
+            start: 'top 82%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+
+      // Metric cards staggered entrance with blur reveal and lift
+      gsap.fromTo(
+        '.metric-card',
+        { opacity: 0, y: 35, scale: 0.95, filter: 'blur(8px)' },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 0.85,
+          stagger: 0.12,
+          ease: 'back.out(1.2)',
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+
+      // Numbers count-up accentuation
+      const numbers = sec.querySelectorAll('.metric-number');
+      numbers.forEach((num) => {
+        gsap.fromTo(
+          num,
+          { scale: 0.85, opacity: 0.6 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.9,
+            ease: 'elastic.out(1.2, 0.4)',
+            scrollTrigger: {
+              trigger: num,
+              start: 'top 90%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      });
+    }, sec);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="metricas" className="relative py-16 sm:py-24 overflow-hidden">
+    <section ref={sectionRef} id="metricas" className="relative py-16 sm:py-24 overflow-hidden">
       {/* Subtle atmospheric ambient glow */}
       <div
         aria-hidden="true"
@@ -15,7 +92,7 @@ export const MetricsProof: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Context Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-5 border-b border-slate-200 dark:border-white/10 gap-4">
+        <div className="metrics-header flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-5 border-b border-slate-200 dark:border-white/10 gap-4">
           <div>
             <GlassBadge variant="teal" className="mb-3.5">
               TRACCIÓN VERIFICADA EN CALLE
@@ -30,14 +107,14 @@ export const MetricsProof: React.FC = () => {
         </div>
 
         {/* Telemetry Glass Ribbon (Apple-style precision readout) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {URBO_METRICS.map((metric, idx) => (
             <GlassSurface
               key={idx}
               variant={metric.isAmber ? 'amber' : 'surface'}
               interactive
               specular
-              className="p-6 sm:p-7 flex flex-col justify-between"
+              className="metric-card p-6 sm:p-7 flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-5">
                 <span className="text-[11px] font-mono tracking-wider uppercase text-slate-500 dark:text-slate-400">
@@ -54,7 +131,7 @@ export const MetricsProof: React.FC = () => {
 
               <div>
                 <div
-                  className={`text-4xl sm:text-5xl font-extrabold tracking-tight font-mono mb-2 ${
+                  className={`metric-number text-4xl sm:text-5xl font-extrabold tracking-tight font-mono mb-2 ${
                     metric.isAmber ? 'text-amber-600 dark:text-urbo-amber' : 'text-slate-900 dark:text-white'
                   }`}
                 >

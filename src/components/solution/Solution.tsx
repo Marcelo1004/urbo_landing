@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   BellRing, 
   Radio, 
@@ -14,17 +14,114 @@ import {
 } from 'lucide-react';
 import { GlassSurface, GlassBadge, GlassButton } from '@/components/ui/Glass';
 import { cn } from '@/lib/utils';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const Solution: React.FC = () => {
   const [voiceTesting, setVoiceTesting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'esperar' | 'rutas' | 'seguridad'>('esperar');
+  const sectionRef = useRef<HTMLElement>(null);
+  const tabContentRef = useRef<HTMLDivElement>(null);
 
   const handleTestVoice = () => {
     setVoiceTesting(true);
     setTimeout(() => setVoiceTesting(false), 2400);
   };
 
+  // Tab transition using GSAP
+  const handleTabChange = (newTab: 'esperar' | 'rutas' | 'seguridad') => {
+    if (newTab === activeTab) return;
+    if (tabContentRef.current) {
+      gsap.to(tabContentRef.current, {
+        opacity: 0,
+        y: -10,
+        filter: 'blur(6px)',
+        duration: 0.22,
+        ease: 'power2.in',
+        onComplete: () => {
+          setActiveTab(newTab);
+          gsap.fromTo(
+            tabContentRef.current,
+            { opacity: 0, y: 15, filter: 'blur(8px)' },
+            { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.45, ease: 'power3.out' }
+          );
+        },
+      });
+    } else {
+      setActiveTab(newTab);
+    }
+  };
+
+  useEffect(() => {
+    const sec = sectionRef.current;
+    if (!sec) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.solution-header',
+        { opacity: 0, y: 30, filter: 'blur(8px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.85,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sec,
+            start: 'top 82%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+
+      gsap.fromTo(
+        '.solution-hero-glass',
+        { opacity: 0, y: 35, scale: 0.98, filter: 'blur(10px)' },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.solution-hero-glass',
+            start: 'top 84%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+
+      gsap.fromTo(
+        '.solution-pillar-card',
+        { opacity: 0, y: 35, scale: 0.96, filter: 'blur(8px)' },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 0.8,
+          stagger: 0.12,
+          ease: 'back.out(1.2)',
+          scrollTrigger: {
+            trigger: '.solution-pillars-grid',
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    }, sec);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="solucion" className="relative py-20 lg:py-28 overflow-hidden">
+    <section ref={sectionRef} id="solucion" className="relative py-20 lg:py-28 overflow-hidden">
       {/* Anchor alias */}
       <span id="como-funciona" className="absolute -top-32" />
 
@@ -41,7 +138,7 @@ export const Solution: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-14 sm:mb-16">
+        <div className="solution-header max-w-3xl mb-14 sm:mb-16">
           <GlassBadge variant="teal" className="mb-5">
             TECNOLOGÍA DE MOVILIDAD
           </GlassBadge>
@@ -59,123 +156,172 @@ export const Solution: React.FC = () => {
         </div>
 
         {/* =================================================================
-            HERO INNOVATION SHOWCASE: MODO "ESPERAR AQUÍ"
+            HERO INNOVATION SHOWCASE: MODO "ESPERAR AQUÍ" (WITH GSAP TABS)
             ================================================================= */}
-        <GlassSurface
-          variant="amber"
-          specular
-          className="p-6 sm:p-10 mb-14 relative overflow-hidden"
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            {/* Left: Explanation */}
-            <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-urbo-amber/15 border border-urbo-amber/30 text-amber-700 dark:text-urbo-amber text-xs font-mono font-bold tracking-wider uppercase mb-5">
-                <BellRing className="w-3.5 h-3.5" />
-                <span>INNOVACIÓN EXCLUSIVA DE URBO</span>
-              </div>
-
-              <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-4">
-                Modo &ldquo;Esperar Aquí&rdquo;
-              </h3>
-
-              <p className="text-base sm:text-lg text-slate-700 dark:text-slate-200 leading-relaxed mb-6">
-                El pasajero toca un botón en su celular al llegar a la parada. El chofer recibe una alerta de voz nítida y automática exactamente a 300 metros de distancia:
-              </p>
-
-              {/* Hands-Free Voice Capsule */}
-              <div
-                onClick={handleTestVoice}
-                className="liquid-glass-surface rounded-2xl p-5 border-amber-500/30 dark:border-urbo-amber/40 cursor-pointer select-none mb-6 hover:border-urbo-amber transition-all shadow-md"
+        <div className="solution-hero-glass">
+          <GlassSurface
+            variant="amber"
+            specular
+            className="p-6 sm:p-10 mb-14 relative overflow-hidden"
+          >
+            {/* Interactive Tab Switcher */}
+            <div className="flex items-center gap-2 mb-8 bg-black/10 dark:bg-white/5 p-1 rounded-full border border-slate-200/50 dark:border-white/10 w-fit">
+              <button
+                type="button"
+                onClick={() => handleTabChange('esperar')}
+                className={cn(
+                  'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
+                  activeTab === 'esperar'
+                    ? 'bg-urbo-amber text-slate-950 shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                )}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 text-xs font-mono text-amber-700 dark:text-urbo-amber font-bold uppercase tracking-wider">
-                    <Volume2 className={cn('w-4 h-4', voiceTesting && 'animate-bounce')} />
-                    <span>Aviso por voz manos libres al chofer</span>
-                  </div>
-                  {/* Wave Visualizer */}
-                  <div className="flex items-center gap-1 h-3">
-                    <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-1' : 'h-1')} />
-                    <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-2' : 'h-2')} />
-                    <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-3' : 'h-3')} />
-                    <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-4' : 'h-1.5')} />
-                  </div>
-                </div>
-
-                <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight font-sans">
-                  &ldquo;Pasajero esperando, mano derecha.&rdquo;
-                </div>
-
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-200 dark:border-white/10 text-xs text-slate-500 dark:text-slate-400 font-mono">
-                  <span>0 distracciones · El chofer no toca el teléfono</span>
-                  <span className="text-amber-600 dark:text-urbo-amber font-semibold">Toca para reproducir</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-urbo-amber flex-shrink-0" />
-                  <span>El chofer frena con tiempo y seguro</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-urbo-amber flex-shrink-0" />
-                  <span>El pasajero nunca se queda varado</span>
-                </div>
-              </div>
+                Modo Esperar Aquí
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange('rutas')}
+                className={cn(
+                  'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
+                  activeTab === 'rutas'
+                    ? 'bg-urbo-amber text-slate-950 shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                )}
+              >
+                Telemetría 300m
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange('seguridad')}
+                className={cn(
+                  'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
+                  activeTab === 'seguridad'
+                    ? 'bg-urbo-amber text-slate-950 shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                )}
+              >
+                Cero Distracciones
+              </button>
             </div>
 
-            {/* Right: Interactive Driver Cockpit View */}
-            <div className="lg:col-span-5 flex justify-center">
-              <GlassSurface
-                variant="elevated"
-                specular
-                className="w-full max-w-[360px] p-6 rounded-3xl border-slate-200 dark:border-white/15 text-left relative overflow-hidden shadow-xl"
-              >
-                <div className="text-xs font-mono uppercase text-slate-500 dark:text-slate-400 mb-1">
-                  COCKPIT DEL CHOFER · EN RUTA
-                </div>
-                <div className="text-lg font-bold text-slate-900 dark:text-white mb-4">
-                  LÍNEA 30 · INT 32
+            <div ref={tabContentRef} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              
+              {/* Left: Explanation */}
+              <div className="lg:col-span-7">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-urbo-amber/15 border border-urbo-amber/30 text-amber-700 dark:text-urbo-amber text-xs font-mono font-bold tracking-wider uppercase mb-5">
+                  <BellRing className="w-3.5 h-3.5" />
+                  <span>INNOVACIÓN EXCLUSIVA DE URBO</span>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">DISTANCIA A LA PARADA</div>
-                    <div className="text-2xl font-black font-mono text-urbo-teal2">300 m</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">Av. Banzer y 2do Anillo</div>
-                  </div>
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-4">
+                  {activeTab === 'esperar' && 'Modo "Esperar Aquí"'}
+                  {activeTab === 'rutas' && 'Alerta Acústica a 300 Metros'}
+                  {activeTab === 'seguridad' && 'Conducción 100% Segura'}
+                </h3>
 
-                  <div className="p-3.5 rounded-xl bg-amber-500/10 dark:bg-urbo-amber/15 border border-amber-500/30 dark:border-urbo-amber/30">
-                    <div className="flex items-center justify-between text-xs font-mono text-amber-700 dark:text-urbo-amber font-bold">
-                      <span>ESTADO DEL AVISO</span>
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-urbo-amber opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-urbo-amber" />
-                      </span>
+                <p className="text-base sm:text-lg text-slate-700 dark:text-slate-200 leading-relaxed mb-6">
+                  {activeTab === 'esperar' &&
+                    'El pasajero toca un botón en su celular al llegar a la parada. El chofer recibe una alerta de voz nítida y automática exactamente a 300 metros de distancia:'}
+                  {activeTab === 'rutas' &&
+                    'La antena GPS del teléfono o micro mide la distancia euclidiana en tiempo real y calcula la desaceleración precisa para que el conductor no frene de golpe.'}
+                  {activeTab === 'seguridad' &&
+                    'El chofer mantiene ambas manos en el volante y la mirada en el asfalto. No hay pantallas brillantes ni mensajes de texto invasivos durante la marcha.'}
+                </p>
+
+                {/* Hands-Free Voice Capsule */}
+                <div
+                  onClick={handleTestVoice}
+                  className="optical-glass-surface rounded-2xl p-5 border-amber-500/30 dark:border-urbo-amber/40 cursor-pointer select-none mb-6 hover:border-urbo-amber transition-all shadow-md"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 text-xs font-mono text-amber-700 dark:text-urbo-amber font-bold uppercase tracking-wider">
+                      <Volume2 className={cn('w-4 h-4', voiceTesting && 'animate-bounce')} />
+                      <span>Aviso por voz manos libres al chofer</span>
                     </div>
-                    <div className="text-sm font-semibold text-slate-900 dark:text-white mt-1">
-                      Alerta sonora emitida por altavoz
+                    {/* Wave Visualizer */}
+                    <div className="flex items-center gap-1 h-3">
+                      <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-1' : 'h-1')} />
+                      <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-2' : 'h-2')} />
+                      <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-3' : 'h-3')} />
+                      <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-4' : 'h-1.5')} />
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-mono text-slate-600 dark:text-slate-300">
-                    <span>Modo conducción segura</span>
-                    <span className="text-urbo-teal2 font-bold">ACTIVO</span>
+                  <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight font-sans">
+                    &ldquo;Pasajero esperando, mano derecha.&rdquo;
+                  </div>
+
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-200 dark:border-white/10 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                    <span>0 distracciones · El chofer no toca el teléfono</span>
+                    <span className="text-amber-600 dark:text-urbo-amber font-semibold">Toca para reproducir</span>
                   </div>
                 </div>
-              </GlassSurface>
-            </div>
 
-          </div>
-        </GlassSurface>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-urbo-amber flex-shrink-0" />
+                    <span>El chofer frena con tiempo y seguro</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-urbo-amber flex-shrink-0" />
+                    <span>El pasajero nunca se queda varado</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Interactive Driver Cockpit View */}
+              <div className="lg:col-span-5 flex justify-center">
+                <GlassSurface
+                  variant="elevated"
+                  specular
+                  className="w-full max-w-[360px] p-6 rounded-3xl border-slate-200 dark:border-white/15 text-left relative overflow-hidden shadow-xl"
+                >
+                  <div className="text-xs font-mono uppercase text-slate-500 dark:text-slate-400 mb-1">
+                    COCKPIT DEL CHOFER · EN RUTA
+                  </div>
+                  <div className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+                    LÍNEA 30 · INT 32
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">DISTANCIA A LA PARADA</div>
+                      <div className="text-2xl font-black font-mono text-urbo-teal2">300 m</div>
+                      <div className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">Av. Banzer y 2do Anillo</div>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-amber-500/10 dark:bg-urbo-amber/15 border border-amber-500/30 dark:border-urbo-amber/30">
+                      <div className="flex items-center justify-between text-xs font-mono text-amber-700 dark:text-urbo-amber font-bold">
+                        <span>ESTADO DEL AVISO</span>
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-urbo-amber opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-urbo-amber" />
+                        </span>
+                      </div>
+                      <div className="text-sm font-semibold text-slate-900 dark:text-white mt-1">
+                        Alerta sonora emitida por altavoz
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-mono text-slate-600 dark:text-slate-300">
+                      <span>Modo conducción segura</span>
+                      <span className="text-urbo-teal2 font-bold">ACTIVO</span>
+                    </div>
+                  </div>
+                </GlassSurface>
+              </div>
+
+            </div>
+          </GlassSurface>
+        </div>
 
         {/* =================================================================
             EDITORIAL SYSTEM SHOWCASE: 4 SUPPORTING PILLARS
             ================================================================= */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+        <div className="solution-pillars-grid grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
           
           {/* Pillar 1: GPS en tiempo real */}
-          <GlassSurface variant="surface" interactive specular className="p-7 sm:p-8 flex flex-col justify-between">
+          <GlassSurface variant="surface" interactive specular className="solution-pillar-card p-7 sm:p-8 flex flex-col justify-between">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 mb-6">
                 <Radio className="w-6 h-6" />
@@ -194,7 +340,7 @@ export const Solution: React.FC = () => {
           </GlassSurface>
 
           {/* Pillar 2: Rutas inteligentes & Eficiencia */}
-          <GlassSurface variant="surface" interactive specular className="p-7 sm:p-8 flex flex-col justify-between">
+          <GlassSurface variant="surface" interactive specular className="solution-pillar-card p-7 sm:p-8 flex flex-col justify-between">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 mb-6">
                 <Zap className="w-6 h-6" />
@@ -213,7 +359,7 @@ export const Solution: React.FC = () => {
           </GlassSurface>
 
           {/* Pillar 3: Seguridad urbana nocturna */}
-          <GlassSurface variant="surface" interactive specular className="p-7 sm:p-8 flex flex-col justify-between">
+          <GlassSurface variant="surface" interactive specular className="solution-pillar-card p-7 sm:p-8 flex flex-col justify-between">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 mb-6">
                 <ShieldCheck className="w-6 h-6" />
@@ -232,7 +378,7 @@ export const Solution: React.FC = () => {
           </GlassSurface>
 
           {/* Pillar 4: Dashboard y Puntos aliados */}
-          <GlassSurface variant="surface" interactive specular className="p-7 sm:p-8 flex flex-col justify-between">
+          <GlassSurface variant="surface" interactive specular className="solution-pillar-card p-7 sm:p-8 flex flex-col justify-between">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 mb-6">
                 <LayoutDashboard className="w-6 h-6" />

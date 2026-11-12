@@ -1,10 +1,74 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Smartphone, Navigation, BarChart3, CheckCircle2, Shield, Award, MapPin, Bus, ArrowUpRight, Volume2 } from 'lucide-react';
 import { GlassSurface, GlassBadge } from '@/components/ui/Glass';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const Audiences: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sec = sectionRef.current;
+    if (!sec) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    const ctx = gsap.context(() => {
+      // Header reveal
+      gsap.fromTo(
+        '.audiences-header',
+        { opacity: 0, y: 30, filter: 'blur(8px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.85,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sec,
+            start: 'top 82%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+
+      // Storytelling cards depth reveal
+      const cards = sec.querySelectorAll('.audience-card');
+      cards.forEach((card, i) => {
+        gsap.fromTo(
+          card,
+          {
+            opacity: 0,
+            y: 40 + i * 15,
+            scale: 0.96,
+            filter: 'blur(10px)',
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            filter: 'blur(0px)',
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 86%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      });
+    }, sec);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="audiencias" className="relative py-20 lg:py-28 overflow-hidden">
+    <section ref={sectionRef} id="audiencias" className="relative py-20 lg:py-28 overflow-hidden">
       {/* Anchor alias */}
       <span id="para-quien" className="absolute -top-32" />
 
@@ -21,7 +85,7 @@ export const Audiences: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-14 sm:mb-16">
+        <div className="audiences-header max-w-3xl mb-14 sm:mb-16">
           <GlassBadge variant="teal" className="mb-5">
             ECOSISTEMA DE MOVILIDAD
           </GlassBadge>
@@ -41,13 +105,14 @@ export const Audiences: React.FC = () => {
         {/* =================================================================
             EXPERIENCIAS DIFERENCIADAS (PASAJERO, CHOFER, DIRECTIVA)
             ================================================================= */}
-        <div className="space-y-10 lg:space-y-12">
+        <div ref={containerRef} className="space-y-10 lg:space-y-12">
           
           {/* 1. PASAJERO: Large Asymmetric Row (App Experience) */}
           <GlassSurface
             variant="surface"
+            interactive
             specular
-            className="p-6 sm:p-10 border-urbo-teal/20"
+            className="audience-card p-6 sm:p-10 border-urbo-teal/20"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
@@ -92,7 +157,7 @@ export const Audiences: React.FC = () => {
 
               {/* Passenger Interactive Glass Phone Frame */}
               <div className="lg:col-span-5 flex justify-center">
-                <div className="w-full max-w-[320px] rounded-3xl p-5 liquid-glass-elevated border-slate-200 dark:border-white/15 shadow-xl">
+                <div className="w-full max-w-[320px] rounded-3xl p-5 optical-glass-surface border-slate-200 dark:border-white/20 shadow-xl">
                   <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-3 pb-2 border-b border-slate-200 dark:border-white/10 font-mono">
                     <span>TU PARADA HABITUAL</span>
                     <span className="text-urbo-teal2 font-bold">LÍNEA 30</span>
@@ -124,8 +189,9 @@ export const Audiences: React.FC = () => {
             {/* 2. CHOFER (Hands-Free Safety & Route Efficiency) */}
             <GlassSurface
               variant="amber"
+              interactive
               specular
-              className="p-6 sm:p-8 flex flex-col justify-between"
+              className="audience-card p-6 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center gap-3 mb-6">
@@ -181,8 +247,9 @@ export const Audiences: React.FC = () => {
             {/* 3. LÍNEAS Y DIRECTIVAS (Fleet Command Console) */}
             <GlassSurface
               variant="elevated"
+              interactive
               specular
-              className="p-6 sm:p-8 flex flex-col justify-between"
+              className="audience-card p-6 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center gap-3 mb-6">

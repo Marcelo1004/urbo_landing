@@ -23,15 +23,23 @@ export const Hero: React.FC = () => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      // Step-by-step cinematic entrance sequence with explicit fromTo
-      tl.fromTo('.hero-badge', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, delay: 0.1 })
-        .fromTo('.hero-line-1', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.75 }, '-=0.4')
-        .fromTo('.hero-line-2', { y: 35, opacity: 0, scale: 0.95 }, { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.2)' }, '-=0.5')
-        .fromTo('.hero-subhead', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.65 }, '-=0.45')
-        .fromTo('.hero-buttons a', { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.6 }, '-=0.35')
-        .fromTo('.hero-metrics-item', { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.55 }, '-=0.35')
-        .fromTo(mapColRef.current, { scale: 0.94, y: 30, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 0.85, ease: 'power2.out' }, '-=0.7')
-        .fromTo('.hero-map-overlay', { opacity: 0, y: 12 }, { opacity: 1, y: 0, stagger: 0.12, duration: 0.5 }, '-=0.3');
+      // Stage 1: Halos & ambient glow
+      tl.fromTo('.hero-ambient-glow', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1.2, ease: 'sine.out' }, 0)
+      // Stage 2: Hero Location Badge
+        .fromTo('.hero-badge', { y: 25, opacity: 0, filter: 'blur(8px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.75 }, 0.2)
+      // Stage 3 & 4: Multi-line Masked Headline Reveal (50-70px initial displacement)
+        .fromTo('.hero-line-1', { y: 65, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power4.out' }, 0.35)
+        .fromTo('.hero-line-2', { y: 70, opacity: 0 }, { y: 0, opacity: 1, duration: 0.95, ease: 'power4.out' }, 0.5)
+      // Stage 5: Subtitle & Call-to-actions
+        .fromTo('.hero-subhead', { y: 24, opacity: 0, filter: 'blur(4px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.7 }, 0.7)
+        .fromTo('.hero-buttons a', { y: 25, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, stagger: 0.12, duration: 0.65, ease: 'back.out(1.4)' }, 0.85)
+      // Stage 6: Telemetry indicators
+        .fromTo('.hero-metrics-item', { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.55 }, 1.0)
+      // Stage 7: Cockpit Map HUD entrance (depth lift, scale & optical reveal)
+        .fromTo(mapColRef.current, { scale: 0.9, y: 45, opacity: 0, filter: 'blur(12px)' }, { scale: 1, y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.1, ease: 'power2.out' }, 0.6)
+        .fromTo('.hero-map-overlay', { opacity: 0, y: 14 }, { opacity: 1, y: 0, stagger: 0.12, duration: 0.55 }, 1.1)
+      // Stage 8: Specular light beam sweep across the glass cockpit
+        .fromTo('.cockpit-specular-sweep', { x: '-140%', opacity: 0 }, { x: '240%', opacity: 0.8, duration: 1.2, ease: 'power2.inOut' }, 1.3);
 
       // Magnetic hover on primary action button
       const btn = primaryBtnRef.current;
@@ -73,15 +81,15 @@ export const Hero: React.FC = () => {
       {/* Ambient Lighting Orbs with continuous gentle breathing */}
       <div
         aria-hidden="true"
-        className="absolute top-1/4 -right-32 w-[600px] h-[600px] rounded-full bg-urbo-teal/15 blur-[170px] pointer-events-none animate-pulse-subtle"
+        className="hero-ambient-glow absolute top-1/4 -right-32 w-[600px] h-[600px] rounded-full bg-urbo-teal/15 blur-[170px] pointer-events-none animate-pulse-subtle"
       />
       <div
         aria-hidden="true"
-        className="absolute -bottom-24 -left-32 w-[500px] h-[500px] rounded-full bg-radioactive/10 blur-[160px] pointer-events-none animate-float-slow"
+        className="hero-ambient-glow absolute -bottom-24 -left-32 w-[500px] h-[500px] rounded-full bg-radioactive/15 blur-[160px] pointer-events-none animate-float-slow"
       />
       <div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-slate-900/50 blur-[130px] pointer-events-none"
+        className="hero-ambient-glow absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-slate-900/50 blur-[130px] pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
@@ -99,11 +107,15 @@ export const Hero: React.FC = () => {
               </GlassBadge>
             </div>
 
-            {/* Main Headline (Multi-line cinematic entrance) */}
+            {/* Main Headline (Multi-line masked cinematic entrance) */}
             <h1 className="hero-headline text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05] text-slate-900 dark:text-white mb-6">
-              <span className="hero-line-1 block">Tu micro.</span>
-              <span className="hero-line-2 block text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
-                En tiempo real.
+              <span className="hero-line-1-wrap overflow-hidden block">
+                <span className="hero-line-1 block">Tu micro.</span>
+              </span>
+              <span className="hero-line-2-wrap overflow-hidden block mt-1">
+                <span className="hero-line-2 block text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
+                  En tiempo real.
+                </span>
               </span>
             </h1>
 
@@ -164,7 +176,13 @@ export const Hero: React.FC = () => {
           <div ref={mapColRef} className="lg:col-span-5 relative w-full flex flex-col items-center">
             
             {/* Real Map Canvas Container with Floating Liquid Glass Controls */}
-            <div className="w-full max-w-[460px] aspect-[4/5] rounded-[36px] p-2 sm:p-2.5 liquid-glass-surface border border-white/20 shadow-glass-edge relative">
+            <div className="w-full max-w-[460px] aspect-[4/5] rounded-[36px] p-2 sm:p-2.5 optical-glass-surface border border-white/25 shadow-glass-volumetric relative overflow-hidden">
+              
+              {/* Specular Light Sweep Overlay */}
+              <div
+                aria-hidden="true"
+                className="cockpit-specular-sweep pointer-events-none absolute -inset-y-12 w-32 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] z-30"
+              />
               
               {/* Vehicle Selector Pills Floating Bar */}
               <div className="hero-map-overlay absolute top-5 right-5 z-20 flex items-center bg-slate-950/80 border border-white/15 rounded-full p-1 backdrop-blur-xl shadow-lg">

@@ -86,8 +86,13 @@ export const Opportunity: React.FC = () => {
             DIAGNÓSTICO URBANO · SANTA CRUZ DE LA SIERRA
           </GlassBadge>
 
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12] mb-6 font-tech">
-            <span className="text-urbo-teal2 mr-1">+</span>1,6 millones de personas.<br />
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12] mb-6">
+            <span className="inline-flex items-baseline font-mono tracking-tighter">
+              <span className="text-urbo-teal2 text-[0.85em] font-black mr-0.5 select-none">+</span>
+              <span className="font-extrabold text-slate-900 dark:text-white">1,6</span>
+            </span>
+            <span className="ml-2 font-tech font-bold">millones de personas.</span>
+            <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
               Información en tiempo real de tu micro al instante y en tus manos.
             </span>
