@@ -53,3 +53,4 @@ export const UrboLogo: React.FC<UrboLogoProps> = ({ className, size = 40 }) => {
     </div>
   );
 };
+
