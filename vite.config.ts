@@ -11,8 +11,10 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    allowedHosts: [
-      'urbolanding-production.up.railway.app'
-    ]
-  }
+    allowedHosts: true,
+  },
+  preview: {
+    host: '0.0.0.0',
+    allowedHosts: true,
+  },
 })
