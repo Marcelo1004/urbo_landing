@@ -86,12 +86,12 @@ export const Opportunity: React.FC = () => {
             DIAGNÓSTICO URBANO · SANTA CRUZ DE LA SIERRA
           </GlassBadge>
 
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12] mb-6">
-            <span className="inline-flex items-baseline font-mono tracking-tighter">
-              <span className="text-urbo-teal2 text-[0.85em] font-black mr-0.5 select-none">+</span>
-              <span className="font-extrabold text-slate-900 dark:text-white">1,6</span>
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.12] mb-6">
+            <span className="inline-flex items-baseline font-tech font-black tracking-tight text-white">
+              <span className="text-urbo-teal2 mr-1 select-none font-extrabold">+</span>
+              <span>1,6</span>
             </span>
-            <span className="ml-2 font-tech font-bold">millones de personas.</span>
+            <span className="ml-2 sm:ml-3 font-tech font-extrabold tracking-tight text-white">millones de personas.</span>
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
               Información en tiempo real de tu micro al instante y en tus manos.
@@ -116,22 +116,22 @@ export const Opportunity: React.FC = () => {
             <GlassSurface
               variant="elevated"
               specular
-              className="p-6 sm:p-8 h-full flex flex-col justify-between relative overflow-hidden border-urbo-teal/25 rounded-3xl dark:hover:shadow-[0_0_35px_rgba(0,201,167,0.2)] transition-shadow duration-500"
+              className="p-5 sm:p-8 h-full flex flex-col justify-between relative overflow-hidden border-urbo-teal/25 rounded-3xl hover:shadow-[0_0_35px_rgba(0,201,167,0.2)] transition-shadow duration-500"
             >
               {/* Subtle Ambient Refraction Glow */}
               <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-urbo-teal/15 rounded-full blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 mb-6">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-10 h-10 rounded-xl bg-urbo-teal/15 border border-urbo-teal/30 flex items-center justify-center text-urbo-teal2">
-                    <Quote className="w-5 h-5 stroke-[2.5]" />
+              <div className="relative z-10 mb-4 sm:mb-6">
+                <div className="flex items-center justify-between mb-4 sm:mb-5">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-urbo-teal/15 border border-urbo-teal/30 flex items-center justify-center text-urbo-teal2">
+                    <Quote className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
                   </div>
                   <GlassBadge variant="teal">
                     TESTIMONIO DE CAMPO
                   </GlassBadge>
                 </div>
 
-                <blockquote className="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900 dark:text-white leading-snug">
+                <blockquote className="text-base sm:text-xl lg:text-2xl font-semibold text-white leading-snug">
                   &ldquo;{TESTIMONIAL_DON_MAURICIO.quote.replace('Entre todos podemos lograrlo.', '')}
                   <span className="text-urbo-teal2 underline decoration-urbo-teal/40 underline-offset-4">
                     Entre todos podemos lograrlo.
@@ -139,16 +139,16 @@ export const Opportunity: React.FC = () => {
                 </blockquote>
               </div>
 
-              <div className="relative z-10 pt-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-between flex-wrap gap-3">
+              <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <div className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-wide uppercase font-mono">
+                  <div className="text-sm sm:text-base font-bold text-white tracking-wide uppercase font-mono">
                     {TESTIMONIAL_DON_MAURICIO.author}
                   </div>
                   <div className="text-xs font-mono text-urbo-teal2 mt-0.5">
                     {TESTIMONIAL_DON_MAURICIO.role} · {TESTIMONIAL_DON_MAURICIO.context}
                   </div>
                 </div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-black/10 dark:bg-white/5 px-2.5 py-1 rounded-full border border-slate-200 dark:border-white/10">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
                   Línea 30 SCZ
                 </span>
               </div>
@@ -156,7 +156,7 @@ export const Opportunity: React.FC = () => {
           </div>
 
           {/* Architectural Compact Pillars (Right 5 cols) */}
-          <div className="lg:col-span-5 flex flex-col gap-4 sm:gap-5 justify-between">
+          <div className="lg:col-span-5 flex flex-col gap-3 sm:gap-5 justify-between">
             
             {/* Pillar 1: Telemetría dormida */}
             <div className="opportunity-card flex-1">
@@ -164,22 +164,22 @@ export const Opportunity: React.FC = () => {
                 variant="surface"
                 interactive
                 specular
-                className="p-5 sm:p-6 h-full flex flex-col justify-between rounded-3xl dark:hover:shadow-[0_0_25px_rgba(0,201,167,0.15)] transition-all"
+                className="p-4 sm:p-6 h-full flex flex-col justify-between rounded-2xl sm:rounded-3xl hover:shadow-[0_0_25px_rgba(0,201,167,0.15)] transition-all"
               >
                 <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 flex-shrink-0">
-                      <Radio className="w-4 h-4" />
+                  <div className="flex items-center gap-2.5 sm:gap-3 mb-2 sm:mb-3">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 flex-shrink-0">
+                      <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    <h3 className="text-sm sm:text-base font-bold text-white">
                       Telemetría GPS ya instalada en los micros
                     </h3>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
                     La gran mayoría de micros en Santa Cruz ya circulan con geolocalización a bordo. Esa señal técnica existía encerrada en servidores aislados: URBO es la capa de software que la lleva a la mano de quien espera.
                   </p>
                 </div>
-                <div className="pt-3 mt-3 border-t border-slate-200 dark:border-white/5 flex items-center gap-1.5 text-xs font-mono text-urbo-teal2 font-semibold">
+                <div className="pt-2.5 sm:pt-3 mt-2.5 sm:mt-3 border-t border-white/10 flex items-center gap-1.5 text-xs font-mono text-urbo-teal2 font-semibold">
                   <span>Infraestructura activa</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>
@@ -192,22 +192,22 @@ export const Opportunity: React.FC = () => {
                 variant="surface"
                 interactive
                 specular
-                className="p-5 sm:p-6 h-full flex flex-col justify-between rounded-3xl dark:hover:shadow-[0_0_25px_rgba(0,201,167,0.15)] transition-all"
+                className="p-4 sm:p-6 h-full flex flex-col justify-between rounded-2xl sm:rounded-3xl hover:shadow-[0_0_25px_rgba(0,201,167,0.15)] transition-all"
               >
                 <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 flex-shrink-0">
-                      <Cpu className="w-4 h-4" />
+                  <div className="flex items-center gap-2.5 sm:gap-3 mb-2 sm:mb-3">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 flex-shrink-0">
+                      <Cpu className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    <h3 className="text-sm sm:text-base font-bold text-white">
                       De la incertidumbre a la coordinación digital
                     </h3>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
                     Hoy los vecinos recurren a grupos informales de WhatsApp para avisarse si un micro ya pasó. Ese comportamiento espontáneo demuestra que la demanda de información en tiempo real es masiva y urgente.
                   </p>
                 </div>
-                <div className="pt-3 mt-3 border-t border-slate-200 dark:border-white/5 flex items-center gap-1.5 text-xs font-mono text-urbo-teal2 font-semibold">
+                <div className="pt-2.5 sm:pt-3 mt-2.5 sm:mt-3 border-t border-white/10 flex items-center gap-1.5 text-xs font-mono text-urbo-teal2 font-semibold">
                   <span>Validación natural de mercado</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>

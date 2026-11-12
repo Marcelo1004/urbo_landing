@@ -92,55 +92,61 @@ export const MetricsProof: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Context Header */}
-        <div className="metrics-header flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-5 border-b border-slate-200 dark:border-white/10 gap-4">
+        <div className="metrics-header flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-14 pb-5 border-b border-white/10 gap-4">
           <div>
             <GlassBadge variant="teal" className="mb-3.5">
               TRACCIÓN VERIFICADA EN CALLE
             </GlassBadge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight font-tech">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-tech">
               Evidencia real del piloto en Santa Cruz
             </h2>
           </div>
-          <div className="text-xs sm:text-sm font-mono text-slate-500 dark:text-slate-400">
+          <div className="text-xs sm:text-sm font-mono text-slate-400">
             Zona Norte · Línea 30 · Validación 100% orgánica en calle
           </div>
         </div>
 
-        {/* Telemetry Glass Ribbon (Apple-style precision readout) */}
-        <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Telemetry Glass Ribbon (2x2 on mobile, 4 across on desktop) */}
+        <div ref={cardsRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
           {URBO_METRICS.map((metric, idx) => (
             <GlassSurface
               key={idx}
               variant={metric.isAmber ? 'amber' : 'surface'}
               interactive
               specular
-              className="metric-card p-6 sm:p-7 flex flex-col justify-between"
+              className="metric-card p-4 sm:p-6 lg:p-7 flex flex-col justify-between rounded-2xl sm:rounded-3xl border border-white/10 hover:border-urbo-teal2/40 shadow-glass-volumetric transition-all duration-300 relative overflow-hidden group"
             >
-              <div className="flex items-center justify-between mb-5">
-                <span className="text-[11px] font-mono tracking-wider uppercase text-slate-500 dark:text-slate-400">
+              {/* Subtle Ambient Hover Glow inside card */}
+              <div
+                aria-hidden="true"
+                className="absolute -right-8 -bottom-8 w-24 h-24 rounded-full bg-urbo-teal/15 blur-2xl pointer-events-none group-hover:bg-urbo-teal/25 transition-all"
+              />
+
+              <div className="flex items-center justify-between mb-3 sm:mb-5 relative z-10">
+                <span className="text-[9px] sm:text-[11px] font-mono tracking-wider uppercase text-slate-400">
                   METRICA 0{idx + 1}
                 </span>
                 <span className="relative flex h-2 w-2">
                   <span
                     className={`relative inline-flex rounded-full h-2 w-2 ${
-                      metric.isAmber ? 'bg-urbo-amber' : 'bg-urbo-teal2'
+                      metric.isAmber ? 'bg-urbo-amber shadow-[0_0_8px_#F59E0B]' : 'bg-urbo-teal2 shadow-[0_0_8px_#00E5BE]'
                     }`}
                   />
                 </span>
               </div>
 
-              <div>
+              <div className="relative z-10">
                 <div
-                  className={`metric-number text-4xl sm:text-5xl font-extrabold tracking-tight font-mono mb-2 ${
-                    metric.isAmber ? 'text-amber-600 dark:text-urbo-amber' : 'text-slate-900 dark:text-white'
+                  className={`metric-number text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight font-tech mb-1 sm:mb-2 ${
+                    metric.isAmber ? 'text-urbo-amber' : 'text-white'
                   }`}
                 >
                   {metric.value}
                 </div>
-                <div className="text-base font-bold text-slate-900 dark:text-slate-100 mb-1.5 font-sans">
+                <div className="text-xs sm:text-base font-bold text-white mb-1 font-sans leading-tight">
                   {metric.label}
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+                <p className="text-[10px] sm:text-xs text-slate-300 leading-relaxed font-normal line-clamp-3 sm:line-clamp-none">
                   {metric.detail}
                 </p>
               </div>
@@ -149,7 +155,7 @@ export const MetricsProof: React.FC = () => {
         </div>
 
         {/* Supporting Institutional Proof Strip */}
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-600 dark:text-slate-300">
+        <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-300">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-urbo-teal2" />
             <span>92 encuestas presenciales completadas en parada</span>

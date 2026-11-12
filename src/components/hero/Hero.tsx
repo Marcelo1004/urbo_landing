@@ -145,23 +145,23 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Telemetry Baseline Proof Bar */}
-            <div className="hero-metrics pt-6 border-t border-slate-200 dark:border-white/10 w-full max-w-xl">
+            <div className="hero-metrics pt-6 border-t border-white/10 w-full max-w-xl">
               <div className="grid grid-cols-3 gap-2 sm:gap-4 text-left">
                 <div className="hero-metrics-item">
-                  <div className="text-sm sm:text-xl font-bold font-mono text-slate-900 dark:text-white">5 meses</div>
-                  <div className="text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider">
+                  <div className="text-base sm:text-2xl font-black font-tech tracking-wider text-white">5 meses</div>
+                  <div className="text-[9px] sm:text-[11px] text-slate-400 uppercase font-mono tracking-wider">
                     En calle
                   </div>
                 </div>
                 <div className="hero-metrics-item">
-                  <div className="text-sm sm:text-xl font-bold font-mono text-urbo-teal2">140</div>
-                  <div className="text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider">
+                  <div className="text-base sm:text-2xl font-black font-tech tracking-wider text-urbo-teal2">140</div>
+                  <div className="text-[9px] sm:text-[11px] text-slate-400 uppercase font-mono tracking-wider">
                     Pilotos
                   </div>
                 </div>
                 <div className="hero-metrics-item">
-                  <div className="text-sm sm:text-xl font-bold font-mono text-urbo-amber">Línea 30</div>
-                  <div className="text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider">
+                  <div className="text-base sm:text-2xl font-black font-tech tracking-wider text-urbo-amber">Línea 30</div>
+                  <div className="text-[9px] sm:text-[11px] text-slate-400 uppercase font-mono tracking-wider">
                     SCZ Norte
                   </div>
                 </div>

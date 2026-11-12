@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Mail, MessageCircle, MapPin, ArrowUpRight, Sparkles, ExternalLink, RefreshCw, Send } from 'lucide-react';
 import { GlassBadge } from '@/components/ui/Glass';
+import { UrboLogo } from '@/components/ui/UrboLogo';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 
@@ -231,10 +232,9 @@ export const FinalCta: React.FC = () => {
               <div className="my-auto flex flex-col items-center justify-center py-2">
                 <div className="relative group flex items-center justify-center">
                   <div className="absolute -inset-4 rounded-full bg-urbo-teal/20 blur-xl group-hover:bg-urbo-teal/35 transition-all duration-500" />
-                  <img
-                    src="/urbo-logo.png"
-                    alt="URBO Logo"
-                    className="relative w-20 h-20 sm:w-24 sm:h-24 object-contain filter drop-shadow-[0_0_20px_rgba(0,201,167,0.6)] transition-transform duration-500 group-hover:scale-105"
+                  <UrboLogo
+                    size={88}
+                    className="relative transition-transform duration-500 group-hover:scale-105 shadow-[0_0_25px_rgba(0,201,167,0.5)]"
                   />
                 </div>
 
@@ -277,9 +277,7 @@ export const FinalCta: React.FC = () => {
               {/* Header */}
               <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-slate-900 border border-white/15 p-1 flex items-center justify-center">
-                    <img src="/urbo-logo.png" alt="URBO" className="w-full h-full object-contain" />
-                  </div>
+                  <UrboLogo size={28} className="rounded-lg" />
                   <span className="text-xs font-mono font-bold tracking-wider text-urbo-teal2 uppercase">
                     CANALES DIRECTOS · URBO
                   </span>

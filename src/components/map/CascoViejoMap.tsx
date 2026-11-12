@@ -15,10 +15,48 @@ interface CascoViejoMapProps {
 }
 
 // Key coordinates around Plaza 24 de Septiembre, Casco Viejo, Santa Cruz de la Sierra
-const PLAZA_24_SEPT: [number, number] = [-63.18212, -17.78329];
+const PLAZA_24_SEPT: [number, number] = [-63.182654, -17.783236];
 
-// Simulated real street path for Línea 30 through Casco Viejo
-// Starting from 1er Anillo / Calle Junin, passing Plaza 24 de Septiembre, turning down Rene Moreno
+// Snapped real street coordinates strictly following the actual road network of Santa Cruz Casco Viejo:
+// Av. Cañoto -> Calle Junín -> 21 de Mayo (Plaza 24 de Septiembre) -> Calle Sucre -> Calle René Moreno -> Av. Irala
+const CASCO_VIEJO_STREET_COORDINATES: [number, number][] = [
+  [-63.189575, -17.78223],
+  [-63.189074, -17.782197],
+  [-63.18875, -17.78218],
+  [-63.187241, -17.782081],
+  [-63.18585, -17.781996],
+  [-63.184988, -17.781941],
+  [-63.18385, -17.781869],
+  [-63.1833, -17.781834],
+  [-63.182783, -17.781804],
+  [-63.182753, -17.782143],
+  [-63.182699, -17.782751],
+  [-63.182654, -17.783236], // Plaza 24 de Septiembre (Don Neyer / Int 32)
+  [-63.182608, -17.783764],
+  [-63.182565, -17.784218],
+  [-63.182542, -17.784471],
+  [-63.182511, -17.784808],
+  [-63.1825, -17.784955],
+  [-63.182415, -17.785901],
+  [-63.181813, -17.78589],
+  [-63.18134, -17.785882],
+  [-63.18138, -17.785521],
+  [-63.181413, -17.785213],
+  [-63.181451, -17.78487],
+  [-63.18155, -17.783799],
+  [-63.180522, -17.78368],
+  [-63.180422, -17.783736],
+  [-63.18033, -17.784638],
+  [-63.180272, -17.785188], // René Moreno & Suárez de Figueroa (Don José Luis / Int 58)
+  [-63.180209, -17.785776],
+  [-63.180125, -17.786742],
+  [-63.180041, -17.78759],
+  [-63.179934, -17.78859],
+  [-63.179865, -17.78929],
+  [-63.179829, -17.789663],
+  [-63.178934, -17.789444],
+];
+
 const ROUTE_LINE_30_GEOJSON: GeoJSON.Feature<GeoJSON.LineString> = {
   type: 'Feature',
   properties: {
@@ -27,22 +65,13 @@ const ROUTE_LINE_30_GEOJSON: GeoJSON.Feature<GeoJSON.LineString> = {
   },
   geometry: {
     type: 'LineString',
-    coordinates: [
-      [-63.1865, -17.7810], // Junín entrance
-      [-63.1848, -17.7820],
-      [-63.1832, -17.7828],
-      [-63.18212, -17.78329], // Plaza 24 de Septiembre corner
-      [-63.1812, -17.7837],
-      [-63.1804, -17.7852], // René Moreno down towards south
-      [-63.1798, -17.7870],
-      [-63.1790, -17.7892],
-    ],
+    coordinates: CASCO_VIEJO_STREET_COORDINATES,
   },
 };
 
 const BUS_LOCATIONS = {
   '32': {
-    coords: [-63.18212, -17.78329] as [number, number],
+    coords: [-63.182654, -17.783236] as [number, number],
     intern: 'INT 32',
     driver: 'Don Neyer',
     speed: '26 km/h',
@@ -50,7 +79,7 @@ const BUS_LOCATIONS = {
     locationName: 'Plaza 24 de Septiembre (Calle Junín)',
   },
   '58': {
-    coords: [-63.1804, -17.7852] as [number, number],
+    coords: [-63.180272, -17.785188] as [number, number],
     intern: 'INT 58',
     driver: 'Don José Luis',
     speed: '22 km/h',

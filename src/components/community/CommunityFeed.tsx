@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { COMMUNITY_MESSAGES } from '@/data/urboData';
 import { GlassSurface, GlassBadge } from '@/components/ui/Glass';
+import { UrboLogo } from '@/components/ui/UrboLogo';
 import { Radio, MapPin, CheckCheck, Users, Shield, Clock, Bus, Send, Activity, Wifi } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
@@ -109,8 +110,8 @@ export const CommunityFeed: React.FC = () => {
                 
                 {/* Avatar and Group Title */}
                 <div className="flex items-center gap-3">
-                  <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-900 border border-urbo-teal/40 p-1 flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <img src="/urbo-logo.png" alt="Grupo Línea 30" className="w-full h-full object-contain" />
+                  <div className="relative flex-shrink-0">
+                    <UrboLogo size={42} className="!rounded-full shadow-sm" />
                     <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-slate-950" />
                   </div>
 

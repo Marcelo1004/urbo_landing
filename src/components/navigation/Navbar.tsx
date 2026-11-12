@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ArrowUpRight, Sun, Moon } from 'lucide-react';
-import { useTheme } from '@/context/ThemeContext';
+import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
+import { UrboLogo } from '@/components/ui/UrboLogo';
 
 export const Navbar: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -85,32 +84,26 @@ export const Navbar: React.FC = () => {
             className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-urbo-teal rounded-full py-0.5 pr-2 flex-shrink-0"
             aria-label="URBO - Tu micro en tiempo real"
           >
-            {/* Logo Mark: 40px (35-40% larger than original 28px) */}
-            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-slate-900/90 border border-white/20 p-1.5 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-urbo-teal group-hover:scale-105 shadow-[0_0_15px_rgba(0,201,167,0.2)]">
-              <img
-                src="/urbo-logo.png"
-                alt="URBO"
-                className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:rotate-3"
-              />
-            </div>
+            {/* Logo Mark: 42px */}
+            <UrboLogo size={42} className="transition-transform duration-300 group-hover:scale-105" />
             
             <div className="flex flex-col">
-              <span className="font-tech text-lg sm:text-xl font-extrabold tracking-wider text-slate-900 dark:text-white leading-none group-hover:text-urbo-teal2 transition-colors">
+              <span className="font-tech text-lg sm:text-xl font-extrabold tracking-wider text-white leading-none group-hover:text-urbo-teal2 transition-colors">
                 URBO
               </span>
-              <span className="text-[9px] font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400 leading-tight mt-0.5">
                 Santa Cruz · SCZ
               </span>
             </div>
           </a>
 
           {/* Desktop Navigation Links */}
-          <ul className="hidden md:flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-medium text-slate-700 dark:text-slate-300">
+          <ul className="hidden md:flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-medium text-slate-300">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="hover:text-slate-900 dark:hover:text-white py-1 transition-colors duration-200 relative group"
+                  className="hover:text-white py-1 transition-colors duration-200 relative group"
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-urbo-teal2 group-hover:w-full transition-all duration-200 rounded-full" />
@@ -119,22 +112,8 @@ export const Navbar: React.FC = () => {
             ))}
           </ul>
 
-          {/* Primary Action Button & Theme Toggle */}
+          {/* Primary Action Button */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Real Light / Dark Mode Toggle */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-white/5 border border-white/15 hover:border-urbo-teal2/50 text-slate-300 hover:text-white transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-urbo-teal"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-urbo-amber transition-transform hover:rotate-45" />
-              ) : (
-                <Moon className="w-4 h-4 text-slate-700 transition-transform hover:-rotate-12" />
-              )}
-            </button>
-
             <a
               href="#contacto"
               className="apple-pill-primary px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
