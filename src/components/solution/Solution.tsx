@@ -12,7 +12,7 @@ import {
   ArrowRight,
   Navigation
 } from 'lucide-react';
-import { GlassSurface, GlassBadge, GlassButton } from '@/components/ui/Glass';
+import { GlassSurface, GlassBadge, GlassButton, OpticalGlass, LiquidGlass } from '@/components/ui/Glass';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -271,44 +271,43 @@ export const Solution: React.FC = () => {
 
               {/* Right: Interactive Driver Cockpit View */}
               <div className="lg:col-span-5 flex justify-center">
-                <GlassSurface
-                  variant="elevated"
-                  specular
-                  className="w-full max-w-[360px] p-6 rounded-3xl border-slate-200 dark:border-white/15 text-left relative overflow-hidden shadow-xl"
+                <OpticalGlass
+                  ambientSheen
+                  className="w-full max-w-[360px] p-6 rounded-3xl border-white/20 text-left relative overflow-hidden shadow-xl"
                 >
-                  <div className="text-xs font-mono uppercase text-slate-500 dark:text-slate-400 mb-1">
+                  <div className="text-xs font-mono uppercase text-slate-400 mb-1">
                     COCKPIT DEL CHOFER · EN RUTA
                   </div>
-                  <div className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+                  <div className="text-lg font-bold text-white mb-4">
                     LÍNEA 30 · INT 32
                   </div>
 
                   <div className="space-y-3">
-                    <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">DISTANCIA A LA PARADA</div>
-                      <div className="text-2xl font-black font-mono text-urbo-teal2">300 m</div>
-                      <div className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">Av. Banzer y 2do Anillo</div>
+                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
+                      <div className="text-[11px] text-slate-400 font-mono">DISTANCIA A LA PARADA</div>
+                      <div className="text-2xl font-black font-tech text-urbo-teal2">300 m</div>
+                      <div className="text-xs text-slate-300 mt-0.5">Av. Banzer y 2do Anillo</div>
                     </div>
 
-                    <div className="p-3.5 rounded-xl bg-amber-500/10 dark:bg-urbo-amber/15 border border-amber-500/30 dark:border-urbo-amber/30">
-                      <div className="flex items-center justify-between text-xs font-mono text-amber-700 dark:text-urbo-amber font-bold">
+                    <div className="p-3.5 rounded-xl bg-urbo-amber/15 border border-urbo-amber/30">
+                      <div className="flex items-center justify-between text-xs font-mono text-urbo-amber font-bold">
                         <span>ESTADO DEL AVISO</span>
                         <span className="relative flex h-2 w-2">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-urbo-amber opacity-75" />
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-urbo-amber" />
                         </span>
                       </div>
-                      <div className="text-sm font-semibold text-slate-900 dark:text-white mt-1">
+                      <div className="text-sm font-semibold text-white mt-1">
                         Alerta sonora emitida por altavoz
                       </div>
                     </div>
 
-                    <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-mono text-slate-600 dark:text-slate-300">
+                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs font-mono text-slate-300">
                       <span>Modo conducción segura</span>
                       <span className="text-urbo-teal2 font-bold">ACTIVO</span>
                     </div>
                   </div>
-                </GlassSurface>
+                </OpticalGlass>
               </div>
 
             </div>

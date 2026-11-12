@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Quote, Radio, Cpu, ArrowRight } from 'lucide-react';
-import { GlassSurface, GlassBadge } from '@/components/ui/Glass';
+import { GlassSurface, GlassBadge, LiquidGlass } from '@/components/ui/Glass';
 import { TESTIMONIAL_DON_MAURICIO } from '@/data/urboData';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -113,10 +113,9 @@ export const Opportunity: React.FC = () => {
           
           {/* Don Mauricio Quote: Compact High-Density Insight Feature (Left 7 cols) */}
           <div className="lg:col-span-7 opportunity-card">
-            <GlassSurface
-              variant="elevated"
-              specular
-              className="p-5 sm:p-8 h-full flex flex-col justify-between relative overflow-hidden border-urbo-teal/25 rounded-3xl hover:shadow-[0_0_35px_rgba(0,201,167,0.2)] transition-shadow duration-500"
+            <LiquidGlass
+              fluorescentBorder
+              className="p-5 sm:p-8 h-full flex flex-col justify-between relative overflow-hidden border-urbo-teal/35 rounded-3xl hover:shadow-[0_0_35px_rgba(0,201,167,0.25)] transition-all duration-500"
             >
               {/* Subtle Ambient Refraction Glow */}
               <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-urbo-teal/15 rounded-full blur-3xl pointer-events-none" />
@@ -152,7 +151,7 @@ export const Opportunity: React.FC = () => {
                   Línea 30 SCZ
                 </span>
               </div>
-            </GlassSurface>
+            </LiquidGlass>
           </div>
 
           {/* Architectural Compact Pillars (Right 5 cols) */}

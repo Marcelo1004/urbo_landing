@@ -177,6 +177,20 @@ export const FinalCta: React.FC = () => {
               className="glass-cursor-glow pointer-events-none absolute inset-0 z-0"
             />
 
+            {/* Beveled Top Specular Edge Highlight */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/60 to-transparent z-10"
+            />
+
+            {/* Autonomous Ambient Specular Sheen (Mobile-friendly, no-hover required) */}
+            <span
+              aria-hidden="true"
+              className="liquid-specular-bar pointer-events-none absolute inset-0 z-0 overflow-hidden"
+            >
+              <span className="ambient-sheen-runner" />
+            </span>
+
             {/* Momentary Glow Burst during morph */}
             <div
               ref={glowBurstRef}

@@ -9,9 +9,11 @@ import { Audiences } from '@/components/audiences/Audiences';
 import { Roadmap } from '@/components/roadmap/Roadmap';
 import { FinalCta } from '@/components/cta/FinalCta';
 import { Footer } from '@/components/footer/Footer';
+import { UrboPreloader } from '@/components/ui/UrboPreloader';
+import { IntroProvider } from '@/motion/useIntroSequence';
 import { useMotionSystem } from '@/motion/useMotionSystem';
 
-export const App: React.FC = () => {
+export const AppContent: React.FC = () => {
   useMotionSystem();
 
   React.useEffect(() => {
@@ -30,6 +32,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--navy-bg)] text-[var(--text-primary)] transition-colors duration-300 flex flex-col selection:bg-urbo-teal/30">
+      <UrboPreloader />
       <Navbar />
       <main className="flex-1">
         <Hero />
@@ -43,6 +46,14 @@ export const App: React.FC = () => {
       </main>
       <Footer />
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <IntroProvider>
+      <AppContent />
+    </IntroProvider>
   );
 };
 

@@ -5,15 +5,56 @@ import { UrboLogo } from '@/components/ui/UrboLogo';
 import { Radio, MapPin, CheckCheck, Users, Shield, Clock, Bus, Send, Activity, Wifi } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const CommunityFeed: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'driver' | 'passenger'>('all');
+  const sectionRef = useRef<HTMLElement>(null);
   const chatStreamRef = useRef<HTMLDivElement>(null);
 
   const filteredMessages =
     filter === 'all'
       ? COMMUNITY_MESSAGES
       : COMMUNITY_MESSAGES.filter((m) => m.role === filter);
+
+  // Cinematic scroll reveal
+  useEffect(() => {
+    const sec = sectionRef.current;
+    if (!sec) return;
+
+    const ctx = gsap.context(() => {
+      gsap.from('.community-left-col', {
+        scrollTrigger: {
+          trigger: sec,
+          start: 'top 82%',
+          toggleActions: 'play none none none',
+        },
+        y: 35,
+        opacity: 0,
+        filter: 'blur(8px)',
+        duration: 0.85,
+        ease: 'power3.out',
+      });
+
+      gsap.from('.community-chat-window', {
+        scrollTrigger: {
+          trigger: sec,
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+        y: 45,
+        scale: 0.96,
+        opacity: 0,
+        filter: 'blur(10px)',
+        duration: 0.95,
+        ease: 'back.out(1.2)',
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Animate chat bubble transitions when switching filters
   useEffect(() => {
@@ -27,7 +68,7 @@ export const CommunityFeed: React.FC = () => {
   }, [filter]);
 
   return (
-    <section id="comunidad" className="relative py-20 lg:py-28 overflow-hidden">
+    <section ref={sectionRef} id="comunidad" className="relative py-20 lg:py-28 overflow-hidden">
       {/* Anchor alias */}
       <span id="piloto" className="absolute -top-28" />
 
@@ -44,51 +85,51 @@ export const CommunityFeed: React.FC = () => {
           {/* =================================================================
               LEFT: THE NATURAL VALIDATION CONTEXT
               ================================================================= */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 community-left-col">
             <GlassBadge variant="teal" pulse className="mb-5">
               VALIDACIÓN NATURAL DE CALLE
             </GlassBadge>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-5 font-tech">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-5 font-tech">
               El piloto ya vive en la calle de Santa Cruz.
             </h2>
 
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-6 font-normal">
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed mb-6 font-normal">
               Durante 5 meses de trabajo directo con la Línea 30, una comunidad de 140 vecinos y choferes se coordinó a diario de forma espontánea. Los conductores transmitían su ubicación en cada salida y los pasajeros sabían cuándo salir a la esquina.
             </p>
 
             {/* Verified Stakeholders */}
-            <div className="space-y-3.5 pt-4 border-t border-slate-200 dark:border-white/10 text-sm">
+            <div className="space-y-3.5 pt-4 border-t border-white/10 text-sm">
               <div className="flex items-start gap-3">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                <p className="text-slate-600 dark:text-slate-300">
-                  <strong className="text-slate-900 dark:text-white font-semibold">Choferes activos en ruta:</strong> Don Neyer (Int 32), Don José Luis (Int 58) y Don Walter (Int 72) con telemetría continua.
+                <p className="text-slate-300">
+                  <strong className="text-white font-semibold">Choferes activos en ruta:</strong> Don Neyer (Int 32), Don José Luis (Int 58) y Don Walter (Int 72) con telemetría continua.
                 </p>
               </div>
 
               <div className="flex items-start gap-3">
                 <span className="w-2.5 h-2.5 rounded-full bg-urbo-teal2 mt-1.5 flex-shrink-0" />
-                <p className="text-slate-600 dark:text-slate-300">
-                  <strong className="text-slate-900 dark:text-white font-semibold">Líder Vaca (Vicepresidente Línea 30):</strong> Respaldando la validación del sistema en la flota norte.
+                <p className="text-slate-300">
+                  <strong className="text-white font-semibold">Líder Vaca (Vicepresidente Línea 30):</strong> Respaldando la validación del sistema en la flota norte.
                 </p>
               </div>
 
               <div className="flex items-start gap-3">
                 <span className="w-2.5 h-2.5 rounded-full bg-urbo-amber mt-1.5 flex-shrink-0" />
-                <p className="text-slate-600 dark:text-slate-300">
-                  <strong className="text-slate-900 dark:text-white font-semibold">1.239 mensajes analizados:</strong> Más del 63% correspondieron exactamente a preguntas de horarios y micros en ruta.
+                <p className="text-slate-300">
+                  <strong className="text-white font-semibold">1.239 mensajes analizados:</strong> Más del 63% correspondieron exactamente a preguntas de horarios y micros en ruta.
                 </p>
               </div>
             </div>
 
             {/* Organic Growth Callout */}
             <div className="mt-7">
-              <GlassSurface variant="subtle" className="p-4 rounded-2xl flex items-center justify-between border-slate-200 dark:border-white/10">
+              <GlassSurface variant="subtle" className="p-4 rounded-2xl flex items-center justify-between border-white/10">
                 <div className="flex items-center gap-3">
                   <Users className="w-5 h-5 text-urbo-teal2" />
                   <div>
-                    <div className="text-base font-extrabold text-slate-900 dark:text-white font-mono">140 Usuarios</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Zona Norte · Santa Cruz</div>
+                    <div className="text-base font-extrabold text-white font-mono">140 Usuarios</div>
+                    <div className="text-[11px] text-slate-400 font-mono">Zona Norte · Santa Cruz</div>
                   </div>
                 </div>
                 <GlassBadge variant="neutral">
@@ -103,7 +144,7 @@ export const CommunityFeed: React.FC = () => {
               RIGHT: WHATSAPP DARK + LIQUID GLASS GROUP CHAT
               ================================================================= */}
           <div className="lg:col-span-7">
-            <div className="rounded-[28px] overflow-hidden border border-slate-200 dark:border-white/20 shadow-2xl liquid-glass-elevated">
+            <div className="community-chat-window rounded-[28px] overflow-hidden border border-white/20 shadow-2xl liquid-glass-elevated">
               
               {/* WhatsApp Group Window Header */}
               <div className="bg-slate-100/90 dark:bg-[#0b1626]/90 px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-white/10 flex items-center justify-between backdrop-blur-md">

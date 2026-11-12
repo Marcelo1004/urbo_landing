@@ -3,12 +3,15 @@ import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 import { UrboLogo } from '@/components/ui/UrboLogo';
+import { useIntroSequence } from '@/motion/useIntroSequence';
 
 export const Navbar: React.FC = () => {
+  const { phase } = useIntroSequence();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
+  const hasNavAnimated = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,23 +37,33 @@ export const Navbar: React.FC = () => {
     navRef.current.style.setProperty('--mouse-opacity', '0');
   };
 
-  // Initial gentle entrance animation
+  // Synchronized Entrance Animation tied to Intro Sequence
   useEffect(() => {
-    if (navRef.current) {
-      gsap.fromTo(
+    if (!navRef.current) return;
+
+    if (phase === 'loading' || phase === 'ready') {
+      if (!hasNavAnimated.current) {
+        gsap.set(navRef.current, { y: -32, opacity: 0 });
+        if (logoRef.current) gsap.set(logoRef.current, { scale: 0.9, opacity: 0 });
+      }
+      return;
+    }
+
+    if ((phase === 'revealing' || phase === 'complete') && !hasNavAnimated.current) {
+      hasNavAnimated.current = true;
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tl.fromTo(
         navRef.current,
-        { y: -24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', delay: 0.1 }
-      );
-    }
-    if (logoRef.current) {
-      gsap.fromTo(
+        { y: -32, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.85, ease: 'back.out(1.2)' }
+      ).fromTo(
         logoRef.current,
-        { scale: 0.9, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.5)', delay: 0.25 }
+        { scale: 0.85, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.5)' },
+        '-=0.5'
       );
     }
-  }, []);
+  }, [phase]);
 
   const navLinks = [
     { label: 'Oportunidad', href: '#oportunidad' },

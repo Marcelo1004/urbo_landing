@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Smartphone, Navigation, BarChart3, CheckCircle2, Shield, Award, MapPin, Bus, ArrowUpRight, Volume2 } from 'lucide-react';
-import { GlassSurface, GlassBadge } from '@/components/ui/Glass';
+import { GlassSurface, GlassBadge, LiquidGlass } from '@/components/ui/Glass';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -108,11 +108,8 @@ export const Audiences: React.FC = () => {
         <div ref={containerRef} className="space-y-10 lg:space-y-12">
           
           {/* 1. PASAJERO: Large Asymmetric Row (App Experience) */}
-          <GlassSurface
-            variant="surface"
-            interactive
-            specular
-            className="audience-card p-6 sm:p-10 border-urbo-teal/20"
+          <LiquidGlass
+            className="audience-card p-6 sm:p-10 border-urbo-teal/30 rounded-3xl"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
@@ -122,7 +119,7 @@ export const Audiences: React.FC = () => {
                     <Smartphone className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
                       Pasajeros
                     </h3>
                     <div className="text-xs font-mono text-urbo-teal2 tracking-wider uppercase font-semibold">
@@ -131,11 +128,11 @@ export const Audiences: React.FC = () => {
                   </div>
                 </div>
 
-                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-6 font-normal">
+                <p className="text-base sm:text-lg text-slate-300 leading-relaxed mb-6 font-normal">
                   Saber exactamente cuándo salir de casa transforma el día. Elimina la ansiedad de esperar en paradas solitarias y ahorra entre 20 y 30 minutos por viaje.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-700 dark:text-slate-300 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-300 mb-6">
                   <div className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-urbo-teal2 flex-shrink-0 mt-0.5" />
                     <span>Mapa en vivo con micros acercándose</span>
@@ -157,31 +154,31 @@ export const Audiences: React.FC = () => {
 
               {/* Passenger Interactive Glass Phone Frame */}
               <div className="lg:col-span-5 flex justify-center">
-                <div className="w-full max-w-[320px] rounded-3xl p-5 optical-glass-surface border-slate-200 dark:border-white/20 shadow-xl">
-                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-3 pb-2 border-b border-slate-200 dark:border-white/10 font-mono">
+                <div className="w-full max-w-[320px] rounded-3xl p-5 optical-glass-surface border-white/20 shadow-xl">
+                  <div className="flex items-center justify-between text-xs text-slate-400 mb-3 pb-2 border-b border-white/10 font-mono">
                     <span>TU PARADA HABITUAL</span>
                     <span className="text-urbo-teal2 font-bold">LÍNEA 30</span>
                   </div>
 
                   <div className="mb-4">
-                    <div className="text-xs text-slate-500 dark:text-slate-400">Micro más cercano</div>
-                    <div className="text-3xl font-black font-mono text-slate-900 dark:text-white mt-1">3 min</div>
+                    <div className="text-xs text-slate-400">Micro más cercano</div>
+                    <div className="text-3xl font-black font-tech text-white mt-1">3 min</div>
                     <div className="text-xs text-urbo-teal2 font-mono mt-0.5 font-semibold">Interno 32 · 350 metros</div>
                   </div>
 
                   {/* Progress bar */}
-                  <div className="w-full bg-slate-200 dark:bg-white/10 h-2 rounded-full overflow-hidden mb-4">
+                  <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden mb-4">
                     <div className="bg-urbo-teal2 h-full w-4/5 rounded-full" />
                   </div>
 
-                  <div className="p-3 rounded-xl bg-urbo-teal/15 border border-urbo-teal/25 text-xs text-center text-teal-700 dark:text-urbo-teal2 font-semibold">
+                  <div className="p-3 rounded-xl bg-urbo-teal/15 border border-urbo-teal/25 text-xs text-center text-urbo-teal2 font-semibold">
                     ✓ Esperar Aquí confirmado
                   </div>
                 </div>
               </div>
 
             </div>
-          </GlassSurface>
+          </LiquidGlass>
 
           {/* 2 & 3: CHOFER & DIRECTIVA (Two Editorial Balanced Glass Suites) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">

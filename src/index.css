@@ -212,11 +212,64 @@ body {
 .glass-cursor-glow {
   background: radial-gradient(
     380px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(0, 229, 190, 0.18),
+    rgba(0, 229, 190, 0.22),
     transparent 65%
   );
   opacity: var(--mouse-active, 0);
   transition: opacity 0.35s ease;
+}
+
+/* Autonomous Ambient Specular Sheen Sweep (Active on Mobile, No-Hover Required) */
+.liquid-specular-bar {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.ambient-sheen-runner {
+  position: absolute;
+  top: -60%;
+  left: -120%;
+  width: 50%;
+  height: 220%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(0, 229, 190, 0.18) 70%,
+    transparent 100%
+  );
+  transform: rotate(26deg);
+  animation: ambientSheenSweep 7.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes ambientSheenSweep {
+  0% {
+    left: -130%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  30% {
+    left: 190%;
+    opacity: 0;
+  }
+  100% {
+    left: 190%;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-sheen-runner {
+    animation: none !important;
+    display: none !important;
+  }
 }
 
 /* Dynamic Cursor Mouse-Follow Highlight */

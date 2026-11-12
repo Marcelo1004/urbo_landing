@@ -2,76 +2,162 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ArrowUpRight, Volume2, Navigation, Compass, Sparkles, MapPin } from 'lucide-react';
 import { GlassBadge } from '@/components/ui/Glass';
 import { CascoViejoMap } from '@/components/map/CascoViejoMap';
+import { useIntroSequence } from '@/motion/useIntroSequence';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 
 export const Hero: React.FC = () => {
+  const { phase } = useIntroSequence();
   const [activeBus, setActiveBus] = useState<'32' | '58'>('32');
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const textColRef = useRef<HTMLDivElement>(null);
   const mapColRef = useRef<HTMLDivElement>(null);
   const primaryBtnRef = useRef<HTMLAnchorElement>(null);
+  const hasAnimatedRef = useRef(false);
+  const ctxRef = useRef<gsap.Context | null>(null);
 
   const triggerVoiceDemo = () => {
     setIsPlayingVoice(true);
     setTimeout(() => setIsPlayingVoice(false), 2400);
   };
 
-  // Cinematic GSAP Entrance Timeline & Magnetic Micro-interactions
+  // Cleanup GSAP context only on component unmount
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-      // Stage 1: Halos & ambient glow
-      tl.fromTo('.hero-ambient-glow', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1.2, ease: 'sine.out' }, 0)
-      // Stage 2: Hero Location Badge
-        .fromTo('.hero-badge', { y: 25, opacity: 0, filter: 'blur(8px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.75 }, 0.2)
-      // Stage 3 & 4: Multi-line Masked Headline Reveal (50-70px initial displacement)
-        .fromTo('.hero-line-1', { y: 65, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power4.out' }, 0.35)
-        .fromTo('.hero-line-2', { y: 70, opacity: 0 }, { y: 0, opacity: 1, duration: 0.95, ease: 'power4.out' }, 0.5)
-      // Stage 5: Subtitle & Call-to-actions
-        .fromTo('.hero-subhead', { y: 24, opacity: 0, filter: 'blur(4px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.7 }, 0.7)
-        .fromTo('.hero-buttons a', { y: 25, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, stagger: 0.12, duration: 0.65, ease: 'back.out(1.4)' }, 0.85)
-      // Stage 6: Telemetry indicators
-        .fromTo('.hero-metrics-item', { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.55 }, 1.0)
-      // Stage 7: Cockpit Map HUD entrance (depth lift, scale & optical reveal)
-        .fromTo(mapColRef.current, { scale: 0.9, y: 45, opacity: 0, filter: 'blur(12px)' }, { scale: 1, y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.1, ease: 'power2.out' }, 0.6)
-        .fromTo('.hero-map-overlay', { opacity: 0, y: 14 }, { opacity: 1, y: 0, stagger: 0.12, duration: 0.55 }, 1.1)
-      // Stage 8: Specular light beam sweep across the glass cockpit
-        .fromTo('.cockpit-specular-sweep', { x: '-140%', opacity: 0 }, { x: '240%', opacity: 0.8, duration: 1.2, ease: 'power2.inOut' }, 1.3);
-
-      // Magnetic hover on primary action button
-      const btn = primaryBtnRef.current;
-      if (btn) {
-        const xTo = gsap.quickTo(btn, 'x', { duration: 0.35, ease: 'power2.out' });
-        const yTo = gsap.quickTo(btn, 'y', { duration: 0.35, ease: 'power2.out' });
-
-        const handleBtnMouseMove = (e: MouseEvent) => {
-          const rect = btn.getBoundingClientRect();
-          const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
-          const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
-          xTo(x);
-          yTo(y);
-        };
-
-        const handleBtnMouseLeave = () => {
-          xTo(0);
-          yTo(0);
-        };
-
-        btn.addEventListener('mousemove', handleBtnMouseMove);
-        btn.addEventListener('mouseleave', handleBtnMouseLeave);
-
-        return () => {
-          btn.removeEventListener('mousemove', handleBtnMouseMove);
-          btn.removeEventListener('mouseleave', handleBtnMouseLeave);
-        };
-      }
-    }, heroRef);
-
-    return () => ctx.revert();
+    return () => {
+      ctxRef.current?.revert();
+    };
   }, []);
+
+  // Cinematic GSAP Entrance Timeline synchronized with Preloader Sequence
+  useEffect(() => {
+    if (!heroRef.current) return;
+
+    // Phase 1: Keep Hero pristine & zero flash during initial preloader display
+    if (phase === 'loading' || phase === 'ready') {
+      if (!hasAnimatedRef.current) {
+        gsap.set(
+          [
+            '.hero-ambient-glow',
+            '.hero-badge',
+            '.hero-line-1',
+            '.hero-line-2',
+            '.hero-subhead',
+            '.hero-buttons a',
+            '.hero-metrics-item',
+            mapColRef.current,
+            '.hero-map-overlay',
+          ],
+          { opacity: 0 }
+        );
+      }
+      return;
+    }
+
+    // Phase 2: Orchestrated Cinematic Entrance when Preloader reveals
+    if ((phase === 'revealing' || phase === 'complete') && !hasAnimatedRef.current) {
+      hasAnimatedRef.current = true;
+      ctxRef.current = gsap.context(() => {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+        // Stage 1: Ambient Halos & glowing dust
+        tl.fromTo(
+          '.hero-ambient-glow',
+          { opacity: 0, scale: 0.8 },
+          { opacity: 1, scale: 1, duration: 1.1, ease: 'sine.out' },
+          0.1
+        )
+        // Stage 2: Hero Location Badge
+          .fromTo(
+            '.hero-badge',
+            { y: 24, opacity: 0, filter: 'blur(8px)' },
+            { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.7 },
+            0.2
+          )
+        // Stage 3 & 4: Masked Headline Reveal Line-by-Line (Dystopian tech feel)
+          .fromTo(
+            '.hero-line-1',
+            { y: 60, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.85, ease: 'power4.out' },
+            0.35
+          )
+          .fromTo(
+            '.hero-line-2',
+            { y: 65, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.9, ease: 'power4.out' },
+            0.48
+          )
+        // Stage 5: Subtitle & Call-to-actions
+          .fromTo(
+            '.hero-subhead',
+            { y: 20, opacity: 0, filter: 'blur(4px)' },
+            { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.65 },
+            0.65
+          )
+          .fromTo(
+            '.hero-buttons a',
+            { y: 22, opacity: 0, scale: 0.95 },
+            { y: 0, opacity: 1, scale: 1, stagger: 0.1, duration: 0.6, ease: 'back.out(1.4)' },
+            0.8
+          )
+        // Stage 6: Telemetry baseline bar (5 meses / 140 / Línea 30)
+          .fromTo(
+            '.hero-metrics-item',
+            { y: 18, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.08, duration: 0.5 },
+            0.95
+          )
+        // Stage 7: Cockpit Map HUD entrance (depth lift, scale & optical reveal)
+          .fromTo(
+            mapColRef.current,
+            { scale: 0.92, y: 35, opacity: 0, filter: 'blur(10px)' },
+            { scale: 1, y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out' },
+            0.55
+          )
+          .fromTo(
+            '.hero-map-overlay',
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, stagger: 0.1, duration: 0.5 },
+            1.0
+          )
+        // Stage 8: Specular light beam sweep across the glass cockpit
+          .fromTo(
+            '.cockpit-specular-sweep',
+            { x: '-140%', opacity: 0 },
+            { x: '240%', opacity: 0.8, duration: 1.1, ease: 'power2.inOut' },
+            1.2
+          );
+
+        // Magnetic hover on primary action button
+        const btn = primaryBtnRef.current;
+        if (btn) {
+          const xTo = gsap.quickTo(btn, 'x', { duration: 0.35, ease: 'power2.out' });
+          const yTo = gsap.quickTo(btn, 'y', { duration: 0.35, ease: 'power2.out' });
+
+          const handleBtnMouseMove = (e: MouseEvent) => {
+            const rect = btn.getBoundingClientRect();
+            const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
+            const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
+            xTo(x);
+            yTo(y);
+          };
+
+          const handleBtnMouseLeave = () => {
+            xTo(0);
+            yTo(0);
+          };
+
+          btn.addEventListener('mousemove', handleBtnMouseMove);
+          btn.addEventListener('mouseleave', handleBtnMouseLeave);
+
+          return () => {
+            btn.removeEventListener('mousemove', handleBtnMouseMove);
+            btn.removeEventListener('mouseleave', handleBtnMouseLeave);
+          };
+        }
+      }, heroRef);
+    }
+  }, [phase]);
 
   return (
     <section
@@ -108,7 +194,7 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Main Headline (Multi-line masked cinematic entrance) */}
-            <h1 className="hero-headline text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05] text-slate-900 dark:text-white mb-6">
+            <h1 className="hero-headline text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05] text-white mb-6">
               <span className="hero-line-1-wrap overflow-hidden block">
                 <span className="hero-line-1 block">Tu micro.</span>
               </span>
@@ -120,7 +206,7 @@ export const Hero: React.FC = () => {
             </h1>
 
             {/* Subtitle / Truth (Updated Copy: "tiempos de llegada") */}
-            <p className="hero-subhead text-sm sm:text-lg lg:text-xl text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl mb-8 font-normal">
+            <p className="hero-subhead text-sm sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-2xl mb-8 font-normal">
               La primera plataforma de transporte público con GPS en vivo, aviso por voz
               manos libres para el chofer y tiempos de llegada para Santa Cruz de la Sierra.
             </p>

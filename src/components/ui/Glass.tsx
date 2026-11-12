@@ -11,6 +11,7 @@ export interface GlassSurfaceProps extends React.HTMLAttributes<HTMLDivElement> 
   interactive?: boolean;
   specular?: boolean;
   refraction?: boolean;
+  ambientSheen?: boolean;
   glow?: 'teal' | 'amber' | 'radioactive' | 'none';
   children: React.ReactNode;
 }
@@ -20,6 +21,7 @@ export const GlassSurface: React.FC<GlassSurfaceProps> = ({
   interactive = false,
   specular = true,
   refraction = false,
+  ambientSheen = true,
   glow = 'none',
   className,
   children,
@@ -59,10 +61,42 @@ export const GlassSurface: React.FC<GlassSurfaceProps> = ({
       )}
       {...props}
     >
-      {/* Dynamic Specular Reflection Sheet */}
-      {specular && <GlassReflection />}
+      {/* Specular & Ambient Sheen Reflection */}
+      {specular && <GlassReflection ambient={ambientSheen} />}
       {children}
     </div>
+  );
+};
+
+/* ==========================================================================
+   LIQUID GLASS (Volumetric High-Depth Optical Fluid Panel)
+   ========================================================================== */
+export interface LiquidGlassProps extends GlassSurfaceProps {
+  fluorescentBorder?: boolean;
+}
+
+export const LiquidGlass: React.FC<LiquidGlassProps> = ({
+  fluorescentBorder = false,
+  className,
+  children,
+  ...props
+}) => {
+  return (
+    <GlassSurface
+      variant="elevated"
+      interactive
+      specular
+      refraction
+      ambientSheen
+      className={cn(
+        'border border-white/20 shadow-glass-volumetric overflow-hidden',
+        fluorescentBorder && 'hover:border-radioactive-bright/50 hover:shadow-[0_0_35px_rgba(166,255,0,0.25)]',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </GlassSurface>
   );
 };
 
@@ -72,12 +106,14 @@ export const GlassSurface: React.FC<GlassSurfaceProps> = ({
 export interface DarkGlassSurfaceProps extends React.HTMLAttributes<HTMLDivElement> {
   interactive?: boolean;
   fluorescentAccent?: boolean;
+  ambientSheen?: boolean;
   children: React.ReactNode;
 }
 
 export const DarkGlassSurface: React.FC<DarkGlassSurfaceProps> = ({
   interactive = true,
   fluorescentAccent = false,
+  ambientSheen = true,
   className,
   children,
   ...props
@@ -96,7 +132,7 @@ export const DarkGlassSurface: React.FC<DarkGlassSurfaceProps> = ({
       )}
       {...props}
     >
-      <GlassReflection />
+      <GlassReflection ambient={ambientSheen} />
       {fluorescentAccent && (
         <span className="absolute top-0 right-0 w-28 h-[1px] bg-gradient-to-l from-radioactive-bright to-transparent opacity-80" />
       )}
@@ -106,15 +142,17 @@ export const DarkGlassSurface: React.FC<DarkGlassSurfaceProps> = ({
 };
 
 /* ==========================================================================
-   OPTICAL GLASS (High refractive realism with edge bevel)
+   OPTICAL GLASS (High refractive realism with beveled perimeter)
    ========================================================================== */
 export interface OpticalGlassProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   interactive?: boolean;
+  ambientSheen?: boolean;
 }
 
 export const OpticalGlass: React.FC<OpticalGlassProps> = ({
   interactive = true,
+  ambientSheen = true,
   className,
   children,
   ...props
@@ -126,35 +164,52 @@ export const OpticalGlass: React.FC<OpticalGlassProps> = ({
     <div
       ref={ref}
       className={cn(
-        'optical-glass-surface rounded-3xl relative overflow-hidden backdrop-blur-3xl shadow-glass-volumetric',
+        'optical-glass-surface rounded-3xl relative overflow-hidden backdrop-blur-3xl shadow-glass-volumetric border border-white/20',
         interactive && 'liquid-glass-interactive',
         className
       )}
       {...props}
     >
       <div className="optical-bevel-ring pointer-events-none absolute inset-0 rounded-[inherit] border border-white/25" />
-      <GlassReflection />
+      <GlassReflection ambient={ambientSheen} />
       {children}
     </div>
   );
 };
 
 /* ==========================================================================
-   GLASS REFLECTION (Specularity that follows cursor)
+   GLASS REFLECTION (Specularity, Bevel & Autonomous Ambient Sheen)
    ========================================================================== */
-export const GlassReflection: React.FC<{ className?: string }> = ({ className }) => {
+export const GlassReflection: React.FC<{ className?: string; ambient?: boolean }> = ({
+  className,
+  ambient = true,
+}) => {
   return (
     <>
-      {/* Edge light highlight */}
+      {/* Beveled Top Specular Edge Highlight */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 dark:via-white/35 to-transparent z-10"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/50 to-transparent z-10"
       />
-      {/* Dynamic mouse highlight */}
+      {/* Beveled Bottom Cyan Bounce Light */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-6 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-urbo-teal/25 to-transparent z-10"
+      />
+      {/* Dynamic Cursor Highlight (Desktop) */}
       <span
         aria-hidden="true"
         className={cn('glass-cursor-glow pointer-events-none absolute inset-0 z-0', className)}
       />
+      {/* Autonomous Ambient Sheen Runner (Mobile-Friendly, No-Hover Required) */}
+      {ambient && (
+        <span
+          aria-hidden="true"
+          className="liquid-specular-bar pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        >
+          <span className="ambient-sheen-runner" />
+        </span>
+      )}
     </>
   );
 };
@@ -178,7 +233,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({
     <GlassSurface className={cn('p-6 sm:p-8 flex flex-col justify-between', className)} {...props}>
       {header && <div className="mb-4">{header}</div>}
       <div className="flex-1">{children}</div>
-      {footer && <div className="mt-6 pt-4 border-t border-slate-200/60 dark:border-white/10">{footer}</div>}
+      {footer && <div className="mt-6 pt-4 border-t border-white/10">{footer}</div>}
     </GlassSurface>
   );
 };
@@ -203,20 +258,20 @@ export const GlassBadge: React.FC<GlassBadgeProps> = ({
 }) => {
   const badgeConfig = {
     teal: {
-      container: 'bg-teal-500/10 dark:bg-urbo-teal/10 border-teal-500/25 dark:border-urbo-teal/30 text-teal-700 dark:text-urbo-teal2 shadow-[0_0_15px_-4px_rgba(0,201,167,0.3)]',
-      dot: 'bg-teal-600 dark:bg-urbo-teal2',
+      container: 'bg-urbo-teal/10 border-urbo-teal/30 text-urbo-teal2 shadow-[0_0_15px_-4px_rgba(0,201,167,0.35)]',
+      dot: 'bg-urbo-teal2',
     },
     amber: {
-      container: 'bg-amber-500/10 dark:bg-urbo-amber/10 border-amber-500/30 dark:border-urbo-amber/35 text-amber-700 dark:text-urbo-amber shadow-[0_0_15px_-4px_rgba(244,196,48,0.3)]',
-      dot: 'bg-amber-500 dark:bg-urbo-amber',
+      container: 'bg-urbo-amber/10 border-urbo-amber/35 text-urbo-amber shadow-[0_0_15px_-4px_rgba(244,196,48,0.35)]',
+      dot: 'bg-urbo-amber',
     },
     radioactive: {
-      container: 'bg-lime-500/10 dark:bg-radioactive/10 border-lime-500/35 dark:border-radioactive-bright/40 text-lime-700 dark:text-radioactive-bright shadow-[0_0_20px_-4px_rgba(166,255,0,0.4)]',
-      dot: 'bg-lime-600 dark:bg-radioactive-bright',
+      container: 'bg-radioactive/10 border-radioactive-bright/40 text-radioactive-bright shadow-[0_0_20px_-4px_rgba(166,255,0,0.45)]',
+      dot: 'bg-radioactive-bright',
     },
     neutral: {
-      container: 'bg-slate-200/60 dark:bg-white/5 border-slate-300/80 dark:border-white/10 text-slate-700 dark:text-slate-300',
-      dot: 'bg-slate-600 dark:bg-slate-300',
+      container: 'bg-white/5 border-white/10 text-slate-300',
+      dot: 'bg-slate-300',
     },
   }[variant];
 
@@ -278,13 +333,13 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
     primary:
       'bg-urbo-teal text-slate-950 font-bold hover:bg-urbo-teal2 shadow-[0_0_20px_rgba(0,201,167,0.3)] hover:shadow-[0_0_30px_rgba(0,229,190,0.5)]',
     secondary:
-      'liquid-glass-subtle text-slate-900 dark:text-white hover:text-urbo-teal2 border-slate-300/60 dark:border-white/10 hover:border-urbo-teal/40',
+      'liquid-glass-subtle text-white hover:text-urbo-teal2 border-white/10 hover:border-urbo-teal/40',
     amber:
       'bg-urbo-amber text-slate-950 font-bold hover:bg-amber-300 shadow-[0_0_20px_rgba(244,196,48,0.3)]',
     radioactive:
       'bg-radioactive-bright text-slate-950 font-extrabold hover:bg-lime-300 shadow-[0_0_25px_rgba(166,255,0,0.5)]',
     ghost:
-      'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5',
+      'text-slate-300 hover:text-white hover:bg-white/5',
   }[variant];
 
   return (
