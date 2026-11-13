@@ -71,3 +71,4 @@ Automated viewport emulation tests verified zero layout breakage and zero horizo
 
 > [!NOTE]
 > The automated test harness was executed via Chromium DevTools Protocol device emulation on Windows 11. While this accurately proves CSS media query responsiveness, viewport math, and compositor pipeline behavior, physical iPhone Safari devices run the WebKit Nitro rendering engine and may exhibit slight variance in backdrop-filter saturation. The automatic touch fallback implemented in `OpticalGlassSurface.tsx` specifically protects WebKit from GPU shader thrashing.
+

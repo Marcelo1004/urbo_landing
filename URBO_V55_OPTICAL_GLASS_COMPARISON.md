@@ -88,3 +88,4 @@ During V5.2 and V5.4 audits, mobile devices (especially iPhone Safari) exhibited
 2. **For Hero Protagonists & Interactive CTAs (e.g. Final CTA Business Card):**
    - **Use Tier B (`<OpticalGlassSurface>`):** Maximum brand prestige and physical tactile immersion on desktop browsers, with automated fallback for touch.
 3. **Strict Limit:** Never render more than 2 instances of Tier B simultaneously on any given viewport.
+

@@ -153,3 +153,4 @@ In `src/App.tsx`, deferred heavy secondary sections:
 - GSAP Bundle (`vendor-gsap.js`): **115.42 kB**
 - React Core (`vendor-react.js`): **12.46 kB**
 - Split Modules: `Roadmap.js` (20.19 kB), `FinalCta.js` (14.52 kB), `CommunityFeed.js` (13.23 kB).
+
