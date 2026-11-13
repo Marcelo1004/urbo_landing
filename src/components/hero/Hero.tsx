@@ -214,12 +214,12 @@ export const Hero: React.FC = () => {
               manos libres para el chofer y tiempos de llegada para Santa Cruz de la Sierra.
             </p>
 
-            {/* Apple Pill Actions with magnetic hover */}
+            {/* MotionSites High-Craft Buttons */}
             <div className="hero-buttons flex flex-wrap items-center gap-3 sm:gap-4 mb-10 w-full sm:w-auto">
               <a
                 ref={primaryBtnRef}
                 href="#solucion"
-                className="apple-pill-primary px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-base flex items-center justify-center gap-2 sm:gap-2.5 w-full sm:w-auto text-slate-950 font-bold shadow-[0_0_30px_rgba(0,201,167,0.35)] hover:shadow-[0_0_40px_rgba(0,201,167,0.55)] transition-shadow"
+                className="ms-btn-chrome rounded-full px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-base flex items-center justify-center gap-2 sm:gap-2.5 w-full sm:w-auto"
               >
                 <span>Explorar la tecnología</span>
                 <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
@@ -227,7 +227,7 @@ export const Hero: React.FC = () => {
 
               <a
                 href="#audiencias"
-                className="apple-pill-secondary px-6 sm:px-7 py-3.5 sm:py-4 text-xs sm:text-base flex items-center justify-center gap-2 w-full sm:w-auto text-slate-800 dark:text-white"
+                className="ms-btn-halo rounded-full px-6 sm:px-7 py-3.5 sm:py-4 text-xs sm:text-base flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 <span>Soy Chofer / Línea</span>
               </a>
@@ -265,7 +265,7 @@ export const Hero: React.FC = () => {
           <div ref={mapColRef} className="lg:col-span-5 relative w-full flex flex-col items-center">
             
             {/* Real Map Canvas Container with Floating Liquid Glass Controls */}
-            <div className="w-full max-w-[460px] aspect-[4/5] rounded-[36px] p-2 sm:p-2.5 optical-glass-surface border border-white/25 shadow-glass-volumetric relative overflow-hidden">
+            <div className="w-full max-w-[460px] aspect-[4/5] rounded-[36px] p-2 sm:p-2.5 ms-liquid-glass ms-liquid-glass--strong shadow-glass-volumetric relative overflow-hidden">
               
               {/* Specular Light Sweep Overlay */}
               <div

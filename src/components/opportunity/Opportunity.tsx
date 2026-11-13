@@ -139,47 +139,60 @@ export const Opportunity: React.FC = () => {
             ================================================================= */}
         <div ref={cardsContainerRef} className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-stretch">
           
-          {/* Don Mauricio Quote: Compact High-Density Insight Feature (Left 7 cols) */}
+          {/* Don Mauricio Quote: Editorial Hero Piece (MotionSites High-Craft Craftsmanship) */}
           <div className="lg:col-span-7 opportunity-card">
-            <LiquidGlass
-              fluorescentBorder
-              className="p-5 sm:p-8 h-full flex flex-col justify-between relative overflow-hidden border-urbo-teal/35 rounded-3xl hover:shadow-[0_0_35px_rgba(0,201,167,0.25)] transition-all duration-500"
+            <div
+              className="p-6 sm:p-9 h-full flex flex-col justify-between relative overflow-hidden rounded-3xl ms-liquid-glass ms-liquid-glass--strong hover:shadow-[0_0_45px_rgba(0,201,167,0.3)] transition-all duration-500 bg-slate-950/70"
             >
               {/* Subtle Ambient Refraction Glow */}
-              <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-urbo-teal/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -right-12 -bottom-12 w-56 h-56 bg-urbo-teal/20 rounded-full blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 mb-4 sm:mb-6">
-                <div className="flex items-center justify-between mb-4 sm:mb-5">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-urbo-teal/15 border border-urbo-teal/30 flex items-center justify-center text-urbo-teal2">
-                    <Quote className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
+              <div className="relative z-10 mb-6">
+                <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-urbo-teal/20 border border-urbo-teal/40 flex items-center justify-center text-urbo-teal2 shadow-[0_0_15px_rgba(0,229,190,0.3)]">
+                      <Quote className="w-5 h-5 stroke-[2.5]" />
+                    </div>
+                    <span className="text-[11px] font-mono tracking-[0.2em] text-urbo-teal2 uppercase font-bold">
+                      PIEZA EDITORIAL · VOZ DE RUTA
+                    </span>
                   </div>
                   <GlassBadge variant="teal">
-                    TESTIMONIO DE CAMPO
+                    TESTIMONIO EN CABINA
                   </GlassBadge>
                 </div>
 
-                <blockquote className="text-base sm:text-xl lg:text-2xl font-semibold text-white leading-snug">
+                <blockquote className="text-lg sm:text-2xl lg:text-[26px] font-medium text-white leading-snug tracking-tight">
                   &ldquo;{TESTIMONIAL_DON_MAURICIO.quote.replace('Entre todos podemos lograrlo.', '')}
-                  <span className="text-urbo-teal2 underline decoration-urbo-teal/40 underline-offset-4">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-300 font-bold block sm:inline mt-1 sm:mt-0 sm:ml-1">
                     Entre todos podemos lograrlo.
                   </span>&rdquo;
                 </blockquote>
               </div>
 
-              <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between flex-wrap gap-3">
-                <div>
-                  <div className="text-sm sm:text-base font-bold text-white tracking-wide uppercase font-mono">
-                    {TESTIMONIAL_DON_MAURICIO.author}
+              <div className="relative z-10 pt-5 border-t border-white/10 flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-800 border border-urbo-teal/40 flex items-center justify-center text-urbo-teal font-tech font-black text-sm">
+                    DM
                   </div>
-                  <div className="text-xs font-mono text-urbo-teal2 mt-0.5">
-                    {TESTIMONIAL_DON_MAURICIO.role} · {TESTIMONIAL_DON_MAURICIO.context}
+                  <div>
+                    <div className="text-sm sm:text-base font-bold text-white tracking-wide uppercase font-mono">
+                      {TESTIMONIAL_DON_MAURICIO.author}
+                    </div>
+                    <div className="text-xs font-mono text-urbo-teal2 mt-0.5">
+                      {TESTIMONIAL_DON_MAURICIO.role} · {TESTIMONIAL_DON_MAURICIO.context}
+                    </div>
                   </div>
                 </div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
-                  Línea 30 SCZ
-                </span>
+
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-radioactive-bright bg-radioactive/10 px-3 py-1 rounded-full border border-radioactive/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-radioactive-bright animate-pulse shadow-[0_0_6px_#A6FF00]" />
+                    Línea 30 SCZ
+                  </span>
+                </div>
               </div>
-            </LiquidGlass>
+            </div>
           </div>
 
           {/* Architectural Compact Pillars (Right 5 cols) */}

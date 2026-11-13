@@ -170,7 +170,7 @@ export const FinalCta: React.FC = () => {
         <div className="perspective-1000 flex justify-center mb-8">
           <div
             ref={cardRef}
-            className="relative w-full max-w-[580px] aspect-[1.75/1] min-h-[300px] rounded-[32px] p-6 sm:p-8 optical-glass-surface border border-white/30 shadow-glass-volumetric overflow-hidden select-none transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(0,201,167,0.25)]"
+            className="relative w-full max-w-[580px] aspect-[1.75/1] min-h-[300px] rounded-[32px] p-6 sm:p-8 ms-liquid-glass ms-liquid-glass--strong shadow-glass-volumetric overflow-hidden select-none transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(0,201,167,0.35)]"
             style={{ transformStyle: 'preserve-3d' }}
           >
             {/* Dynamic Glass Reflection Highlight */}

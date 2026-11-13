@@ -458,7 +458,7 @@ export const Roadmap: React.FC = () => {
         {/* =================================================================
             URBAN MOBILITY NAVIGATION COCKPIT (MAPLIBRE MAP + LIQUID GLASS HUD)
             ================================================================= */}
-        <div className="roadmap-cockpit-frame relative w-full h-[580px] sm:h-[640px] rounded-[36px] overflow-hidden border border-white/20 shadow-glass-volumetric select-none">
+        <div className="roadmap-cockpit-frame relative w-full h-[580px] sm:h-[640px] rounded-[36px] overflow-hidden ms-liquid-glass ms-liquid-glass--strong shadow-glass-volumetric select-none">
           
           {/* 1. Underlying Real MapLibre Interactive Canvas */}
           <div ref={mapContainerRef} className="absolute inset-0 w-full h-full" />
@@ -503,7 +503,7 @@ export const Roadmap: React.FC = () => {
 
           {/* 3. Left Floating Phase Navigation Tabs (Liquid Glass Capsule) */}
           <div className="absolute top-20 left-4 z-20 hidden md:flex flex-col gap-2 max-w-[240px] pointer-events-auto">
-            <div className="liquid-glass-elevated rounded-2xl p-2 border-white/15 backdrop-blur-2xl space-y-1">
+            <div className="ms-liquid-glass rounded-2xl p-2.5 backdrop-blur-2xl space-y-1 bg-slate-950/80 shadow-2xl">
               <div className="px-2 py-1 text-[10px] font-mono font-bold tracking-widest text-slate-400 uppercase">
                 Estaciones en Malla Vial
               </div>

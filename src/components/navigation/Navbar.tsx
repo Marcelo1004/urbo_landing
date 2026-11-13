@@ -87,8 +87,8 @@ export const Navbar: React.FC = () => {
           onMouseLeave={handleMouseLeave}
           aria-label="Navegación principal"
           className={cn(
-            'liquid-glass-nav glass-glow-mouse rounded-full flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 transition-all duration-300',
-            isScrolled ? 'shadow-2xl border-urbo-teal/25' : 'border-white/12'
+            'ms-liquid-glass ms-liquid-glass--strong glass-glow-mouse rounded-full flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 transition-all duration-300',
+            isScrolled ? 'shadow-2xl' : ''
           )}
         >
           {/* Brand Logo (Enlarged ~40% with subtle floating and micro-interaction) */}
@@ -130,7 +130,7 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center gap-2 sm:gap-3">
             <a
               href="#contacto"
-              className="apple-pill-primary px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="ms-btn-chrome rounded-full px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-urbo-teal"
             >
               <span>Unirse</span>
               <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />

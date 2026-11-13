@@ -72,10 +72,10 @@ export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setStatusText(text);
     };
 
-    // Stage 1 — React Hydration & Initial DOM (Immediate)
-    advanceProgress(30, 'INICIALIZANDO MOTOR REACT & DOM');
+    // Stage 1 — Inicialización del sistema
+    advanceProgress(25, 'Preparando tu experiencia...');
 
-    // Stage 2 — Critical Fonts Check with strict race timeout (0.15s)
+    // Stage 2 — Tipografía y activos críticos
     const runFontVerification = async () => {
       try {
         if (document.fonts) {
@@ -88,24 +88,24 @@ export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // Fallback gracefully without stalling
       }
 
-      advanceProgress(68, 'VERIFICANDO TIPOGRAFÍA Y ACTIVOS');
+      advanceProgress(65, 'Conectando la ciudad...');
     };
 
-    // Stage 3 — GSAP Context & Hero Assembly (0.2s)
+    // Stage 3 — Ensamblaje visual y cartografía
     const runHeroPreparation = () => {
       setTimeout(() => {
-        advanceProgress(90, 'SINCRONIZANDO TIMELINES GSAP');
+        advanceProgress(88, 'Movilidad en tiempo real...');
       }, isFirstVisit ? 180 : 80);
     };
 
-    // Stage 4 — Final Handshake & Telemetry Calibration (100%)
+    // Stage 4 — Calibración final
     const runFinalCalibration = () => {
       const elapsed = Date.now() - mountedTimeRef.current;
       const remaining = Math.max(50, minDisplayTime - elapsed);
 
       setTimeout(() => {
         if (isCancelled || hasFinishedRef.current) return;
-        advanceProgress(100, 'CASCO VIEJO · SISTEMA LISTO');
+        advanceProgress(100, 'Bienvenido a URBO');
         
         // Fluid transition to 'ready' phase once bar reaches 100%
         setTimeout(() => {

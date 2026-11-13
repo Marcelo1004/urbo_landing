@@ -198,39 +198,39 @@ export const UrboPreloader: React.FC = () => {
           className="absolute -inset-8 rounded-full bg-gradient-to-r from-urbo-teal/30 via-cyan-400/20 to-radioactive/20 blur-2xl opacity-0 pointer-events-none"
         />
 
-        {/* Logo Container with Optical Glass Surface */}
+        {/* Logo Container with MotionSites Liquid Glass Lens Capsule */}
         <div
           ref={logoWrapperRef}
-          className="relative rounded-3xl p-3.5 optical-glass-surface border border-urbo-teal/40 shadow-[0_0_36px_rgba(0,201,167,0.3)] overflow-hidden flex items-center justify-center bg-slate-950/70 backdrop-blur-xl"
+          className="relative rounded-3xl p-4 sm:p-5 ms-liquid-glass ms-liquid-glass--strong shadow-[0_0_50px_rgba(0,201,167,0.35)] overflow-hidden flex items-center justify-center bg-slate-950/75 backdrop-blur-2xl"
         >
           {/* Specular Diagonal Sheen Sweep */}
           <div
             ref={sheenRef}
-            className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-[-25deg] pointer-events-none"
+            className="absolute inset-y-0 w-28 bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-[-25deg] pointer-events-none"
           />
 
-          <UrboLogo size={76} className="!bg-transparent !border-none !shadow-none" />
+          <UrboLogo size={88} className="!bg-transparent !border-none !shadow-none" />
         </div>
 
         {/* Minimalist Tech Typography Brand */}
-        <div ref={textLabelRef} className="mt-5 text-center">
-          <div className="font-tech text-2xl sm:text-3xl font-black tracking-[0.25em] text-white uppercase">
-            URBO
+        <div ref={textLabelRef} className="mt-6 text-center">
+          <div className="text-[10px] sm:text-[11px] font-mono tracking-[0.28em] text-urbo-teal2 uppercase">
+            MOVILIDAD METROPOLITANA · SCZ
           </div>
-          <div className="text-[10px] sm:text-[11px] font-mono tracking-[0.22em] text-urbo-teal2 uppercase mt-1">
-            MOVILIDAD EN TIEMPO REAL · SCZ
+          <div className="font-tech text-3xl sm:text-4xl font-black tracking-[0.25em] text-white uppercase mt-1">
+            URBO
           </div>
         </div>
 
         {/* =================================================================
-            LIQUID GLASS PROGRESS BAR
+            MOTIONSITES LIQUID GLASS PROGRESS BAR
             ================================================================= */}
-        <div ref={barContainerRef} className="mt-6 flex flex-col items-center w-full max-w-[280px] sm:max-w-[340px]">
+        <div ref={barContainerRef} className="mt-7 flex flex-col items-center w-full max-w-[300px] sm:max-w-[380px]">
           {/* Top Status & Monospace Percentage Header */}
-          <div className="w-full flex items-center justify-between mb-2 text-[10px] font-mono tracking-wider">
-            <div className="flex items-center gap-1.5 text-slate-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-urbo-teal animate-pulse" />
-              <span className="truncate max-w-[190px] sm:max-w-[230px]">{statusText}</span>
+          <div className="w-full flex items-center justify-between mb-2.5 text-[11px] font-mono tracking-wider">
+            <div className="flex items-center gap-2 text-slate-300">
+              <span className="w-2 h-2 rounded-full bg-urbo-teal animate-pulse shadow-[0_0_8px_#00E5BE]" />
+              <span className="truncate max-w-[210px] sm:max-w-[270px] text-slate-200 font-medium">{statusText}</span>
             </div>
             <span ref={percentTextRef} className="text-urbo-teal2 font-bold font-mono text-xs">
               {displayPercent}%
@@ -238,24 +238,24 @@ export const UrboPreloader: React.FC = () => {
           </div>
 
           {/* Liquid Glass Pill Container */}
-          <div className="relative w-full h-3.5 rounded-full optical-glass-surface border border-white/20 border-t-white/40 border-b-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.35)] overflow-hidden bg-slate-950/80 backdrop-blur-xl p-[2px]">
+          <div className="relative w-full h-4 rounded-full ms-liquid-glass overflow-hidden bg-slate-950/80 backdrop-blur-xl p-[2.5px] shadow-[0_6px_25px_rgba(0,0,0,0.8)]">
             {/* Top Internal Glass Specular Highlight */}
-            <div className="absolute inset-x-2 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none z-20" />
+            <div className="absolute inset-x-2 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none z-20" />
 
             {/* Active Liquid Fill */}
             <div
               ref={liquidFillRef}
-              className="h-full rounded-full bg-gradient-to-r from-urbo-teal/85 via-urbo-teal2 to-radioactive-bright relative overflow-hidden transition-all shadow-[0_0_14px_rgba(0,229,190,0.6)]"
+              className="h-full rounded-full bg-gradient-to-r from-urbo-teal via-cyan-400 to-[#A6FF00] relative overflow-hidden transition-all shadow-[0_0_18px_rgba(0,229,190,0.7)]"
               style={{ width: `${displayPercent}%` }}
             >
               {/* Internal Moving Specular Beam */}
               <div
                 ref={barSheenRef}
-                className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/60 to-transparent skew-x-[-25deg] pointer-events-none"
+                className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-white/70 to-transparent skew-x-[-25deg] pointer-events-none"
               />
 
               {/* Leading Edge Light Bead */}
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#00E5BE]" />
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_10px_#00E5BE]" />
             </div>
           </div>
         </div>

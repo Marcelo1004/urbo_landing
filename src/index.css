@@ -45,6 +45,132 @@ section, [id] {
   scroll-margin-top: 8rem;
 }
 
+/* ==========================================================================
+   MOTIONSITES LIQUID GLASS MATERIAL SYSTEM (OPTICAL LENS RIM & HAIRLINE MASK)
+   ========================================================================== */
+
+/* MotionSites Signature Liquid Glass Surface with Gradient Hairline Lens Rim */
+.ms-liquid-glass {
+  position: relative;
+  overflow: hidden;
+  border: none !important;
+  background: rgba(11, 20, 38, 0.55);
+  background-blend-mode: luminosity;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
+    0 20px 45px -12px rgba(0, 0, 0, 0.7);
+}
+
+.ms-liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(0, 229, 190, var(--rim-a, 0.55)) 0%,
+    rgba(255, 255, 255, var(--rim-b, 0.25)) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, var(--rim-b, 0.15)) 80%,
+    rgba(0, 229, 190, var(--rim-a, 0.45)) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.ms-liquid-glass--strong {
+  background: rgba(15, 28, 53, 0.75);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  box-shadow: 
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.25),
+    0 28px 60px -15px rgba(0, 0, 0, 0.85),
+    0 0 35px -10px rgba(0, 201, 167, 0.18);
+}
+
+.ms-liquid-glass--strong::before {
+  --rim-a: 0.85;
+  --rim-b: 0.4;
+}
+
+/* MotionSites Liquid Metal Button Finish with Sweep Shine */
+.ms-btn-chrome {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  background: linear-gradient(180deg, #00E5BE 0%, #00C9A7 50%, #008F77 100%);
+  color: #070B14;
+  font-weight: 700;
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
+    0 0 25px rgba(0, 229, 190, 0.35),
+    0 10px 25px -5px rgba(0, 201, 167, 0.3);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.ms-btn-chrome::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.55) 48%, transparent 76%);
+  transform: translateX(-140%);
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ms-btn-chrome:hover::after {
+  transform: translateX(140%);
+}
+
+.ms-btn-chrome:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    inset 0 1px 0 0 #fff,
+    0 0 35px rgba(0, 229, 190, 0.55),
+    0 14px 30px -5px rgba(0, 201, 167, 0.45);
+}
+
+.ms-btn-halo {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  background: rgba(15, 28, 53, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ms-btn-halo:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(0, 229, 190, 0.6);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 0 25px rgba(0, 229, 190, 0.25),
+    0 12px 30px -5px rgba(0, 0, 0, 0.65);
+}
+
 /* Base body typography and smooth rendering */
 body {
   background-color: var(--navy-bg);
