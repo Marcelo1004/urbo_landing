@@ -18,19 +18,18 @@ export const Audiences: React.FC = () => {
     if (reduce) return;
 
     const ctx = gsap.context(() => {
-      // Header reveal
+      // Header reveal (pure transform & opacity)
       gsap.fromTo(
         '.audiences-header',
-        { opacity: 0, y: 30, filter: 'blur(8px)' },
+        { opacity: 0, y: 24 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
-          duration: 0.85,
+          duration: 0.7,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sec,
-            start: 'top 82%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
           },
         }
@@ -43,20 +42,18 @@ export const Audiences: React.FC = () => {
           card,
           {
             opacity: 0,
-            y: 40 + i * 15,
-            scale: 0.96,
-            filter: 'blur(10px)',
+            y: 30 + i * 10,
+            scale: 0.98,
           },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            filter: 'blur(0px)',
-            duration: 0.9,
+            duration: 0.75,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: card,
-              start: 'top 86%',
+              start: 'top 88%',
               toggleActions: 'play none none none',
             },
           }

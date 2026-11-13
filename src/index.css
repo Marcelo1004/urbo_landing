@@ -231,36 +231,37 @@ body {
 .ambient-sheen-runner {
   position: absolute;
   top: -60%;
-  left: -120%;
+  left: 0;
   width: 50%;
   height: 220%;
   background: linear-gradient(
     90deg,
     transparent 0%,
     rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0.25) 50%,
-    rgba(0, 229, 190, 0.18) 70%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(0, 229, 190, 0.16) 70%,
     transparent 100%
   );
-  transform: rotate(26deg);
-  animation: ambientSheenSweep 7.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform: translate3d(-150%, 0, 0) rotate(26deg);
+  will-change: transform;
+  animation: ambientSheenSweep 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   pointer-events: none;
 }
 
 @keyframes ambientSheenSweep {
   0% {
-    left: -130%;
+    transform: translate3d(-150%, 0, 0) rotate(26deg);
     opacity: 0;
   }
-  10% {
-    opacity: 0.85;
+  8% {
+    opacity: 0.8;
   }
-  30% {
-    left: 190%;
+  28% {
+    transform: translate3d(280%, 0, 0) rotate(26deg);
     opacity: 0;
   }
   100% {
-    left: 190%;
+    transform: translate3d(280%, 0, 0) rotate(26deg);
     opacity: 0;
   }
 }

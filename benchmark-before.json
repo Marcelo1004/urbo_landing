@@ -1,0 +1,18 @@
+{
+  "preloaderDurationMs": 0,
+  "scrollProfile": {
+    "frameCount": 61,
+    "avgFrameTime": 47.23,
+    "maxFrameTime": 291.2,
+    "droppedFrames": 48,
+    "severeJankFrames": 33
+  },
+  "canvasElementCount": 2,
+  "layoutCount": 109,
+  "recalcStyleCount": 362,
+  "layoutDurationSec": "0.0874",
+  "recalcStyleDurationSec": "0.2933",
+  "jsHeapUsedMB": "16.72",
+  "scriptDurationSec": "0.8365",
+  "taskDurationSec": "1.7040"
+}

@@ -16,13 +16,16 @@ export const FinalCta: React.FC = () => {
   const sheenRef = useRef<HTMLDivElement>(null);
   const glowBurstRef = useRef<HTMLDivElement>(null);
 
-  // 1. Interactive 3D Mouse Tilt Tracking (Physical Liquid Glass Object feel)
+  // 1. Interactive 3D Mouse Tilt Tracking (Desktop only, passive & clean)
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
 
-    const xTo = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power2.out' });
-    const yTo = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power2.out' });
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    if (isTouch) return;
+
+    const xTo = gsap.quickTo(card, 'rotationY', { duration: 0.4, ease: 'power2.out' });
+    const yTo = gsap.quickTo(card, 'rotationX', { duration: 0.4, ease: 'power2.out' });
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = card.getBoundingClientRect();
@@ -32,9 +35,9 @@ export const FinalCta: React.FC = () => {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      // Subtle tilt max +- 6 degrees
-      const rotY = ((x - centerX) / centerX) * 6;
-      const rotX = -((y - centerY) / centerY) * 6;
+      // Subtle tilt max +- 5 degrees
+      const rotY = ((x - centerX) / centerX) * 5;
+      const rotX = -((y - centerY) / centerY) * 5;
 
       xTo(rotY);
       yTo(rotX);
@@ -51,6 +54,7 @@ export const FinalCta: React.FC = () => {
     return () => {
       card.removeEventListener('mousemove', handleMouseMove);
       card.removeEventListener('mouseleave', handleMouseLeave);
+      gsap.set(card, { rotationX: 0, rotationY: 0 });
     };
   }, []);
 
@@ -90,38 +94,35 @@ export const FinalCta: React.FC = () => {
       );
     }
 
-    // Outgoing content: fade, slight slide & blur
+    // Outgoing content: fade & slight slide (pure composite)
     if (outgoing) {
       tl.to(
         outgoing,
         {
           opacity: 0,
-          y: isGoingToContact ? -12 : 12,
-          filter: 'blur(8px)',
-          duration: 0.35,
+          y: isGoingToContact ? -10 : 10,
+          duration: 0.25,
           ease: 'power2.in',
         },
         0
       );
     }
 
-    // Incoming content: slide in with stagger & de-blur
+    // Incoming content: slide in with stagger
     if (incoming) {
       tl.fromTo(
         incoming,
         {
           opacity: 0,
-          y: isGoingToContact ? 14 : -14,
-          filter: 'blur(8px)',
+          y: isGoingToContact ? 12 : -12,
         },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
-          duration: 0.5,
-          ease: 'power2.out',
+          duration: 0.35,
+          ease: 'power3.out',
         },
-        '-=0.15'
+        '-=0.1'
       );
     }
 

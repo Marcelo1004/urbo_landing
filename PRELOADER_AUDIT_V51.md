@@ -88,3 +88,4 @@ finishTl
      - 55% - 80%: Sincronización de GSAP y estado base del Hero.
      - 80% - 100%: Calibración de telemetría y cartografía Casco Viejo (con fallback inmediato de radar táctico).
    - Tiempos: ~1.7s en primera visita, ~0.8s en visitas repetidas de la sesión (`sessionStorage`), timeout de seguridad inquebrantable a los 2.6s.
+

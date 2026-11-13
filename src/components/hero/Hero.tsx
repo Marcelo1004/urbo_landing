@@ -64,80 +64,81 @@ export const Hero: React.FC = () => {
         tl.fromTo(
           '.hero-ambient-glow',
           { opacity: 0, scale: 0.8 },
-          { opacity: 1, scale: 1, duration: 1.1, ease: 'sine.out' },
-          0.1
+          { opacity: 1, scale: 1, duration: 0.85, ease: 'sine.out' },
+          0.05
         )
         // Stage 2: Hero Location Badge
           .fromTo(
             '.hero-badge',
-            { y: 24, opacity: 0, filter: 'blur(8px)' },
-            { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.7 },
-            0.2
+            { y: 18, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.6 },
+            0.12
           )
         // Stage 3 & 4: Masked Headline Reveal Line-by-Line (Dystopian tech feel)
           .fromTo(
             '.hero-line-1',
-            { y: 60, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.85, ease: 'power4.out' },
-            0.35
+            { y: 45, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.75, ease: 'power4.out' },
+            0.22
           )
           .fromTo(
             '.hero-line-2',
-            { y: 65, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.9, ease: 'power4.out' },
-            0.48
+            { y: 50, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.8, ease: 'power4.out' },
+            0.32
           )
         // Stage 5: Subtitle & Call-to-actions
           .fromTo(
             '.hero-subhead',
-            { y: 20, opacity: 0, filter: 'blur(4px)' },
-            { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.65 },
-            0.65
+            { y: 16, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.55 },
+            0.45
           )
           .fromTo(
             '.hero-buttons a',
-            { y: 22, opacity: 0, scale: 0.95 },
-            { y: 0, opacity: 1, scale: 1, stagger: 0.1, duration: 0.6, ease: 'back.out(1.4)' },
-            0.8
+            { y: 18, opacity: 0, scale: 0.96 },
+            { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 0.5, ease: 'back.out(1.4)' },
+            0.55
           )
         // Stage 6: Telemetry baseline bar (5 meses / 140 / Línea 30)
           .fromTo(
             '.hero-metrics-item',
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, stagger: 0.08, duration: 0.5 },
-            0.95
+            { y: 14, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.06, duration: 0.45 },
+            0.65
           )
-        // Stage 7: Cockpit Map HUD entrance (depth lift, scale & optical reveal)
+        // Stage 7: Cockpit Map HUD entrance (depth lift & scale)
           .fromTo(
             mapColRef.current,
-            { scale: 0.92, y: 35, opacity: 0, filter: 'blur(10px)' },
-            { scale: 1, y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out' },
-            0.55
+            { scale: 0.94, y: 28, opacity: 0 },
+            { scale: 1, y: 0, opacity: 1, duration: 0.8, ease: 'power2.out' },
+            0.35
           )
           .fromTo(
             '.hero-map-overlay',
-            { opacity: 0, y: 12 },
-            { opacity: 1, y: 0, stagger: 0.1, duration: 0.5 },
-            1.0
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, stagger: 0.08, duration: 0.45 },
+            0.7
           )
         // Stage 8: Specular light beam sweep across the glass cockpit
           .fromTo(
             '.cockpit-specular-sweep',
             { x: '-140%', opacity: 0 },
-            { x: '240%', opacity: 0.8, duration: 1.1, ease: 'power2.inOut' },
-            1.2
+            { x: '240%', opacity: 0.7, duration: 0.95, ease: 'power2.inOut' },
+            0.8
           );
 
-        // Magnetic hover on primary action button
+        // Magnetic hover on primary action button (Desktop mouse only)
+        const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
         const btn = primaryBtnRef.current;
-        if (btn) {
+        if (btn && !isTouch) {
           const xTo = gsap.quickTo(btn, 'x', { duration: 0.35, ease: 'power2.out' });
           const yTo = gsap.quickTo(btn, 'y', { duration: 0.35, ease: 'power2.out' });
 
           const handleBtnMouseMove = (e: MouseEvent) => {
             const rect = btn.getBoundingClientRect();
-            const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
-            const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
+            const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
+            const y = (e.clientY - rect.top - rect.height / 2) * 0.25;
             xTo(x);
             yTo(y);
           };
@@ -153,6 +154,7 @@ export const Hero: React.FC = () => {
           return () => {
             btn.removeEventListener('mousemove', handleBtnMouseMove);
             btn.removeEventListener('mouseleave', handleBtnMouseLeave);
+            gsap.set(btn, { x: 0, y: 0 });
           };
         }
       }, heroRef);

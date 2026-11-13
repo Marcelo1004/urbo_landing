@@ -30,22 +30,21 @@ export const Solution: React.FC = () => {
     setTimeout(() => setVoiceTesting(false), 2400);
   };
 
-  // Tab transition using GSAP
+  // Tab transition using GSAP (pure transform & opacity)
   const handleTabChange = (newTab: 'esperar' | 'rutas' | 'seguridad') => {
     if (newTab === activeTab) return;
     if (tabContentRef.current) {
       gsap.to(tabContentRef.current, {
         opacity: 0,
-        y: -10,
-        filter: 'blur(6px)',
-        duration: 0.22,
+        y: -8,
+        duration: 0.18,
         ease: 'power2.in',
         onComplete: () => {
           setActiveTab(newTab);
           gsap.fromTo(
             tabContentRef.current,
-            { opacity: 0, y: 15, filter: 'blur(8px)' },
-            { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.45, ease: 'power3.out' }
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }
           );
         },
       });
@@ -64,16 +63,15 @@ export const Solution: React.FC = () => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.solution-header',
-        { opacity: 0, y: 30, filter: 'blur(8px)' },
+        { opacity: 0, y: 24 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
-          duration: 0.85,
+          duration: 0.7,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sec,
-            start: 'top 82%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
           },
         }
@@ -81,17 +79,16 @@ export const Solution: React.FC = () => {
 
       gsap.fromTo(
         '.solution-hero-glass',
-        { opacity: 0, y: 35, scale: 0.98, filter: 'blur(10px)' },
+        { opacity: 0, y: 30, scale: 0.98 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          filter: 'blur(0px)',
-          duration: 0.9,
+          duration: 0.75,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: '.solution-hero-glass',
-            start: 'top 84%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
           },
         }
@@ -99,14 +96,13 @@ export const Solution: React.FC = () => {
 
       gsap.fromTo(
         '.solution-pillar-card',
-        { opacity: 0, y: 35, scale: 0.96, filter: 'blur(8px)' },
+        { opacity: 0, y: 28, scale: 0.97 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          filter: 'blur(0px)',
-          duration: 0.8,
-          stagger: 0.12,
+          duration: 0.7,
+          stagger: 0.1,
           ease: 'back.out(1.2)',
           scrollTrigger: {
             trigger: '.solution-pillars-grid',

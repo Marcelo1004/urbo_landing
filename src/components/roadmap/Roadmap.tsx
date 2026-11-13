@@ -129,6 +129,7 @@ export const Roadmap: React.FC = () => {
   const [isProjected, setIsProjected] = useState(false);
   const [selectedStationId, setSelectedStationId] = useState<string>('03'); // Default to Phase 3 (Current)
   const [isAnimating, setIsAnimating] = useState(false);
+  const [shouldInitMap, setShouldInitMap] = useState(false);
 
   // Exact Progress values for Phase 3 (Active) and Phase 5 (Projected)
   const REAL_PROGRESS = ROADMAP_STATIONS[2].progressRatio; // 0.261
@@ -137,9 +138,28 @@ export const Roadmap: React.FC = () => {
   // GSAP animated progress holder
   const progressHolder = useRef<{ p: number }>({ p: REAL_PROGRESS });
 
-  // 1. Initialize MapLibre with Santa Cruz Street Network
+  // Lazy Initialization: Mount WebGL context only when user scrolls near #roadmap section
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    const sec = sectionRef.current;
+    if (!sec) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldInitMap(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '350px' }
+    );
+
+    observer.observe(sec);
+    return () => observer.disconnect();
+  }, []);
+
+  // 1. Initialize MapLibre with Santa Cruz Street Network (Deferred for 60fps initial paint)
+  useEffect(() => {
+    if (!shouldInitMap || !mapContainerRef.current) return;
 
     const map = new Map({
       container: mapContainerRef.current,
@@ -277,7 +297,7 @@ export const Roadmap: React.FC = () => {
       gpsDotMarkerRef.current?.remove();
       map.remove();
     };
-  }, []);
+  }, [shouldInitMap]);
 
   // 2. Camera Navigation & Fly-To Station
   const flyToStation = (station: StationData) => {

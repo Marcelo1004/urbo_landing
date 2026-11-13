@@ -92,7 +92,7 @@ export const UrboPreloader: React.FC = () => {
 
     gsap.to(progressAnimRef.current, {
       value: progress,
-      duration: 0.45,
+      duration: 0.28,
       ease: 'power2.out',
       onUpdate: () => {
         const rounded = Math.round(progressAnimRef.current.value);
@@ -115,41 +115,41 @@ export const UrboPreloader: React.FC = () => {
     // 1. Specular Flash on the completed Liquid Glass bar & Logo
     exitTl
       .to(logoWrapperRef.current, {
-        scale: 1.04,
-        filter: 'drop-shadow(0 0 28px rgba(0, 229, 190, 0.9))',
-        duration: 0.22,
+        scale: 1.03,
+        filter: 'drop-shadow(0 0 22px rgba(0, 229, 190, 0.9))',
+        duration: 0.12,
         ease: 'power2.out',
       })
       // 2. Preloader content gently ascends and dissolves
       .to(
         [logoWrapperRef.current, barContainerRef.current, textLabelRef.current],
         {
-          y: -16,
+          y: -12,
           opacity: 0,
-          scale: 0.96,
-          duration: 0.26,
-          ease: 'power3.in',
+          scale: 0.97,
+          duration: 0.18,
+          ease: 'power2.in',
         },
-        '+=0.04'
+        '+=0.02'
       )
-      // 3. Dark curtain sweeps upwards uncovering the Hero
+      // 3. Dark curtain sweeps upwards uncovering the Hero swiftly (0.36s)
       .to(
         preloaderRef.current,
         {
           yPercent: -100,
-          duration: 0.62,
+          duration: 0.36,
           ease: 'power3.inOut',
           onStart: () => {
             // Trigger Hero GSAP reveal timeline with optimal offset so it unfolds in full view!
             setTimeout(() => {
               setPhase('revealing');
-            }, 110);
+            }, 60);
           },
           onComplete: () => {
             setPhase('complete');
           },
         },
-        '-=0.06'
+        '-=0.05'
       );
   }, [phase, setPhase]);
 

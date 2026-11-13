@@ -12,50 +12,77 @@ export const Opportunity: React.FC = () => {
   const cardsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const sec = sectionRef.current;
+    if (!sec) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
     const ctx = gsap.context(() => {
-      // Headline reveal
-      gsap.from('.opportunity-text', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-        },
-        y: 30,
-        opacity: 0,
-        filter: 'blur(8px)',
-        duration: 0.85,
-        ease: 'power3.out',
-      });
+      // Headline reveal with pure transform & opacity (composite-only, 60fps)
+      gsap.fromTo(
+        '.opportunity-text',
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sec,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
 
-      // Compact Cards Staggered Reveal with Blur & Lift
-      gsap.from('.opportunity-card', {
-        scrollTrigger: {
-          trigger: cardsContainerRef.current,
-          start: 'top 82%',
-        },
-        y: 40,
-        opacity: 0,
-        filter: 'blur(10px)',
-        duration: 0.9,
-        stagger: 0.18,
-        ease: 'power3.out',
-      });
+      // Compact Cards Staggered Reveal
+      gsap.fromTo(
+        '.opportunity-card',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.75,
+          stagger: 0.14,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: cardsContainerRef.current || sec,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
 
-      // Micro tilt on cards
-      const cards = document.querySelectorAll('.opportunity-card');
-      cards.forEach((card) => {
-        const handleCardMouseMove = (e: Event) => {
-          const mouseEvent = e as MouseEvent;
-          const rect = (card as HTMLElement).getBoundingClientRect();
-          const x = (mouseEvent.clientX - rect.left - rect.width / 2) * 0.05;
-          const y = (mouseEvent.clientY - rect.top - rect.height / 2) * 0.05;
-          gsap.to(card, { rotationY: x, rotationX: -y, duration: 0.3, ease: 'power1.out' });
+      // Micro tilt on cards for desktop only (with proper listener cleanup)
+      const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+      if (!isTouch) {
+        const cards = sec.querySelectorAll('.opportunity-card');
+        const cleanups: (() => void)[] = [];
+
+        cards.forEach((card) => {
+          const el = card as HTMLElement;
+          const handleCardMouseMove = (e: MouseEvent) => {
+            const rect = el.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width - 0.5) * 5;
+            const y = ((e.clientY - rect.top) / rect.height - 0.5) * -5;
+            gsap.to(el, { rotationY: x, rotationX: y, duration: 0.3, ease: 'power1.out' });
+          };
+          const handleCardMouseLeave = () => {
+            gsap.to(el, { rotationY: 0, rotationX: 0, duration: 0.4, ease: 'power2.out' });
+          };
+          el.addEventListener('mousemove', handleCardMouseMove);
+          el.addEventListener('mouseleave', handleCardMouseLeave);
+          cleanups.push(() => {
+            el.removeEventListener('mousemove', handleCardMouseMove);
+            el.removeEventListener('mouseleave', handleCardMouseLeave);
+          });
+        });
+
+        return () => {
+          cleanups.forEach((c) => c());
         };
-        const handleCardMouseLeave = () => {
-          gsap.to(card, { rotationY: 0, rotationX: 0, duration: 0.5, ease: 'power2.out' });
-        };
-        card.addEventListener('mousemove', handleCardMouseMove);
-        card.addEventListener('mouseleave', handleCardMouseLeave);
-      });
+      }
     }, sectionRef);
 
     return () => ctx.revert();

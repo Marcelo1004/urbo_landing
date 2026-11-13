@@ -25,32 +25,38 @@ export const CommunityFeed: React.FC = () => {
     if (!sec) return;
 
     const ctx = gsap.context(() => {
-      gsap.from('.community-left-col', {
-        scrollTrigger: {
-          trigger: sec,
-          start: 'top 82%',
-          toggleActions: 'play none none none',
-        },
-        y: 35,
-        opacity: 0,
-        filter: 'blur(8px)',
-        duration: 0.85,
-        ease: 'power3.out',
-      });
+      gsap.fromTo(
+        '.community-left-col',
+        { y: 24, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sec,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
 
-      gsap.from('.community-chat-window', {
-        scrollTrigger: {
-          trigger: sec,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-        y: 45,
-        scale: 0.96,
-        opacity: 0,
-        filter: 'blur(10px)',
-        duration: 0.95,
-        ease: 'back.out(1.2)',
-      });
+      gsap.fromTo(
+        '.community-chat-window',
+        { y: 30, scale: 0.98, opacity: 0 },
+        {
+          y: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 0.75,
+          ease: 'back.out(1.1)',
+          scrollTrigger: {
+            trigger: sec,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
     }, sectionRef);
 
     return () => ctx.revert();

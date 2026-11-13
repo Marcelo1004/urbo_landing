@@ -27,6 +27,10 @@ export function useGlassHover<T extends HTMLElement = HTMLDivElement>(
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) return;
 
+    // Zero-overhead on touch / mobile devices: no mouse listeners, no RAF, no quickTo
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    if (isTouch) return;
+
     // Fast setters using quickTo
     const xTo = gsap.quickTo(el, 'rotationY', { duration: 0.35, ease: 'power2.out' });
     const yTo = gsap.quickTo(el, 'rotationX', { duration: 0.35, ease: 'power2.out' });

@@ -19,35 +19,33 @@ export const MetricsProof: React.FC = () => {
     if (reduce) return;
 
     const ctx = gsap.context(() => {
-      // Header entrance
+      // Header entrance (pure transform & opacity)
       gsap.fromTo(
         '.metrics-header',
-        { opacity: 0, y: 25, filter: 'blur(6px)' },
+        { opacity: 0, y: 22 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
-          duration: 0.8,
+          duration: 0.7,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sec,
-            start: 'top 82%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
           },
         }
       );
 
-      // Metric cards staggered entrance with blur reveal and lift
+      // Metric cards staggered entrance
       gsap.fromTo(
         '.metric-card',
-        { opacity: 0, y: 35, scale: 0.95, filter: 'blur(8px)' },
+        { opacity: 0, y: 28, scale: 0.97 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          filter: 'blur(0px)',
-          duration: 0.85,
-          stagger: 0.12,
+          duration: 0.75,
+          stagger: 0.1,
           ease: 'back.out(1.2)',
           scrollTrigger: {
             trigger: cardsRef.current,

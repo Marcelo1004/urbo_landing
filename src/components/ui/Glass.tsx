@@ -21,7 +21,7 @@ export const GlassSurface: React.FC<GlassSurfaceProps> = ({
   interactive = false,
   specular = true,
   refraction = false,
-  ambientSheen = true,
+  ambientSheen = false,
   glow = 'none',
   className,
   children,
@@ -86,10 +86,10 @@ export const LiquidGlass: React.FC<LiquidGlassProps> = ({
       variant="elevated"
       interactive
       specular
-      refraction
-      ambientSheen
+      refraction={false}
+      ambientSheen={false}
       className={cn(
-        'border border-white/20 shadow-glass-volumetric overflow-hidden',
+        'border border-white/15 shadow-glass-volumetric overflow-hidden',
         fluorescentBorder && 'hover:border-radioactive-bright/50 hover:shadow-[0_0_35px_rgba(166,255,0,0.25)]',
         className
       )}
@@ -113,7 +113,7 @@ export interface DarkGlassSurfaceProps extends React.HTMLAttributes<HTMLDivEleme
 export const DarkGlassSurface: React.FC<DarkGlassSurfaceProps> = ({
   interactive = true,
   fluorescentAccent = false,
-  ambientSheen = true,
+  ambientSheen = false,
   className,
   children,
   ...props

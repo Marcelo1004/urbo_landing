@@ -62,10 +62,9 @@ export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     let isCancelled = false;
 
     // Calibrated target display time:
-    // First visit: ~1.7s of smooth perception for branding & liquid glass progress
-    // Repeat visit in same session: ~0.8s accelerated
-    const minDisplayTime = isFirstVisit ? 1650 : 800;
-    const safetyTimeoutTime = 2600; // Hard fallback limit against slow CDN / fonts
+    // Fast, elegant & non-blocking sequence: 0.6s to 1.0s total visual experience
+    const minDisplayTime = isFirstVisit ? 650 : 300;
+    const safetyTimeoutTime = 1800; // Hard fallback limit against slow CDN / fonts
 
     const advanceProgress = (val: number, text: string) => {
       if (isCancelled || hasFinishedRef.current) return;
@@ -74,41 +73,41 @@ export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     // Stage 1 — React Hydration & Initial DOM (Immediate)
-    advanceProgress(25, 'INICIALIZANDO MOTOR REACT & DOM');
+    advanceProgress(30, 'INICIALIZANDO MOTOR REACT & DOM');
 
-    // Stage 2 — Critical Fonts Check with strict race timeout (0.4s)
+    // Stage 2 — Critical Fonts Check with strict race timeout (0.18s)
     const runFontVerification = async () => {
       try {
         if (document.fonts) {
           await Promise.race([
             document.fonts.ready,
-            new Promise((resolve) => setTimeout(resolve, 450)),
+            new Promise((resolve) => setTimeout(resolve, 180)),
           ]);
         }
       } catch {
         // Fallback gracefully without stalling
       }
 
-      advanceProgress(55, 'VERIFICANDO TIPOGRAFÍA Y ACTIVOS');
+      advanceProgress(65, 'VERIFICANDO TIPOGRAFÍA Y ACTIVOS');
     };
 
-    // Stage 3 — GSAP Context & Hero Assembly (0.8s)
+    // Stage 3 — GSAP Context & Hero Assembly (0.25s)
     const runHeroPreparation = () => {
       setTimeout(() => {
-        advanceProgress(80, 'SINCRONIZANDO TIMELINES GSAP');
-      }, isFirstVisit ? 850 : 400);
+        advanceProgress(88, 'SINCRONIZANDO TIMELINES GSAP');
+      }, isFirstVisit ? 240 : 100);
     };
 
     // Stage 4 — Final Handshake & Telemetry Calibration (100%)
     const runFinalCalibration = () => {
       const elapsed = Date.now() - mountedTimeRef.current;
-      const remaining = Math.max(120, minDisplayTime - elapsed);
+      const remaining = Math.max(60, minDisplayTime - elapsed);
 
       setTimeout(() => {
         if (isCancelled || hasFinishedRef.current) return;
         advanceProgress(100, 'CASCO VIEJO · SISTEMA LISTO');
         
-        // Brief pause at 100% so the user sees the completed liquid glass bar
+        // Brief pause at 100% so the user perceives completion
         setTimeout(() => {
           if (isCancelled || hasFinishedRef.current) return;
           hasFinishedRef.current = true;
@@ -118,7 +117,7 @@ export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           } catch {
             // Ignore storage restrictions
           }
-        }, 180);
+        }, 90);
       }, remaining);
     };
 
