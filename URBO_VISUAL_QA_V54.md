@@ -42,3 +42,4 @@
 5. **Experiencia Móvil iPhone (390x844)**:
    - Archivo: `v54-viewport-390.png`
    - Validación: Sin scroll horizontal, botones touch de 48px de altura accesible, contraste nítido en Dark Mode.
+

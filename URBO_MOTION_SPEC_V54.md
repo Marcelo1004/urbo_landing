@@ -88,3 +88,4 @@ stateDiagram-v2
     heroEntering --> complete : Overlay at 0% opacity (Unmounts Preloader)
     complete --> [*] : Full 60fps Native Scroll Interaction
 ```
+

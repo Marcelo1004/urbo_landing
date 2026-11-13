@@ -31,3 +31,4 @@
 | **Beneficiarios** | Columna simétrica. | Segmentar visualmente Pasajero vs Chofer vs Línea con jerarquía asimétrica. | Jerarquización con acentos de color dedicados (Teal, Ámbar, Radioactive). |
 | **Roadmap** | Excelente mapa MapLibre y punto GPS; marco de mapa requería mayor acabado. | El cockpit cartográfico debe sentirse como un instrumento de navegación aeroespacial/urbano. | Cockpit enmarcado en `.ms-liquid-glass--strong` con visor de 640px, tabs de malla vial y botón de proyección interactivo. |
 | **CTA Final** | Business card con flip GSAP. | Mantener morph en un solo plano (sin volteo 3D destructivo) con acabado Liquid Glass de grado protagónico. | Tarjeta en `.ms-liquid-glass--strong` con halo perimetral cian y microchip NFC integrado. |
+
