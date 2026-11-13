@@ -45,3 +45,4 @@ De acuerdo con el procedimiento obligatorio de la Fase 0:
 4. **Fase 5 & 6:** Refinamiento de ScrollTrigger en todas las secciones y animaciones recurrentes sin hover.
 5. **Fase 7 & 8:** Verificación en viewports móviles iPhone y optimización de rendimiento.
 6. **Fase 9:** Validación visual, grabación de screenshots y push a producción.
+

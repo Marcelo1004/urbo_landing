@@ -11,6 +11,7 @@ if (typeof window !== 'undefined') {
 interface CascoViejoMapProps {
   activeBus: '32' | '58';
   onBusSelect?: (bus: '32' | '58') => void;
+  onMapReady?: () => void;
   className?: string;
 }
 
@@ -91,6 +92,7 @@ const BUS_LOCATIONS = {
 export const CascoViejoMap: React.FC<CascoViejoMapProps> = ({
   activeBus,
   onBusSelect,
+  onMapReady,
   className,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -124,6 +126,7 @@ export const CascoViejoMap: React.FC<CascoViejoMapProps> = ({
     map.on('load', () => {
       console.log('MapLibre GL Loaded successfully!');
       setMapLoaded(true);
+      if (onMapReady) onMapReady();
 
       // Add Línea 30 Route Layer
       if (!map.getSource('line-30-route')) {
@@ -230,9 +233,22 @@ export const CascoViejoMap: React.FC<CascoViejoMapProps> = ({
   const activeInfo = BUS_LOCATIONS[selectedMarker || activeBus];
 
   return (
-    <div className={cn('relative w-full h-full min-h-[460px] rounded-[32px] overflow-hidden border border-white/15 shadow-2xl', className)}>
+    <div className={cn('relative w-full h-full min-h-[460px] rounded-[32px] overflow-hidden border border-white/15 shadow-2xl bg-slate-950', className)}>
       {/* Real Map Canvas */}
       <div ref={mapContainerRef} className="w-full h-full min-h-[460px]" />
+
+      {/* Tactical Radar Fallback while map tiles calibrate */}
+      {!mapLoaded && (
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center bg-slate-950/95 pointer-events-none transition-opacity duration-700">
+          <div className="relative w-16 h-16 rounded-full border border-urbo-teal/20 flex items-center justify-center">
+            <span className="absolute inset-0 rounded-full border border-urbo-teal/40 animate-ping" style={{ animationDuration: '3s' }} />
+            <Compass className="w-7 h-7 text-urbo-teal animate-spin" style={{ animationDuration: '6s' }} />
+          </div>
+          <span className="text-[10px] font-mono text-slate-400 tracking-[0.2em] uppercase mt-3">
+            CALIBRANDO CARTOGRAFÍA CASCO VIEJO
+          </span>
+        </div>
+      )}
 
       {/* Top Overlay: Demonstration Indicator & Casco Viejo Label */}
       <div className="absolute top-3 left-3 right-14 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">

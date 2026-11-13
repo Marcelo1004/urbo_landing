@@ -491,6 +491,26 @@ body {
   background-size: 100% 100%, 100% 100%, 24px 24px;
 }
 
+/* Subtle Ambient Ping */
+@keyframes pingSubtle {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+.animate-ping-subtle {
+  animation: pingSubtle 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* Reduced Motion Safety */
 @media (prefers-reduced-motion: reduce) {
   *,

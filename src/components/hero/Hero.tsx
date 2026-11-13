@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 
 export const Hero: React.FC = () => {
-  const { phase } = useIntroSequence();
+  const { phase, setMapReady } = useIntroSequence();
   const [activeBus, setActiveBus] = useState<'32' | '58'>('32');
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
@@ -298,8 +298,12 @@ export const Hero: React.FC = () => {
                 </button>
               </div>
 
-              {/* The Real Interactive MapLibre GL Map */}
-              <CascoViejoMap activeBus={activeBus} onBusSelect={setActiveBus} />
+              {/* The Real Interactive MapLibre GL Map with Smart Load Handshake */}
+              <CascoViejoMap
+                activeBus={activeBus}
+                onBusSelect={setActiveBus}
+                onMapReady={() => setMapReady(true)}
+              />
 
               {/* Hands-Free Voice Alert Demo Pill (Interactive Test Button) */}
               <div
