@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from '@/motion/motionTokens';
 import STREET_ROUTE_COORDS from '@/data/roadmap-street-route.json';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -371,35 +372,36 @@ export const Roadmap: React.FC = () => {
     if (!sec) return;
 
     const ctx = gsap.context(() => {
+      // Header entrance (pure composite, 20px displacement)
       gsap.fromTo(
         '.roadmap-header',
-        { opacity: 0, y: 35, filter: 'blur(8px)' },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
-          duration: 0.85,
-          ease: 'power3.out',
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: sec,
-            start: 'top 82%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
           },
         }
       );
 
+      // Cockpit Frame entrance (pure composite, smooth scale & lift)
       gsap.fromTo(
         '.roadmap-cockpit-frame',
-        { opacity: 0, scale: 0.96, y: 30 },
+        { opacity: 0, scale: 0.98, y: 24 },
         {
           opacity: 1,
           scale: 1,
           y: 0,
-          duration: 1.0,
-          ease: 'power3.out',
+          duration: motion.duration.reveal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: sec,
-            start: 'top 78%',
+            start: 'top 80%',
             toggleActions: 'play none none none',
           },
         }

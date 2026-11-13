@@ -6,6 +6,7 @@ import { Radio, MapPin, CheckCheck, Users, Shield, Clock, Bus, Send, Activity, W
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from '@/motion/motionTokens';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,12 +28,12 @@ export const CommunityFeed: React.FC = () => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.community-left-col',
-        { y: 24, opacity: 0 },
+        { y: 20, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.7,
-          ease: 'power3.out',
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: sec,
             start: 'top 85%',
@@ -43,13 +44,13 @@ export const CommunityFeed: React.FC = () => {
 
       gsap.fromTo(
         '.community-chat-window',
-        { y: 30, scale: 0.98, opacity: 0 },
+        { y: 24, scale: 0.98, opacity: 0 },
         {
           y: 0,
           scale: 1,
           opacity: 1,
-          duration: 0.75,
-          ease: 'back.out(1.1)',
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: sec,
             start: 'top 85%',

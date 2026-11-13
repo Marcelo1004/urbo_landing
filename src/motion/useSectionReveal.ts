@@ -42,12 +42,10 @@ export function useSectionReveal(
         {
           opacity: 0,
           y,
-          filter: 'blur(8px)',
         },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
           duration,
           stagger,
           ease: 'power3.out',

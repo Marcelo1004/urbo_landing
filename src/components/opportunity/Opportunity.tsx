@@ -4,6 +4,7 @@ import { GlassSurface, GlassBadge, LiquidGlass } from '@/components/ui/Glass';
 import { TESTIMONIAL_DON_MAURICIO } from '@/data/urboData';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from '@/motion/motionTokens';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,12 +23,12 @@ export const Opportunity: React.FC = () => {
       // Headline reveal with pure transform & opacity (composite-only, 60fps)
       gsap.fromTo(
         '.opportunity-text',
-        { opacity: 0, y: 24 },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: sec,
             start: 'top 85%',
@@ -39,13 +40,13 @@ export const Opportunity: React.FC = () => {
       // Compact Cards Staggered Reveal
       gsap.fromTo(
         '.opportunity-card',
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: 24 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.75,
-          stagger: 0.14,
-          ease: 'power3.out',
+          duration: motion.duration.normal,
+          stagger: 0.08,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: cardsContainerRef.current || sec,
             start: 'top 85%',

@@ -4,6 +4,7 @@ import { GlassBadge } from '@/components/ui/Glass';
 import { UrboLogo } from '@/components/ui/UrboLogo';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
+import { motion } from '@/motion/motionTokens';
 
 export const FinalCta: React.FC = () => {
   // 'brand' (State A) vs 'contact' (State B)
@@ -89,7 +90,7 @@ export const FinalCta: React.FC = () => {
       tl.fromTo(
         sheenRef.current,
         { x: '-120%', opacity: 0 },
-        { x: '180%', opacity: 0.8, duration: 0.65, ease: 'power2.inOut' },
+        { x: '180%', opacity: 0.8, duration: motion.duration.normal, ease: motion.ease.transition },
         0
       );
     }
@@ -100,9 +101,9 @@ export const FinalCta: React.FC = () => {
         outgoing,
         {
           opacity: 0,
-          y: isGoingToContact ? -10 : 10,
-          duration: 0.25,
-          ease: 'power2.in',
+          y: isGoingToContact ? -8 : 8,
+          duration: motion.duration.micro,
+          ease: motion.ease.exit,
         },
         0
       );
@@ -114,15 +115,15 @@ export const FinalCta: React.FC = () => {
         incoming,
         {
           opacity: 0,
-          y: isGoingToContact ? 12 : -12,
+          y: isGoingToContact ? 10 : -10,
         },
         {
           opacity: 1,
           y: 0,
-          duration: 0.35,
-          ease: 'power3.out',
+          duration: motion.duration.fast,
+          ease: motion.ease.enter,
         },
-        '-=0.1'
+        '-=0.08'
       );
     }
 

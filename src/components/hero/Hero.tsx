@@ -3,6 +3,7 @@ import { ArrowUpRight, Volume2, Navigation, Compass, Sparkles, MapPin } from 'lu
 import { GlassBadge } from '@/components/ui/Glass';
 import { CascoViejoMap } from '@/components/map/CascoViejoMap';
 import { useIntroSequence } from '@/motion/useIntroSequence';
+import { motion } from '@/motion/motionTokens';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 
@@ -34,7 +35,7 @@ export const Hero: React.FC = () => {
     if (!heroRef.current) return;
 
     // Phase 1: Keep Hero pristine & zero flash during initial preloader display
-    if (phase === 'loading' || phase === 'ready') {
+    if (phase === 'loading' || phase === 'ready' || phase === 'exiting') {
       if (!hasAnimatedRef.current) {
         gsap.set(
           [
@@ -54,78 +55,78 @@ export const Hero: React.FC = () => {
       return;
     }
 
-    // Phase 2: Orchestrated Cinematic Entrance when Preloader reveals
-    if ((phase === 'revealing' || phase === 'complete') && !hasAnimatedRef.current) {
+    // Phase 2: Orchestrated Cinematic Entrance when Preloader dissolves into Hero
+    if ((phase === 'heroEntering' || phase === 'complete') && !hasAnimatedRef.current) {
       hasAnimatedRef.current = true;
       ctxRef.current = gsap.context(() => {
-        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        const tl = gsap.timeline({ defaults: { ease: motion.ease.enter } });
 
         // Stage 1: Ambient Halos & glowing dust
         tl.fromTo(
           '.hero-ambient-glow',
-          { opacity: 0, scale: 0.8 },
-          { opacity: 1, scale: 1, duration: 0.85, ease: 'sine.out' },
-          0.05
+          { opacity: 0, scale: 0.9 },
+          { opacity: 1, scale: 1, duration: 0.65, ease: 'sine.out' },
+          0
         )
         // Stage 2: Hero Location Badge
           .fromTo(
             '.hero-badge',
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6 },
-            0.12
+            { y: 16, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.45 },
+            0.08
           )
-        // Stage 3 & 4: Masked Headline Reveal Line-by-Line (Dystopian tech feel)
+        // Stage 3 & 4: Headline Reveal (Restrained displacement 24-28px, pure composite)
           .fromTo(
             '.hero-line-1',
-            { y: 45, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.75, ease: 'power4.out' },
-            0.22
+            { y: 24, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.55 },
+            0.16
           )
           .fromTo(
             '.hero-line-2',
-            { y: 50, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.8, ease: 'power4.out' },
-            0.32
+            { y: 28, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.58 },
+            0.24
           )
         // Stage 5: Subtitle & Call-to-actions
           .fromTo(
             '.hero-subhead',
             { y: 16, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.55 },
-            0.45
+            { y: 0, opacity: 1, duration: 0.45 },
+            0.34
           )
           .fromTo(
             '.hero-buttons a',
-            { y: 18, opacity: 0, scale: 0.96 },
-            { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 0.5, ease: 'back.out(1.4)' },
-            0.55
+            { y: 16, opacity: 0, scale: 0.98 },
+            { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 0.42, ease: motion.ease.enter },
+            0.42
           )
         // Stage 6: Telemetry baseline bar (5 meses / 140 / Línea 30)
           .fromTo(
             '.hero-metrics-item',
-            { y: 14, opacity: 0 },
-            { y: 0, opacity: 1, stagger: 0.06, duration: 0.45 },
-            0.65
+            { y: 16, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.06, duration: 0.42, ease: motion.ease.enter },
+            0.50
           )
         // Stage 7: Cockpit Map HUD entrance (depth lift & scale)
           .fromTo(
             mapColRef.current,
-            { scale: 0.94, y: 28, opacity: 0 },
-            { scale: 1, y: 0, opacity: 1, duration: 0.8, ease: 'power2.out' },
-            0.35
+            { scale: 0.97, y: 22, opacity: 0 },
+            { scale: 1, y: 0, opacity: 1, duration: 0.65, ease: motion.ease.enter },
+            0.28
           )
           .fromTo(
             '.hero-map-overlay',
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, stagger: 0.08, duration: 0.45 },
-            0.7
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, stagger: 0.06, duration: 0.42, ease: motion.ease.enter },
+            0.55
           )
         // Stage 8: Specular light beam sweep across the glass cockpit
           .fromTo(
             '.cockpit-specular-sweep',
-            { x: '-140%', opacity: 0 },
-            { x: '240%', opacity: 0.7, duration: 0.95, ease: 'power2.inOut' },
-            0.8
+            { x: '-120%', opacity: 0 },
+            { x: '220%', opacity: 0.7, duration: 0.75, ease: motion.ease.transition },
+            0.65
           );
 
         // Magnetic hover on primary action button (Desktop mouse only)

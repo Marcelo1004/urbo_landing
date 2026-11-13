@@ -3,6 +3,7 @@ import { Smartphone, Navigation, BarChart3, CheckCircle2, Shield, Award, MapPin,
 import { GlassSurface, GlassBadge, LiquidGlass } from '@/components/ui/Glass';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from '@/motion/motionTokens';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,12 +22,12 @@ export const Audiences: React.FC = () => {
       // Header reveal (pure transform & opacity)
       gsap.fromTo(
         '.audiences-header',
-        { opacity: 0, y: 24 },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: sec,
             start: 'top 85%',
@@ -35,22 +36,22 @@ export const Audiences: React.FC = () => {
         }
       );
 
-      // Storytelling cards depth reveal
+      // Storytelling cards depth reveal (restrained 24px displacement, pure composite)
       const cards = sec.querySelectorAll('.audience-card');
-      cards.forEach((card, i) => {
+      cards.forEach((card) => {
         gsap.fromTo(
           card,
           {
             opacity: 0,
-            y: 30 + i * 10,
+            y: 24,
             scale: 0.98,
           },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.75,
-            ease: 'power3.out',
+            duration: motion.duration.normal,
+            ease: motion.ease.enter,
             scrollTrigger: {
               trigger: card,
               start: 'top 88%',

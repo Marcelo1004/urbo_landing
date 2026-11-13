@@ -4,6 +4,7 @@ import { URBO_METRICS } from '@/data/urboData';
 import { ShieldCheck, Users, MessageSquare, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from '@/motion/motionTokens';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,12 +23,12 @@ export const MetricsProof: React.FC = () => {
       // Header entrance (pure transform & opacity)
       gsap.fromTo(
         '.metrics-header',
-        { opacity: 0, y: 22 },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: sec,
             start: 'top 85%',
@@ -39,14 +40,14 @@ export const MetricsProof: React.FC = () => {
       // Metric cards staggered entrance
       gsap.fromTo(
         '.metric-card',
-        { opacity: 0, y: 28, scale: 0.97 },
+        { opacity: 0, y: 24, scale: 0.98 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.75,
-          stagger: 0.1,
-          ease: 'back.out(1.2)',
+          duration: motion.duration.normal,
+          stagger: 0.08,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: cardsRef.current,
             start: 'top 85%',

@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { UrboLogo } from '@/components/ui/UrboLogo';
 import { useIntroSequence } from '@/motion/useIntroSequence';
+import { motion } from '@/motion/motionTokens';
 import { gsap } from 'gsap';
 
 export const UrboPreloader: React.FC = () => {
   const { phase, setPhase, progress, statusText } = useIntroSequence();
 
   const preloaderRef = useRef<HTMLDivElement>(null);
+  const contentWrapperRef = useRef<HTMLDivElement>(null);
   const logoWrapperRef = useRef<HTMLDivElement>(null);
   const glowRingRef = useRef<HTMLDivElement>(null);
   const sheenRef = useRef<HTMLDivElement>(null);
@@ -18,7 +20,7 @@ export const UrboPreloader: React.FC = () => {
 
   const [displayPercent, setDisplayPercent] = useState<number>(progress);
   const hasExitedRef = useRef<boolean>(false);
-  const progressAnimRef = useRef<{ value: number }>({ value: 10 });
+  const progressAnimRef = useRef<{ value: number }>({ value: 15 });
 
   // Initial Entrance Animation for Preloader Elements
   useEffect(() => {
@@ -30,69 +32,57 @@ export const UrboPreloader: React.FC = () => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
 
-      // Stage 1 — Logo Appearance with Optical Blur Reveal
+      // Stage 1 — Logo Appearance with smooth scale & opacity
       tl.fromTo(
         logoWrapperRef.current,
-        { scale: 0.88, y: 12, opacity: 0, filter: 'blur(8px)' },
-        { scale: 1, y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.55, ease: 'power3.out' }
+        { scale: 0.92, y: 10, opacity: 0 },
+        { scale: 1, y: 0, opacity: 1, duration: motion.duration.normal, ease: motion.ease.enter }
       );
 
       // Stage 2 — Glowing Aura Ring Expansion
       tl.fromTo(
         glowRingRef.current,
-        { opacity: 0, scale: 0.75 },
-        { opacity: 0.8, scale: 1.25, duration: 0.65, ease: 'sine.out' },
-        '-=0.35'
+        { opacity: 0, scale: 0.8 },
+        { opacity: 0.75, scale: 1.2, duration: 0.55, ease: 'sine.out' },
+        '-=0.3'
       );
 
       // Stage 3 — Specular Sheen Sweep on Logo
       tl.fromTo(
         sheenRef.current,
         { x: '-150%', opacity: 0 },
-        { x: '250%', opacity: 0.9, duration: 0.7, ease: 'power2.inOut' },
-        '-=0.45'
+        { x: '250%', opacity: 0.85, duration: 0.6, ease: motion.ease.transition },
+        '-=0.35'
       );
 
-      // Stage 4 — Brand Typography & Liquid Glass Progress Bar Entrance (enters at 0.22s)
+      // Stage 4 — Brand Typography & Liquid Glass Progress Bar Entrance
       tl.fromTo(
         [textLabelRef.current, barContainerRef.current],
         { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: 'power2.out' },
-        0.22
+        { opacity: 1, y: 0, duration: motion.duration.fast, stagger: 0.06, ease: motion.ease.enter },
+        0.2
       );
 
-      // Continuous ambient sheen on the Liquid Glass progress bar
+      // Ambient sheen on the Liquid Glass progress bar
       if (barSheenRef.current) {
         gsap.fromTo(
           barSheenRef.current,
           { x: '-120%', opacity: 0 },
-          { x: '350%', opacity: 0.8, duration: 1.4, repeat: -1, repeatDelay: 0.6, ease: 'power2.inOut' }
+          { x: '350%', opacity: 0.75, duration: 1.4, repeat: -1, repeatDelay: 0.5, ease: 'power2.inOut' }
         );
-      }
-
-      // Continuous gentle breathing of the logo aura
-      if (glowRingRef.current) {
-        gsap.to(glowRingRef.current, {
-          scale: 1.35,
-          opacity: 0.6,
-          duration: 1.8,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
       }
     }, preloaderRef);
 
     return () => ctx.revert();
   }, []);
 
-  // Smoothly interpolate progress whenever context updates it
+  // Smoothly interpolate progress number and bar fill
   useEffect(() => {
-    if (phase === 'complete') return;
+    if (phase === 'complete' || phase === 'exiting' || phase === 'heroEntering') return;
 
     gsap.to(progressAnimRef.current, {
       value: progress,
-      duration: 0.28,
+      duration: 0.25,
       ease: 'power2.out',
       onUpdate: () => {
         const rounded = Math.round(progressAnimRef.current.value);
@@ -104,7 +94,10 @@ export const UrboPreloader: React.FC = () => {
     });
   }, [progress, phase]);
 
-  // Orchestrated Exit Sequence: Handshake to Hero Timeline
+  // =========================================================================
+  // LIQUID GLASS DISSOLVE SEQUENCE (No Dropdown, No Curtain Slide)
+  // Single coordinated orchestrator executing once
+  // =========================================================================
   useEffect(() => {
     if (phase !== 'ready') return;
     if (hasExitedRef.current) return;
@@ -112,68 +105,93 @@ export const UrboPreloader: React.FC = () => {
 
     const exitTl = gsap.timeline();
 
-    // 1. Specular Flash on the completed Liquid Glass bar & Logo
+    // 1. Reflejo atraviesa la barra y el logo (specular sweep at 100%)
     exitTl
-      .to(logoWrapperRef.current, {
-        scale: 1.03,
-        filter: 'drop-shadow(0 0 22px rgba(0, 229, 190, 0.9))',
-        duration: 0.12,
-        ease: 'power2.out',
-      })
-      // 2. Preloader content gently ascends and dissolves
       .to(
-        [logoWrapperRef.current, barContainerRef.current, textLabelRef.current],
+        logoWrapperRef.current,
         {
-          y: -12,
-          opacity: 0,
-          scale: 0.97,
-          duration: 0.18,
-          ease: 'power2.in',
+          scale: 1.02,
+          boxShadow: '0 0 35px rgba(0, 229, 190, 0.45)',
+          duration: motion.duration.micro,
+          ease: 'power2.out',
         },
-        '+=0.02'
+        0
       )
-      // 3. Dark curtain sweeps upwards uncovering the Hero swiftly (0.36s)
+      .fromTo(
+        sheenRef.current,
+        { x: '-120%', opacity: 0 },
+        { x: '240%', opacity: 0.95, duration: motion.duration.fast, ease: motion.ease.transition },
+        0
+      )
+      .fromTo(
+        barSheenRef.current,
+        { x: '-100%', opacity: 0 },
+        { x: '320%', opacity: 1, duration: motion.duration.fast, ease: motion.ease.transition },
+        0.04
+      )
+      // 2. El contenido del preloader se desvanece suavemente
+      .to(
+        contentWrapperRef.current,
+        {
+          opacity: 0,
+          y: -10,
+          scale: 0.98,
+          duration: motion.duration.fast,
+          ease: motion.ease.exit,
+          onStart: () => {
+            setPhase('exiting');
+          },
+        },
+        '+=0.06'
+      )
+      // 3. La superficie de Liquid Glass del preloader se disuelve (Crossfade Dissolve)
+      //    Absolutamente NINGÚN dropdown ni cortina vertical.
       .to(
         preloaderRef.current,
         {
-          yPercent: -100,
-          duration: 0.36,
-          ease: 'power3.inOut',
+          opacity: 0,
+          scale: 1.01,
+          duration: 0.42,
+          ease: motion.ease.exit,
           onStart: () => {
-            // Trigger Hero GSAP reveal timeline with optimal offset so it unfolds in full view!
+            // Handshake exacto: el fondo y el Hero comienzan su entrada
+            // mientras la superficie de vidrio aún se está disolviendo
             setTimeout(() => {
-              setPhase('revealing');
+              setPhase('heroEntering');
             }, 60);
           },
           onComplete: () => {
             setPhase('complete');
           },
         },
-        '-=0.05'
+        '-=0.12'
       );
   }, [phase, setPhase]);
 
   if (phase === 'complete') return null;
 
+  const isTransitioning = phase === 'exiting' || phase === 'heroEntering';
+
   return (
     <div
       ref={preloaderRef}
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#070B14] select-none pointer-events-auto overflow-hidden min-h-[100dvh]"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#070B14] select-none overflow-hidden min-h-[100dvh] will-change-[opacity,transform]"
+      style={{ pointerEvents: isTransitioning ? 'none' : 'auto' }}
       aria-label="Cargando URBO"
       role="status"
     >
       {/* Ambient background volumetric glow */}
       <div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-urbo-teal/15 blur-[160px] pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full bg-urbo-teal/15 blur-[150px] pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute bottom-10 right-10 w-[320px] h-[320px] rounded-full bg-radioactive/10 blur-[130px] pointer-events-none"
+        className="absolute bottom-10 right-10 w-[280px] h-[280px] rounded-full bg-radioactive/10 blur-[120px] pointer-events-none"
       />
 
-      {/* Main Protagonist Capsule */}
-      <div className="relative flex flex-col items-center z-10 px-4">
+      {/* Main Protagonist Capsule Wrapper */}
+      <div ref={contentWrapperRef} className="relative flex flex-col items-center z-10 px-4 will-change-[opacity,transform]">
         {/* Glowing Aura Ring */}
         <div
           ref={glowRingRef}
@@ -183,7 +201,7 @@ export const UrboPreloader: React.FC = () => {
         {/* Logo Container with Optical Glass Surface */}
         <div
           ref={logoWrapperRef}
-          className="relative rounded-3xl p-3.5 optical-glass-surface border border-urbo-teal/40 shadow-[0_0_42px_rgba(0,201,167,0.35)] overflow-hidden flex items-center justify-center bg-slate-950/70 backdrop-blur-xl"
+          className="relative rounded-3xl p-3.5 optical-glass-surface border border-urbo-teal/40 shadow-[0_0_36px_rgba(0,201,167,0.3)] overflow-hidden flex items-center justify-center bg-slate-950/70 backdrop-blur-xl"
         >
           {/* Specular Diagonal Sheen Sweep */}
           <div
@@ -191,7 +209,7 @@ export const UrboPreloader: React.FC = () => {
             className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-[-25deg] pointer-events-none"
           />
 
-          <UrboLogo size={78} className="!bg-transparent !border-none !shadow-none" />
+          <UrboLogo size={76} className="!bg-transparent !border-none !shadow-none" />
         </div>
 
         {/* Minimalist Tech Typography Brand */}
@@ -205,7 +223,7 @@ export const UrboPreloader: React.FC = () => {
         </div>
 
         {/* =================================================================
-            AUTHENTIC LIQUID GLASS PROGRESS BAR
+            LIQUID GLASS PROGRESS BAR
             ================================================================= */}
         <div ref={barContainerRef} className="mt-6 flex flex-col items-center w-full max-w-[280px] sm:max-w-[340px]">
           {/* Top Status & Monospace Percentage Header */}
@@ -233,7 +251,7 @@ export const UrboPreloader: React.FC = () => {
               {/* Internal Moving Specular Beam */}
               <div
                 ref={barSheenRef}
-                className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/55 to-transparent skew-x-[-25deg] pointer-events-none"
+                className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/60 to-transparent skew-x-[-25deg] pointer-events-none"
               />
 
               {/* Leading Edge Light Bead */}

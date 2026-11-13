@@ -16,6 +16,7 @@ import { GlassSurface, GlassBadge, GlassButton, OpticalGlass, LiquidGlass } from
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from '@/motion/motionTokens';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,15 +37,15 @@ export const Solution: React.FC = () => {
     if (tabContentRef.current) {
       gsap.to(tabContentRef.current, {
         opacity: 0,
-        y: -8,
-        duration: 0.18,
-        ease: 'power2.in',
+        y: -6,
+        duration: motion.duration.micro,
+        ease: motion.ease.exit,
         onComplete: () => {
           setActiveTab(newTab);
           gsap.fromTo(
             tabContentRef.current,
-            { opacity: 0, y: 12 },
-            { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: motion.duration.fast, ease: motion.ease.enter }
           );
         },
       });
@@ -63,12 +64,12 @@ export const Solution: React.FC = () => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.solution-header',
-        { opacity: 0, y: 24 },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: sec,
             start: 'top 85%',
@@ -79,13 +80,13 @@ export const Solution: React.FC = () => {
 
       gsap.fromTo(
         '.solution-hero-glass',
-        { opacity: 0, y: 30, scale: 0.98 },
+        { opacity: 0, y: 24, scale: 0.98 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.75,
-          ease: 'power3.out',
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: '.solution-hero-glass',
             start: 'top 85%',
@@ -96,14 +97,14 @@ export const Solution: React.FC = () => {
 
       gsap.fromTo(
         '.solution-pillar-card',
-        { opacity: 0, y: 28, scale: 0.97 },
+        { opacity: 0, y: 24, scale: 0.98 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.7,
-          stagger: 0.1,
-          ease: 'back.out(1.2)',
+          duration: motion.duration.normal,
+          stagger: 0.08,
+          ease: motion.ease.enter,
           scrollTrigger: {
             trigger: '.solution-pillars-grid',
             start: 'top 85%',
