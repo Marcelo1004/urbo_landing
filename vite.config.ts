@@ -17,4 +17,15 @@ export default defineConfig({
     host: '0.0.0.0',
     allowedHosts: true,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-maplibre': ['maplibre-gl'],
+          'vendor-gsap': ['gsap', 'gsap/ScrollTrigger'],
+          'vendor-react': ['react', 'react-dom'],
+        },
+      },
+    },
+  },
 })

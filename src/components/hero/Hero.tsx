@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 
 export const Hero: React.FC = () => {
-  const { phase, setMapReady } = useIntroSequence();
+  const { phase, setHeroReady } = useIntroSequence();
   const [activeBus, setActiveBus] = useState<'32' | '58'>('32');
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
@@ -23,16 +23,38 @@ export const Hero: React.FC = () => {
     setTimeout(() => setIsPlayingVoice(false), 2400);
   };
 
-  // Cleanup GSAP context only on component unmount
+  // Signal layout readiness to IntroContext and cleanup on unmount
   useEffect(() => {
+    setHeroReady(true);
     return () => {
+      setHeroReady(false);
       ctxRef.current?.revert();
     };
-  }, []);
+  }, [setHeroReady]);
 
   // Cinematic GSAP Entrance Timeline synchronized with Preloader Sequence
   useEffect(() => {
     if (!heroRef.current) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      hasAnimatedRef.current = true;
+      gsap.set(
+        [
+          '.hero-ambient-glow',
+          '.hero-badge',
+          '.hero-line-1',
+          '.hero-line-2',
+          '.hero-subhead',
+          '.hero-buttons a',
+          '.hero-metrics-item',
+          mapColRef.current,
+          '.hero-map-overlay',
+        ],
+        { opacity: 1, y: 0, scale: 1 }
+      );
+      return;
+    }
 
     // Phase 1: Keep Hero pristine & zero flash during initial preloader display
     if (phase === 'loading' || phase === 'ready' || phase === 'exiting') {

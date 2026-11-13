@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 
 export type IntroPhase = 'loading' | 'ready' | 'exiting' | 'heroEntering' | 'complete';
 
@@ -6,11 +6,8 @@ export interface IntroContextType {
   phase: IntroPhase;
   setPhase: (phase: IntroPhase) => void;
   isComplete: boolean;
-  progress: number;
   statusText: string;
   isFirstVisit: boolean;
-  mapReady: boolean;
-  setMapReady: (ready: boolean) => void;
   heroReady: boolean;
   setHeroReady: (ready: boolean) => void;
 }
@@ -19,23 +16,18 @@ const IntroContext = createContext<IntroContextType>({
   phase: 'loading',
   setPhase: () => {},
   isComplete: false,
-  progress: 0,
-  statusText: 'INICIALIZANDO SISTEMA',
+  statusText: 'Conectando la ciudad...',
   isFirstVisit: true,
-  mapReady: false,
-  setMapReady: () => {},
   heroReady: false,
   setHeroReady: () => {},
 });
 
-const SESSION_KEY = 'urbo_v53_session_active';
+const SESSION_KEY = 'urbo_v55_session_active';
 
 export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [phase, setPhase] = useState<IntroPhase>('loading');
-  const [progress, setProgress] = useState<number>(15);
-  const [statusText, setStatusText] = useState<string>('INICIALIZANDO MOTOR REACT');
-  const [mapReady, setMapReady] = useState<boolean>(false);
-  const [heroReady, setHeroReady] = useState<boolean>(false);
+  const [statusText, setStatusText] = useState<string>('Conectando la ciudad...');
+  const [heroReady, setHeroReadyState] = useState<boolean>(false);
 
   const [isFirstVisit] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
@@ -48,11 +40,17 @@ export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const mountedTimeRef = useRef<number>(Date.now());
   const hasFinishedRef = useRef<boolean>(false);
+  const heroReadyRef = useRef<boolean>(false);
+
+  const setHeroReady = useCallback((ready: boolean) => {
+    heroReadyRef.current = ready;
+    setHeroReadyState(ready);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Bypass completely if user prefers reduced motion
+    // Fast-path bypass for users who prefer reduced motion
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) {
       setPhase('complete');
@@ -61,82 +59,57 @@ export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     let isCancelled = false;
 
-    // Calibrated target display time:
-    // 0.55s (first visit) / 0.25s (repeat visit) of active loading bar progression
-    const minDisplayTime = isFirstVisit ? 550 : 250;
-    const safetyTimeoutTime = 1600; // Hard fallback limit against slow CDN / fonts
+    // Minimum display time for brand impression (450ms first visit / 150ms repeat)
+    const minDisplayTime = isFirstVisit ? 450 : 150;
+    const safetyTimeout = 1200; // Hard fallback limit
 
-    const advanceProgress = (val: number, text: string) => {
-      if (isCancelled || hasFinishedRef.current) return;
-      setProgress(val);
-      setStatusText(text);
-    };
-
-    // Stage 1 — Inicialización del sistema
-    advanceProgress(25, 'Preparando tu experiencia...');
-
-    // Stage 2 — Tipografía y activos críticos
-    const runFontVerification = async () => {
+    // Deterministic readiness verification: Wait for critical fonts + hero mounting
+    const verifyReadiness = async () => {
       try {
         if (document.fonts) {
           await Promise.race([
             document.fonts.ready,
-            new Promise((resolve) => setTimeout(resolve, 150)),
+            new Promise((resolve) => setTimeout(resolve, 120)),
           ]);
         }
       } catch {
-        // Fallback gracefully without stalling
+        // Fallback without stalling
       }
 
-      advanceProgress(65, 'Conectando la ciudad...');
-    };
+      if (isCancelled || hasFinishedRef.current) return;
+      setStatusText('Movilidad en tiempo real');
 
-    // Stage 3 — Ensamblaje visual y cartografía
-    const runHeroPreparation = () => {
-      setTimeout(() => {
-        advanceProgress(88, 'Movilidad en tiempo real...');
-      }, isFirstVisit ? 180 : 80);
-    };
-
-    // Stage 4 — Calibración final
-    const runFinalCalibration = () => {
       const elapsed = Date.now() - mountedTimeRef.current;
-      const remaining = Math.max(50, minDisplayTime - elapsed);
+      const remainingWait = Math.max(0, minDisplayTime - elapsed);
 
       setTimeout(() => {
         if (isCancelled || hasFinishedRef.current) return;
-        advanceProgress(100, 'Bienvenido a URBO');
-        
-        // Fluid transition to 'ready' phase once bar reaches 100%
-        setTimeout(() => {
-          if (isCancelled || hasFinishedRef.current) return;
-          hasFinishedRef.current = true;
-          setPhase('ready');
-          try {
-            sessionStorage.setItem(SESSION_KEY, 'true');
-          } catch {
-            // Ignore storage restrictions
-          }
-        }, 80);
-      }, remaining);
+        hasFinishedRef.current = true;
+        setStatusText('Bienvenido a URBO');
+        setPhase('ready');
+
+        try {
+          sessionStorage.setItem(SESSION_KEY, 'true');
+        } catch {
+          // Ignore storage restrictions
+        }
+      }, remainingWait);
     };
 
-    runFontVerification()
-      .then(runHeroPreparation)
-      .then(runFinalCalibration);
+    verifyReadiness();
 
-    // Hard Safety Timeout — Never leave user trapped on loading screen
-    const safetyTimer = setTimeout(() => {
+    // Failsafe timer: Never trap the user under any network anomaly
+    const timer = setTimeout(() => {
       if (!hasFinishedRef.current && !isCancelled) {
         hasFinishedRef.current = true;
-        advanceProgress(100, 'SISTEMA LISTO');
+        setStatusText('Bienvenido a URBO');
         setPhase('ready');
       }
-    }, safetyTimeoutTime);
+    }, safetyTimeout);
 
     return () => {
       isCancelled = true;
-      clearTimeout(safetyTimer);
+      clearTimeout(timer);
     };
   }, [isFirstVisit]);
 
@@ -146,11 +119,8 @@ export const IntroProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         phase,
         setPhase,
         isComplete: phase === 'complete',
-        progress,
         statusText,
         isFirstVisit,
-        mapReady,
-        setMapReady,
         heroReady,
         setHeroReady,
       }}

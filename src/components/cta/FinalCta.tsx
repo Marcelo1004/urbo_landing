@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Mail, MessageCircle, MapPin, ArrowUpRight, Sparkles, ExternalLink, RefreshCw, Send } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Mail, MessageCircle, MapPin, ArrowUpRight, ExternalLink, RefreshCw } from 'lucide-react';
 import { GlassBadge } from '@/components/ui/Glass';
 import { UrboLogo } from '@/components/ui/UrboLogo';
+import { OpticalGlassSurface } from '@/components/ui/OpticalGlassSurface';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 import { motion } from '@/motion/motionTokens';
@@ -11,53 +12,10 @@ export const FinalCta: React.FC = () => {
   const [activeView, setActiveView] = useState<'brand' | 'contact'>('brand');
   const [animating, setAnimating] = useState(false);
 
-  const cardRef = useRef<HTMLDivElement>(null);
   const stateARef = useRef<HTMLDivElement>(null);
   const stateBRef = useRef<HTMLDivElement>(null);
   const sheenRef = useRef<HTMLDivElement>(null);
   const glowBurstRef = useRef<HTMLDivElement>(null);
-
-  // 1. Interactive 3D Mouse Tilt Tracking (Desktop only, passive & clean)
-  useEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
-
-    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
-    if (isTouch) return;
-
-    const xTo = gsap.quickTo(card, 'rotationY', { duration: 0.4, ease: 'power2.out' });
-    const yTo = gsap.quickTo(card, 'rotationX', { duration: 0.4, ease: 'power2.out' });
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      // Subtle tilt max +- 5 degrees
-      const rotY = ((x - centerX) / centerX) * 5;
-      const rotX = -((y - centerY) / centerY) * 5;
-
-      xTo(rotY);
-      yTo(rotX);
-    };
-
-    const handleMouseLeave = () => {
-      xTo(0);
-      yTo(0);
-    };
-
-    card.addEventListener('mousemove', handleMouseMove);
-    card.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      card.removeEventListener('mousemove', handleMouseMove);
-      card.removeEventListener('mouseleave', handleMouseLeave);
-      gsap.set(card, { rotationX: 0, rotationY: 0 });
-    };
-  }, []);
 
   // 2. Elegant Content Morph Transition via GSAP (Crossfade, Blur, Shimmer, Stagger)
   const toggleView = () => {
@@ -166,12 +124,16 @@ export const FinalCta: React.FC = () => {
         {/* =================================================================
             HORIZONTAL OPTICAL LIQUID GLASS BUSINESS CARD (ASPECT ~1.75:1)
             Single Plane Content Morph with 3D Mouse Tracking & Refractive Edge
+            Using OpticalGlassSurface (SVG Displacement + Fresnel Specular)
             ================================================================= */}
         <div className="perspective-1000 flex justify-center mb-8">
-          <div
-            ref={cardRef}
-            className="relative w-full max-w-[580px] aspect-[1.75/1] min-h-[300px] rounded-[32px] p-6 sm:p-8 ms-liquid-glass ms-liquid-glass--strong shadow-glass-volumetric overflow-hidden select-none transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(0,201,167,0.35)]"
-            style={{ transformStyle: 'preserve-3d' }}
+          <OpticalGlassSurface
+            intensity="medium"
+            interactive={true}
+            specular={true}
+            chromaticFringe={true}
+            className="w-full max-w-[580px] aspect-[1.75/1] min-h-[300px] p-6 sm:p-8 shadow-glass-volumetric cursor-pointer"
+            onClick={toggleView}
           >
             {/* Dynamic Glass Reflection Highlight */}
             <span
@@ -363,7 +325,7 @@ export const FinalCta: React.FC = () => {
               </div>
             </div>
 
-          </div>
+          </OpticalGlassSurface>
         </div>
 
         {/* Quick Action Pill Controls */}

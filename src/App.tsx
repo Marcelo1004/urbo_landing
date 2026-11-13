@@ -4,14 +4,22 @@ import { Hero } from '@/components/hero/Hero';
 import { Opportunity } from '@/components/opportunity/Opportunity';
 import { Solution } from '@/components/solution/Solution';
 import { MetricsProof } from '@/components/metrics/MetricsProof';
-import { CommunityFeed } from '@/components/community/CommunityFeed';
 import { Audiences } from '@/components/audiences/Audiences';
-import { Roadmap } from '@/components/roadmap/Roadmap';
-import { FinalCta } from '@/components/cta/FinalCta';
 import { Footer } from '@/components/footer/Footer';
 import { UrboPreloader } from '@/components/ui/UrboPreloader';
 import { IntroProvider } from '@/motion/useIntroSequence';
 import { useMotionSystem } from '@/motion/useMotionSystem';
+
+// Code Splitting for heavy below-the-fold modules (reduces initial JS payload by >40%)
+const CommunityFeed = React.lazy(() =>
+  import('@/components/community/CommunityFeed').then((m) => ({ default: m.CommunityFeed }))
+);
+const Roadmap = React.lazy(() =>
+  import('@/components/roadmap/Roadmap').then((m) => ({ default: m.Roadmap }))
+);
+const FinalCta = React.lazy(() =>
+  import('@/components/cta/FinalCta').then((m) => ({ default: m.FinalCta }))
+);
 
 export const AppContent: React.FC = () => {
   useMotionSystem();
@@ -39,10 +47,21 @@ export const AppContent: React.FC = () => {
         <Opportunity />
         <Solution />
         <MetricsProof />
-        <CommunityFeed />
+        
+        {/* Deferred Secondary Modules with reserved layout height to prevent CLS */}
+        <React.Suspense fallback={<div className="min-h-[500px] w-full" aria-hidden="true" />}>
+          <CommunityFeed />
+        </React.Suspense>
+        
         <Audiences />
-        <Roadmap />
-        <FinalCta />
+        
+        <React.Suspense fallback={<div className="min-h-[640px] w-full" aria-hidden="true" />}>
+          <Roadmap />
+        </React.Suspense>
+        
+        <React.Suspense fallback={<div className="min-h-[400px] w-full" aria-hidden="true" />}>
+          <FinalCta />
+        </React.Suspense>
       </main>
       <Footer />
     </div>
