@@ -16,27 +16,31 @@
 
 :root, .dark, [data-theme="dark"] {
   --font-display: "SD Dystopian", "Syne", sans-serif;
-  --navy-bg: #070B14;
-  --navy-base: #0B1426;
-  --navy-surface: #0F1C35;
-  --navy-elevated: #162444;
+  --navy-bg: #0F1D36;
+  --navy-base: #0F1D36;
+  --navy-surface: #162444;
+  --navy-elevated: #1B2A47;
+  --cream-bg: #FAF5EC;
   
-  --teal-primary: #00C9A7;
-  --teal-bright: #00E5BE;
-  --teal-deep: #008F77;
-  --amber-accent: #F4C430;
-  --radioactive-green: #A6FF00;
-  --radioactive-bright: #B8FF21;
+  --emerald-primary: #10B981;
+  --emerald-bright: #34D399;
+  --emerald-deep: #059669;
+  --teal-primary: #10B981;
+  --teal-bright: #34D399;
+  --teal-deep: #059669;
+  --amber-accent: #F59E0B;
+  --radioactive-green: #10B981;
+  --radioactive-bright: #34D399;
   
   --text-primary: #FFFFFF;
   --text-secondary: #94A3B8;
   --text-muted: #64748B;
   
-  --glass-fill: rgba(11, 20, 38, 0.45);
-  --glass-fill-elevated: rgba(15, 28, 53, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.09);
-  --glass-border-bright: rgba(0, 201, 167, 0.35);
-  --glass-highlight: rgba(255, 255, 255, 0.18);
+  --glass-fill: rgba(15, 29, 54, 0.65);
+  --glass-fill-elevated: rgba(22, 36, 68, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-bright: rgba(16, 185, 129, 0.45);
+  --glass-highlight: rgba(255, 255, 255, 0.25);
   --glass-blur: 24px;
 }
 
@@ -110,13 +114,13 @@ section, [id] {
   gap: 8px;
   cursor: pointer;
   text-decoration: none;
-  background: linear-gradient(180deg, #00E5BE 0%, #00C9A7 50%, #008F77 100%);
+  background: linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%);
   color: #070B14;
   font-weight: 700;
   box-shadow: 
     inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
-    0 0 25px rgba(0, 229, 190, 0.35),
-    0 10px 25px -5px rgba(0, 201, 167, 0.3);
+    0 0 25px rgba(16, 185, 129, 0.4),
+    0 10px 25px -5px rgba(16, 185, 129, 0.35);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, filter 0.3s ease;
 }
 

@@ -14,6 +14,9 @@ import { useMotionSystem } from '@/motion/useMotionSystem';
 const CommunityFeed = React.lazy(() =>
   import('@/components/community/CommunityFeed').then((m) => ({ default: m.CommunityFeed }))
 );
+const InstagramGallery = React.lazy(() =>
+  import('@/components/instagram/InstagramGallery').then((m) => ({ default: m.InstagramGallery }))
+);
 const Roadmap = React.lazy(() =>
   import('@/components/roadmap/Roadmap').then((m) => ({ default: m.Roadmap }))
 );
@@ -54,6 +57,10 @@ export const AppContent: React.FC = () => {
         </React.Suspense>
         
         <Audiences />
+        
+        <React.Suspense fallback={<div className="min-h-[480px] w-full" aria-hidden="true" />}>
+          <InstagramGallery />
+        </React.Suspense>
         
         <React.Suspense fallback={<div className="min-h-[640px] w-full" aria-hidden="true" />}>
           <Roadmap />

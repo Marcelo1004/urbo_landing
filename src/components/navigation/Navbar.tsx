@@ -71,6 +71,7 @@ export const Navbar: React.FC = () => {
     { label: 'Solución', href: '#solucion' },
     { label: 'Piloto', href: '#piloto' },
     { label: 'Beneficiarios', href: '#audiencias' },
+    { label: 'Instagram', href: '#instagram' },
     { label: 'Roadmap', href: '#roadmap' },
   ];
 

@@ -4,15 +4,14 @@ import {
   Radio, 
   Zap, 
   ShieldCheck, 
-  Sparkles, 
   LayoutDashboard, 
   Volume2, 
-  Smartphone, 
   Check, 
   ArrowRight,
-  Navigation
+  Wifi,
+  Sparkles
 } from 'lucide-react';
-import { GlassSurface, GlassBadge, GlassButton, OpticalGlass, LiquidGlass } from '@/components/ui/Glass';
+import { GlassBadge } from '@/components/ui/Glass';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -31,7 +30,6 @@ export const Solution: React.FC = () => {
     setTimeout(() => setVoiceTesting(false), 2400);
   };
 
-  // Tab transition using GSAP (pure transform & opacity)
   const handleTabChange = (newTab: 'esperar' | 'rutas' | 'seguridad') => {
     if (newTab === activeTab) return;
     if (tabContentRef.current) {
@@ -118,59 +116,61 @@ export const Solution: React.FC = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="solucion" className="relative py-20 lg:py-28 overflow-hidden">
+    <section 
+      ref={sectionRef} 
+      id="solucion" 
+      className="relative py-20 lg:py-28 overflow-hidden bg-[#FAF5EC] text-[#0F1D36] transition-colors duration-300"
+    >
       {/* Anchor alias */}
       <span id="como-funciona" className="absolute -top-32" />
 
       {/* Atmospheric lighting */}
       <div
         aria-hidden="true"
-        className="absolute top-1/4 right-0 w-[600px] h-[600px] rounded-full bg-urbo-teal/15 blur-[170px] pointer-events-none"
+        className="absolute top-1/4 right-0 w-[550px] h-[550px] rounded-full bg-emerald-500/5 blur-[160px] pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute bottom-1/4 -left-32 w-[550px] h-[550px] rounded-full bg-urbo-amber/10 blur-[160px] pointer-events-none"
+        className="absolute bottom-1/4 -left-32 w-[500px] h-[500px] rounded-full bg-[#0F1D36]/5 blur-[150px] pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="solution-header max-w-3xl mb-14 sm:mb-16">
-          <GlassBadge variant="teal" className="mb-5">
-            TECNOLOGÍA DE MOVILIDAD
-          </GlassBadge>
+        <div className="solution-header max-w-3xl mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0F1D36]/5 border border-[#0F1D36]/15 text-[#0F1D36] text-xs font-mono font-semibold tracking-wider uppercase mb-5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>TECNOLOGÍA DE MOVILIDAD</span>
+          </div>
 
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.08] mb-5 font-tech">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0F1D36] tracking-tight leading-[1.08] mb-5 font-tech">
             Menos tiempo en la esquina.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-urbo-teal2 via-urbo-teal to-teal-400 font-tech">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-700 to-[#0F1D36] font-tech">
               Más control en tu viaje.
             </span>
           </h2>
 
-          <p className="text-base sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+          <p className="text-base sm:text-xl text-[#2B3B55] leading-relaxed font-normal">
             Una plataforma diseñada para la realidad urbana de Santa Cruz: simple para el pasajero, segura y con manos libres para el chofer, y transparente para las líneas.
           </p>
         </div>
 
         {/* =================================================================
-            HERO INNOVATION SHOWCASE: MODO "ESPERAR AQUÍ" (WITH GSAP TABS)
+            HERO INNOVATION SHOWCASE: MODO "ESPERAR AQUÍ" (PROTAGONIST CARD)
+            Deep Navy #0F1D36 Luxury Cockpit over Cream Canvas
             ================================================================= */}
-        <div className="solution-hero-glass">
-          <GlassSurface
-            variant="amber"
-            specular
-            className="p-6 sm:p-10 mb-14 relative overflow-hidden"
-          >
+        <div className="solution-hero-glass mb-14">
+          <div className="p-6 sm:p-10 rounded-3xl bg-[#0F1D36] border border-white/12 shadow-2xl relative overflow-hidden text-white">
             {/* Interactive Tab Switcher */}
-            <div className="flex items-center gap-2 mb-8 bg-black/10 dark:bg-white/5 p-1 rounded-full border border-slate-200/50 dark:border-white/10 w-fit">
+            <div className="flex items-center gap-2 mb-8 bg-white/5 p-1 rounded-full border border-white/10 w-fit">
               <button
                 type="button"
                 onClick={() => handleTabChange('esperar')}
                 className={cn(
                   'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
                   activeTab === 'esperar'
-                    ? 'bg-urbo-amber text-slate-950 shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-amber-400 text-slate-950 shadow-md'
+                    : 'text-slate-300 hover:text-white'
                 )}
               >
                 Modo Esperar Aquí
@@ -181,8 +181,8 @@ export const Solution: React.FC = () => {
                 className={cn(
                   'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
                   activeTab === 'rutas'
-                    ? 'bg-urbo-amber text-slate-950 shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-amber-400 text-slate-950 shadow-md'
+                    : 'text-slate-300 hover:text-white'
                 )}
               >
                 Telemetría 300m
@@ -193,8 +193,8 @@ export const Solution: React.FC = () => {
                 className={cn(
                   'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
                   activeTab === 'seguridad'
-                    ? 'bg-urbo-amber text-slate-950 shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-amber-400 text-slate-950 shadow-md'
+                    : 'text-slate-300 hover:text-white'
                 )}
               >
                 Cero Distracciones
@@ -205,18 +205,18 @@ export const Solution: React.FC = () => {
               
               {/* Left: Explanation */}
               <div className="lg:col-span-7">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-urbo-amber/15 border border-urbo-amber/30 text-amber-700 dark:text-urbo-amber text-xs font-mono font-bold tracking-wider uppercase mb-5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 text-xs font-mono font-bold tracking-wider uppercase mb-5">
                   <BellRing className="w-3.5 h-3.5" />
                   <span>INNOVACIÓN EXCLUSIVA DE URBO</span>
                 </div>
 
-                <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-4">
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
                   {activeTab === 'esperar' && 'Modo "Esperar Aquí"'}
                   {activeTab === 'rutas' && 'Alerta Acústica a 300 Metros'}
                   {activeTab === 'seguridad' && 'Conducción 100% Segura'}
                 </h3>
 
-                <p className="text-base sm:text-lg text-slate-700 dark:text-slate-200 leading-relaxed mb-6">
+                <p className="text-base sm:text-lg text-slate-300 leading-relaxed mb-6 font-normal">
                   {activeTab === 'esperar' &&
                     'El pasajero toca un botón en su celular al llegar a la parada. El chofer recibe una alerta de voz nítida y automática exactamente a 300 metros de distancia:'}
                   {activeTab === 'rutas' &&
@@ -225,55 +225,53 @@ export const Solution: React.FC = () => {
                     'El chofer mantiene ambas manos en el volante y la mirada en el asfalto. No hay pantallas brillantes ni mensajes de texto invasivos durante la marcha.'}
                 </p>
 
-                {/* Hands-Free Voice Capsule */}
+                {/* Hands-Free Voice Capsule Button */}
                 <div
                   onClick={handleTestVoice}
-                  className="optical-glass-surface rounded-2xl p-5 border-amber-500/30 dark:border-urbo-amber/40 cursor-pointer select-none mb-6 hover:border-urbo-amber transition-all shadow-md"
+                  className="rounded-2xl p-5 bg-[#1B2A47] border border-amber-400/40 cursor-pointer select-none mb-6 hover:border-amber-400 transition-all shadow-xl"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 text-xs font-mono text-amber-700 dark:text-urbo-amber font-bold uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">
                       <Volume2 className={cn('w-4 h-4', voiceTesting && 'animate-bounce')} />
                       <span>Aviso por voz manos libres al chofer</span>
                     </div>
                     {/* Wave Visualizer */}
                     <div className="flex items-center gap-1 h-3">
-                      <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-1' : 'h-1')} />
-                      <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-2' : 'h-2')} />
-                      <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-3' : 'h-3')} />
-                      <span className={cn('w-1 bg-urbo-amber rounded-full', voiceTesting ? 'audio-bar-4' : 'h-1.5')} />
+                      <span className={cn('w-1 bg-amber-400 rounded-full', voiceTesting ? 'audio-bar-1' : 'h-1')} />
+                      <span className={cn('w-1 bg-amber-400 rounded-full', voiceTesting ? 'audio-bar-2' : 'h-2')} />
+                      <span className={cn('w-1 bg-amber-400 rounded-full', voiceTesting ? 'audio-bar-3' : 'h-3')} />
+                      <span className={cn('w-1 bg-amber-400 rounded-full', voiceTesting ? 'audio-bar-4' : 'h-1.5')} />
                     </div>
                   </div>
 
-                  <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight font-sans">
+                  <div className="text-lg sm:text-xl font-bold text-white tracking-tight font-sans">
                     &ldquo;Pasajero esperando, mano derecha.&rdquo;
                   </div>
 
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-200 dark:border-white/10 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10 text-xs text-slate-400 font-mono">
                     <span>0 distracciones · El chofer no toca el teléfono</span>
-                    <span className="text-amber-600 dark:text-urbo-amber font-semibold">Toca para reproducir</span>
+                    <span className="text-amber-400 font-semibold">Toca para reproducir</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-300">
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-urbo-amber flex-shrink-0" />
+                    <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                     <span>El chofer frena con tiempo y seguro</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-urbo-amber flex-shrink-0" />
-                    <span>El pasajero nunca se queda varado</span>
+                    <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <span>El pasajero sube sin correr peligro</span>
                   </div>
                 </div>
               </div>
 
-              {/* Right: Interactive Driver Cockpit View */}
+              {/* Right: Driver Cockpit Preview Card */}
               <div className="lg:col-span-5 flex justify-center">
-                <OpticalGlass
-                  ambientSheen
-                  className="w-full max-w-[360px] p-6 rounded-3xl border-white/20 text-left relative overflow-hidden shadow-xl"
-                >
-                  <div className="text-xs font-mono uppercase text-slate-400 mb-1">
-                    COCKPIT DEL CHOFER · EN RUTA
+                <div className="w-full max-w-[360px] p-6 rounded-3xl bg-[#16253F] border border-white/15 text-left relative overflow-hidden shadow-2xl">
+                  <div className="text-xs font-mono uppercase text-slate-400 mb-1 flex items-center justify-between">
+                    <span>COCKPIT DEL CHOFER</span>
+                    <span className="text-emerald-400 font-bold">EN RUTA</span>
                   </div>
                   <div className="text-lg font-bold text-white mb-4">
                     LÍNEA 30 · INT 32
@@ -282,16 +280,16 @@ export const Solution: React.FC = () => {
                   <div className="space-y-3">
                     <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
                       <div className="text-[11px] text-slate-400 font-mono">DISTANCIA A LA PARADA</div>
-                      <div className="text-2xl font-black font-tech text-urbo-teal2">300 m</div>
+                      <div className="text-2xl font-black font-tech text-emerald-400">300 m</div>
                       <div className="text-xs text-slate-300 mt-0.5">Av. Banzer y 2do Anillo</div>
                     </div>
 
-                    <div className="p-3.5 rounded-xl bg-urbo-amber/15 border border-urbo-amber/30">
-                      <div className="flex items-center justify-between text-xs font-mono text-urbo-amber font-bold">
+                    <div className="p-3.5 rounded-xl bg-amber-400/15 border border-amber-400/30">
+                      <div className="flex items-center justify-between text-xs font-mono text-amber-300 font-bold">
                         <span>ESTADO DEL AVISO</span>
                         <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-urbo-amber opacity-75" />
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-urbo-amber" />
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
                         </span>
                       </div>
                       <div className="text-sm font-semibold text-white mt-1">
@@ -301,96 +299,91 @@ export const Solution: React.FC = () => {
 
                     <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs font-mono text-slate-300">
                       <span>Modo conducción segura</span>
-                      <span className="text-urbo-teal2 font-bold">ACTIVO</span>
+                      <span className="text-emerald-400 font-bold">ACTIVO</span>
                     </div>
                   </div>
-                </OpticalGlass>
+                </div>
               </div>
 
             </div>
-          </GlassSurface>
+          </div>
         </div>
 
         {/* =================================================================
-            EDITORIAL SYSTEM SHOWCASE: 4 SUPPORTING PILLARS
+            BREAK REPETITIVE PATTERN: 2 FEATURED CARDS + 2 COMPACT PILLARS
             ================================================================= */}
-        <div className="solution-pillars-grid grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+        <div className="solution-pillars-grid grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           
-          {/* Pillar 1: GPS en tiempo real */}
-          <GlassSurface variant="surface" interactive specular className="solution-pillar-card p-7 sm:p-8 flex flex-col justify-between">
+          {/* Card A: GPS en tiempo real */}
+          <div className="solution-pillar-card p-7 sm:p-8 rounded-3xl bg-white border border-[#0F1D36]/10 shadow-[0_10px_35px_rgba(15,29,54,0.06)] hover:shadow-[0_15px_45px_rgba(15,29,54,0.12)] transition-all flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 mb-5">
                 <Radio className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
+              <h3 className="text-xl font-bold text-[#0F1D36] mb-3">
                 GPS en tiempo real y mapa en vivo
               </h3>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+              <p className="text-sm sm:text-base text-[#374A67] leading-relaxed font-normal">
                 Visualización fluida de los micros acercándose en el mapa. Cálculo exacto de minutos y metros restantes para salir de casa justo a tiempo. Actualización constante con optimización extrema de batería y consumo de datos móviles.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/5 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
+            <div className="pt-5 mt-5 border-t border-[#0F1D36]/10 flex items-center justify-between text-xs font-mono text-[#374A67]">
               <span>Telemetría de baja latencia</span>
-              <span className="text-urbo-teal2 font-bold">ACTUALIZACIÓN CONTINUA</span>
+              <span className="text-emerald-600 font-bold">ACTUALIZACIÓN CONTINUA</span>
             </div>
-          </GlassSurface>
+          </div>
 
-          {/* Pillar 2: Rutas inteligentes & Eficiencia */}
-          <GlassSurface variant="surface" interactive specular className="solution-pillar-card p-7 sm:p-8 flex flex-col justify-between">
+          {/* Card B: Dashboard institucional para la línea */}
+          <div className="solution-pillar-card p-7 sm:p-8 rounded-3xl bg-white border border-[#0F1D36]/10 shadow-[0_10px_35px_rgba(15,29,54,0.06)] hover:shadow-[0_15px_45px_rgba(15,29,54,0.12)] transition-all flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 mb-6">
-                <Zap className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-                Rutas más inteligentes
-              </h3>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                Algoritmos que aprenden los cuellos de botella históricos de Santa Cruz (horas pico en rotondas y anillos), sugiriendo al chofer el ritmo de avance óptimo para evitar quemar diésel en paradas desiertas.
-              </p>
-            </div>
-            <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/5 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
-              <span>Optimización de recorrido</span>
-              <span className="text-urbo-teal2 font-bold">MENOS COMBUSTIBLE</span>
-            </div>
-          </GlassSurface>
-
-          {/* Pillar 3: Seguridad urbana nocturna */}
-          <GlassSurface variant="surface" interactive specular className="solution-pillar-card p-7 sm:p-8 flex flex-col justify-between">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 mb-6">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-                Seguridad urbana y tranquilidad familiar
-              </h3>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                Permite compartir el recorrido en vivo con tu familia en cualquier horario, especialmente de noche. Saben en qué interno viajas y a qué hora desciendes en tu parada, reduciendo el riesgo en esquinas oscuras.
-              </p>
-            </div>
-            <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/5 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
-              <span>Tranquilidad en traslados</span>
-              <span className="text-urbo-teal2 font-bold">VIAJE COMPARTIDO</span>
-            </div>
-          </GlassSurface>
-
-          {/* Pillar 4: Dashboard y Puntos aliados */}
-          <GlassSurface variant="surface" interactive specular className="solution-pillar-card p-7 sm:p-8 flex flex-col justify-between">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-urbo-teal/15 border border-urbo-teal/25 flex items-center justify-center text-urbo-teal2 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 mb-5">
                 <LayoutDashboard className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-                Dashboard de línea y sistema de puntos
+              <h3 className="text-xl font-bold text-[#0F1D36] mb-3">
+                Dashboard de línea y gestión de flota
               </h3>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                Las directivas acceden a un panel en vivo para auditar frecuencias, vueltas completadas y mapas de calor. A la vez, pasajeros y choferes acumulan puntos canjeables en talleres, llanterías y comercios del recorrido.
+              <p className="text-sm sm:text-base text-[#374A67] leading-relaxed font-normal">
+                La directiva visualiza toda su flota en vivo, regularidad de frecuencias, mapa de calor de pasajeros y métricas con evidencia documentada para gestiones con el municipio y control de vueltas completadas.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-slate-200 dark:border-white/5 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
+            <div className="pt-5 mt-5 border-t border-[#0F1D36]/10 flex items-center justify-between text-xs font-mono text-[#374A67]">
               <span>Gestión institucional</span>
-              <span className="text-urbo-teal2 font-bold">ALIANZAS LOCALES</span>
+              <span className="text-emerald-600 font-bold">CONTROL DE FLOTA</span>
             </div>
-          </GlassSurface>
+          </div>
+
+        </div>
+
+        {/* 2 Compact Feature Strips */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div className="solution-pillar-card p-6 rounded-2xl bg-white/70 border border-[#0F1D36]/10 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
+            <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 flex-shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-[#0F1D36] mb-1">
+                Seguridad urbana y tranquilidad familiar
+              </h4>
+              <p className="text-xs text-[#374A67] leading-relaxed">
+                Seguimiento de viaje compartido con familiares en traslados nocturnos para saber en qué interno viajas.
+              </p>
+            </div>
+          </div>
+
+          <div className="solution-pillar-card p-6 rounded-2xl bg-white/70 border border-[#0F1D36]/10 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
+            <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 flex-shrink-0">
+              <Zap className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-[#0F1D36] mb-1">
+                Rutas más inteligentes y ahorro diésel
+              </h4>
+              <p className="text-xs text-[#374A67] leading-relaxed">
+                Anticipación de cuellos de botella en anillos y rotondas para reducir combustible quemado en vacío.
+              </p>
+            </div>
+          </div>
 
         </div>
 

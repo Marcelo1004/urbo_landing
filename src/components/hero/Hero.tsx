@@ -142,13 +142,6 @@ export const Hero: React.FC = () => {
             { opacity: 0, y: 12 },
             { opacity: 1, y: 0, stagger: 0.06, duration: 0.42, ease: motion.ease.enter },
             0.55
-          )
-        // Stage 8: Specular light beam sweep across the glass cockpit
-          .fromTo(
-            '.cockpit-specular-sweep',
-            { x: '-120%', opacity: 0 },
-            { x: '220%', opacity: 0.7, duration: 0.75, ease: motion.ease.transition },
-            0.65
           );
 
         // Magnetic hover on primary action button (Desktop mouse only)
@@ -187,6 +180,7 @@ export const Hero: React.FC = () => {
   return (
     <section
       ref={heroRef}
+      id="inicio"
       className="relative min-h-[720px] lg:min-h-[820px] pt-28 sm:pt-36 pb-16 lg:pb-24 flex items-center justify-center overflow-hidden scz-transit-grid"
     >
       {/* Ambient Lighting Orbs with continuous gentle breathing */}
@@ -283,27 +277,22 @@ export const Hero: React.FC = () => {
 
           {/* =================================================================
               RIGHT: REAL CARTOGRAPHIC MAP COCKPIT (CASCO VIEJO SANTA CRUZ)
+              Refined High-Contrast Navy Chassis (Zero glare, clear cartography)
               ================================================================= */}
           <div ref={mapColRef} className="lg:col-span-5 relative w-full flex flex-col items-center">
             
-            {/* Real Map Canvas Container with Floating Liquid Glass Controls */}
-            <div className="w-full max-w-[460px] aspect-[4/5] rounded-[36px] p-2 sm:p-2.5 ms-liquid-glass ms-liquid-glass--strong shadow-glass-volumetric relative overflow-hidden">
+            {/* Real Map Canvas Container (Deep Navy #0F1D36, crystal clear cartography) */}
+            <div className="w-full max-w-[480px] aspect-[4/5] rounded-[34px] p-2 sm:p-2.5 bg-[#0F1D36] border border-white/15 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] relative overflow-hidden">
               
-              {/* Specular Light Sweep Overlay */}
-              <div
-                aria-hidden="true"
-                className="cockpit-specular-sweep pointer-events-none absolute -inset-y-12 w-32 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] z-30"
-              />
-              
-              {/* Vehicle Selector Pills Floating Bar */}
-              <div className="hero-map-overlay absolute top-5 right-5 z-20 flex items-center bg-slate-950/80 border border-white/15 rounded-full p-1 backdrop-blur-xl shadow-lg">
+              {/* Vehicle Selector Floating Bar */}
+              <div className="hero-map-overlay absolute top-4 right-4 z-20 flex items-center bg-[#0F1D36]/90 border border-white/15 rounded-full p-1 backdrop-blur-xl shadow-lg">
                 <button
                   type="button"
                   onClick={() => setActiveBus('32')}
                   className={cn(
                     'px-3 py-1 rounded-full text-xs font-mono font-bold transition-all',
                     activeBus === '32'
-                      ? 'bg-urbo-teal text-slate-950 shadow-sm'
+                      ? 'bg-emerald-400 text-slate-950 shadow-sm'
                       : 'text-slate-400 hover:text-white'
                   )}
                 >
@@ -315,7 +304,7 @@ export const Hero: React.FC = () => {
                   className={cn(
                     'px-3 py-1 rounded-full text-xs font-mono font-bold transition-all',
                     activeBus === '58'
-                      ? 'bg-urbo-teal text-slate-950 shadow-sm'
+                      ? 'bg-emerald-400 text-slate-950 shadow-sm'
                       : 'text-slate-400 hover:text-white'
                   )}
                 >
@@ -327,30 +316,29 @@ export const Hero: React.FC = () => {
               <CascoViejoMap
                 activeBus={activeBus}
                 onBusSelect={setActiveBus}
-                onMapReady={() => setMapReady(true)}
               />
 
               {/* Hands-Free Voice Alert Demo Pill (Interactive Test Button) */}
               <div
                 onClick={triggerVoiceDemo}
-                className="hero-map-overlay absolute top-16 left-5 z-20 cursor-pointer select-none max-w-[260px] liquid-glass-amber p-2.5 rounded-2xl border-urbo-amber/40 shadow-lg hover:border-urbo-amber transition-all"
+                className="hero-map-overlay absolute top-16 left-4 z-20 cursor-pointer select-none max-w-[250px] bg-[#0F1D36]/95 p-2.5 rounded-2xl border border-amber-400/40 shadow-xl hover:border-amber-400 transition-all backdrop-blur-md"
               >
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-urbo-amber font-bold uppercase">
-                    <Volume2 className={cn('w-3.5 h-3.5', isPlayingVoice && 'animate-bounce')} />
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-400 font-bold uppercase">
+                    <Volume2 className={cn('w-3.5 h-3.5 text-amber-400', isPlayingVoice && 'animate-bounce')} />
                     <span>AVISO POR VOZ A 300M</span>
                   </div>
                   {/* Wave bar animation */}
                   <div className="flex items-center gap-0.5 h-2.5">
-                    <span className={cn('w-0.5 bg-urbo-amber rounded-full', isPlayingVoice ? 'audio-bar-1' : 'h-1')} />
-                    <span className={cn('w-0.5 bg-urbo-amber rounded-full', isPlayingVoice ? 'audio-bar-2' : 'h-2')} />
-                    <span className={cn('w-0.5 bg-urbo-amber rounded-full', isPlayingVoice ? 'audio-bar-3' : 'h-1.5')} />
+                    <span className={cn('w-0.5 bg-amber-400 rounded-full', isPlayingVoice ? 'audio-bar-1' : 'h-1')} />
+                    <span className={cn('w-0.5 bg-amber-400 rounded-full', isPlayingVoice ? 'audio-bar-2' : 'h-2')} />
+                    <span className={cn('w-0.5 bg-amber-400 rounded-full', isPlayingVoice ? 'audio-bar-3' : 'h-1.5')} />
                   </div>
                 </div>
-                <div className="text-[11px] font-semibold text-slate-900 dark:text-white leading-tight">
+                <div className="text-[11px] font-semibold text-white leading-tight">
                   &ldquo;Pasajero esperando, mano derecha.&rdquo;
                 </div>
-                <div className="text-[9px] text-urbo-amber font-mono mt-1">
+                <div className="text-[9px] text-amber-300 font-mono mt-1">
                   Toca para reproducir demo
                 </div>
               </div>

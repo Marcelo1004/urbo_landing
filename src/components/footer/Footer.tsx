@@ -28,13 +28,16 @@ export const Footer: React.FC = () => {
               <a href="#piloto" className="hover:text-urbo-teal2 transition-colors">Piloto</a>
             </li>
             <li>
-              <a href="#audiencias" className="hover:text-urbo-teal2 transition-colors">Beneficiarios</a>
+              <a href="#audiencias" className="hover:text-emerald-400 transition-colors">Beneficiarios</a>
             </li>
             <li>
-              <a href="#roadmap" className="hover:text-urbo-teal2 transition-colors">Roadmap</a>
+              <a href="#instagram" className="hover:text-emerald-400 transition-colors">Instagram</a>
             </li>
             <li>
-              <a href="#contacto" className="hover:text-urbo-teal2 transition-colors">Contacto</a>
+              <a href="#roadmap" className="hover:text-emerald-400 transition-colors">Roadmap</a>
+            </li>
+            <li>
+              <a href="#contacto" className="hover:text-emerald-400 transition-colors">Contacto</a>
             </li>
           </ul>
 

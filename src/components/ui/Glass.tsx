@@ -242,7 +242,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({
    GLASS BADGE
    ========================================================================== */
 export interface GlassBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'teal' | 'amber' | 'radioactive' | 'neutral';
+  variant?: 'teal' | 'amber' | 'radioactive' | 'neutral' | 'emerald' | 'emerald-dark';
   dot?: boolean;
   pulse?: boolean;
   children: React.ReactNode;
@@ -260,6 +260,14 @@ export const GlassBadge: React.FC<GlassBadgeProps> = ({
     teal: {
       container: 'bg-urbo-teal/10 border-urbo-teal/30 text-urbo-teal2 shadow-[0_0_15px_-4px_rgba(0,201,167,0.35)]',
       dot: 'bg-urbo-teal2',
+    },
+    emerald: {
+      container: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_-4px_rgba(16,185,129,0.35)]',
+      dot: 'bg-emerald-400',
+    },
+    'emerald-dark': {
+      container: 'bg-emerald-950/60 border-emerald-500/40 text-emerald-700 shadow-sm',
+      dot: 'bg-emerald-600',
     },
     amber: {
       container: 'bg-urbo-amber/10 border-urbo-amber/35 text-urbo-amber shadow-[0_0_15px_-4px_rgba(244,196,48,0.35)]',
