@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { GlassBadge } from '@/components/ui/Glass';
 import { UrboLogo } from '@/components/ui/UrboLogo';
-import { UrboCityScene3D } from './UrboCityScene3D';
+import { UrboNavMap3D } from './UrboNavMap3D';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -166,8 +166,8 @@ export const CinematicHero: React.FC = () => {
         ref={stageRef}
         className="sticky top-0 h-screen h-[100dvh] w-full overflow-hidden bg-[#070B14] flex flex-col justify-between select-none"
       >
-        {/* Three.js Nocturnal Santa Cruz Isometric City Canvas */}
-        <UrboCityScene3D scrollProgress={scrollProgress} />
+        {/* MapLibre GL 3D Urban Navigation Canvas (Google Maps 3D style) */}
+        <UrboNavMap3D scrollProgress={scrollProgress} />
 
         {/* Top Scrim Gradient */}
         <div
@@ -207,7 +207,7 @@ export const CinematicHero: React.FC = () => {
         {/* Dynamic Center Stage Overlays (Narrative Chapters) */}
         <div className="relative z-20 flex-1 flex flex-col justify-center items-center px-4 md:px-8 text-center pointer-events-none">
           {/* Chapter 0: Editorial Hero Headline with SD Dystopian Cyberpunk Brand */}
-          <div className="hero-title-group max-w-3xl flex flex-col items-center">
+          <div className="hero-title-group max-w-3xl flex flex-col items-center -mt-6 sm:-mt-12">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00C9A7]/10 border border-[#00C9A7]/30 text-[#00E5BE] text-xs font-mono font-bold tracking-widest uppercase mb-4 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5" />
               <span>CIUDAD 3D EN TIEMPO REAL · SANTA CRUZ</span>
@@ -230,8 +230,8 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Chapter 1 Card: La Incertidumbre & Casco Viejo (20% - 50%) */}
-          <div className="chapter-card-1 absolute max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/90 backdrop-blur-xl border border-white/10 text-left shadow-2xl pointer-events-auto">
+          {/* Chapter 1 Card: La Incertidumbre & Casco Viejo (Docked Left to leave 3D street & beacon open) */}
+          <div className="chapter-card-1 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/92 backdrop-blur-xl border border-white/10 text-left shadow-2xl pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#F4C430] flex items-center gap-1.5 font-bold">
                 <Activity className="w-3.5 h-3.5" />
@@ -247,8 +247,8 @@ export const CinematicHero: React.FC = () => {
             </p>
           </div>
 
-          {/* Chapter 2 Card: Monumento Cristo Redentor (52% - 80%) */}
-          <div className="chapter-card-2 absolute max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/90 backdrop-blur-xl border border-[#00E5BE]/40 text-left shadow-2xl pointer-events-auto">
+          {/* Chapter 2 Card: Monumento Cristo Redentor (Docked Left to leave 3D street & beacon open) */}
+          <div className="chapter-card-2 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/92 backdrop-blur-xl border border-[#00E5BE]/40 text-left shadow-2xl pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#00E5BE] flex items-center gap-1.5 font-bold">
                 <Radio className="w-3.5 h-3.5" />

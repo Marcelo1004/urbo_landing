@@ -543,6 +543,78 @@ body {
   animation: lightSweep 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
+/* ==========================================================================
+   STAR WARS VOLUMETRIC HOLOGRAM SYSTEM
+   ========================================================================== */
+
+@keyframes holoFlicker {
+  0% { opacity: 0.97; filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.4)) contrast(1.02); }
+  15% { opacity: 1; filter: drop-shadow(0 0 25px rgba(0, 229, 190, 0.6)) contrast(1.05); }
+  22% { opacity: 0.94; filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.45)) contrast(1); }
+  25% { opacity: 1; filter: drop-shadow(0 0 28px rgba(0, 229, 190, 0.65)) contrast(1.08); }
+  55% { opacity: 0.98; filter: drop-shadow(0 0 22px rgba(56, 189, 248, 0.5)) contrast(1.03); }
+  72% { opacity: 0.93; filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.4)) contrast(0.98); }
+  76% { opacity: 1; filter: drop-shadow(0 0 30px rgba(0, 229, 190, 0.7)) contrast(1.08); }
+  100% { opacity: 0.97; filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.4)) contrast(1.02); }
+}
+
+@keyframes holoScanlines {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+@keyframes holoBeamPulse {
+  0%, 100% { opacity: 0.6; transform: scaleY(1); }
+  50% { opacity: 0.85; transform: scaleY(1.05); }
+}
+
+@keyframes gpsAuraPulse {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  50% { transform: scale(1.4); opacity: 0.25; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.star-wars-hologram {
+  position: relative;
+  animation: holoFlicker 3.5s ease-in-out infinite;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  box-shadow: 
+    0 0 30px rgba(56, 189, 248, 0.25),
+    0 0 60px rgba(0, 229, 190, 0.15),
+    inset 0 0 30px rgba(56, 189, 248, 0.12);
+}
+
+.star-wars-hologram::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(56, 189, 248, 0.08) 0px,
+    rgba(56, 189, 248, 0.08) 1px,
+    transparent 2px,
+    transparent 5px
+  );
+  background-size: 100% 5px;
+  animation: holoScanlines 8s linear infinite;
+  z-index: 1;
+}
+
+.holo-emitter-cone {
+  position: absolute;
+  bottom: -40px;
+  left: 5%;
+  right: 5%;
+  height: 60px;
+  background: linear-gradient(to top, rgba(0, 229, 190, 0.4) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 100%);
+  clip-path: polygon(15% 100%, 85% 100%, 100% 0%, 0% 0%);
+  pointer-events: none;
+  animation: holoBeamPulse 2s ease-in-out infinite;
+  z-index: 5;
+}
+
 /* MapLibre dark theme overrides */
 .maplibregl-map {
   font-family: inherit !important;

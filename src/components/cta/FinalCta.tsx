@@ -137,7 +137,7 @@ export const FinalCta: React.FC = () => {
           </h2>
 
           <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto font-sans">
-            Presiona el botón de la tarjeta URBO para activar la proyección holográfica de contacto directo con los fundadores y canales oficiales.
+            Haz clic en <span className="text-[#00E5BE] font-semibold">Contáctanos</span> para desplegar los canales oficiales y enlaces directos con el equipo fundador de URBO.
           </p>
         </div>
 
@@ -147,27 +147,24 @@ export const FinalCta: React.FC = () => {
         <div ref={hologramStageRef} className="relative flex flex-col items-center justify-center max-w-[840px] mx-auto mb-12">
           
           {/* =============================================================
-              EMERGING HOLOGRAPHIC PROJECTION PANEL (EMERGES UPWARD)
+              EMERGING STAR WARS HOLOGRAPHIC PROJECTION PANEL (EMERGES UPWARD)
               ============================================================= */}
           <div
             ref={holoPanelRef}
             className={cn(
-              'w-full max-w-[800px] rounded-[32px] p-6 sm:p-8 mb-4 bg-gradient-to-b from-[#0F1C35]/95 via-[#0B1426]/95 to-[#070B14]/95 border-2 border-[#00E5BE]/60 backdrop-blur-2xl shadow-[0_0_60px_rgba(0,229,190,0.35),inset_0_0_30px_rgba(0,201,167,0.15)] text-left transition-all relative z-30',
+              'w-full max-w-[800px] rounded-[32px] p-6 sm:p-8 mb-4 bg-gradient-to-b from-[#0F1C35]/95 via-[#0B1426]/95 to-[#070B14]/95 border-2 border-[#38BDF8]/60 backdrop-blur-2xl shadow-[0_0_60px_rgba(56,189,248,0.35),inset_0_0_30px_rgba(0,229,190,0.2)] text-left transition-all relative z-30 star-wars-hologram',
               isProjected ? 'block' : 'hidden opacity-0 pointer-events-none'
             )}
           >
-            {/* Holographic Scanline Watermark */}
-            <div 
-              aria-hidden="true" 
-              className="absolute inset-0 pointer-events-none opacity-15 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#00E5BE_3px,#00E5BE_3px)] [background-size:100%_4px] rounded-[30px]" 
-            />
+            {/* Holographic Emitter Light Cone at the bottom */}
+            <div className="holo-emitter-cone" aria-hidden="true" />
 
             {/* Header: Projection Tag & Close Button */}
-            <div className="relative z-10 flex items-center justify-between border-b border-[#00E5BE]/30 pb-4 mb-5">
+            <div className="relative z-10 flex items-center justify-between border-b border-[#38BDF8]/30 pb-4 mb-5">
               <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] animate-ping" />
-                <span className="text-xs sm:text-sm font-mono font-bold tracking-widest text-[#00E5BE] uppercase font-tech">
-                  PROYECCIÓN HOLOGRÁFICA · PROTOCOLO URBO
+                <span className="w-2.5 h-2.5 rounded-full bg-[#38BDF8] animate-ping" />
+                <span className="text-xs sm:text-sm font-mono font-bold tracking-widest text-[#38BDF8] uppercase font-tech">
+                  CANALES DIRECTOS · PROTOCOLO URBO
                 </span>
               </div>
 
@@ -176,7 +173,7 @@ export const FinalCta: React.FC = () => {
                 onClick={closeHologram}
                 className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs font-mono text-slate-200 transition-colors cursor-pointer border border-white/15"
               >
-                <X className="w-3.5 h-3.5 text-[#00E5BE]" />
+                <X className="w-3.5 h-3.5 text-[#38BDF8]" />
                 <span>Cerrar</span>
               </button>
             </div>
@@ -348,7 +345,7 @@ export const FinalCta: React.FC = () => {
                 className="flex items-center gap-2 text-slate-950 font-bold transition-all bg-[#00C9A7] hover:bg-[#00E5BE] px-6 py-2.5 rounded-full shadow-[0_0_20px_rgba(0,201,167,0.5)] hover:shadow-[0_0_30px_rgba(0,229,190,0.8)] hover:scale-105 active:scale-95 cursor-pointer text-xs uppercase tracking-wider"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{isProjected ? 'Ocultar proyección' : 'Contáctanos'}</span>
+                <span>{isProjected ? 'Ocultar canales' : 'Contáctanos'}</span>
               </button>
             </div>
 
