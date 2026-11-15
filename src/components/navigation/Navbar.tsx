@@ -3,11 +3,9 @@ import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 import { UrboLogo } from '@/components/ui/UrboLogo';
-import { useIntroSequence } from '@/motion/useIntroSequence';
 import { motion } from '@/motion/motionTokens';
 
 export const Navbar: React.FC = () => {
-  const { phase } = useIntroSequence();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -38,33 +36,22 @@ export const Navbar: React.FC = () => {
     navRef.current.style.setProperty('--mouse-opacity', '0');
   };
 
-  // Synchronized Entrance Animation tied to Intro Sequence
+  // Direct Entrance Animation on Mount (zero blocking preloader)
   useEffect(() => {
-    if (!navRef.current) return;
-
-    if (phase === 'loading' || phase === 'ready' || phase === 'exiting') {
-      if (!hasNavAnimated.current) {
-        gsap.set(navRef.current, { y: -20, opacity: 0 });
-        if (logoRef.current) gsap.set(logoRef.current, { scale: 0.95, opacity: 0 });
-      }
-      return;
-    }
-
-    if ((phase === 'heroEntering' || phase === 'complete') && !hasNavAnimated.current) {
-      hasNavAnimated.current = true;
-      const tl = gsap.timeline({ defaults: { ease: motion.ease.enter } });
-      tl.fromTo(
-        navRef.current,
-        { y: -20, opacity: 0 },
-        { y: 0, opacity: 1, duration: motion.duration.normal, ease: motion.ease.enter }
-      ).fromTo(
-        logoRef.current,
-        { scale: 0.95, opacity: 0 },
-        { scale: 1, opacity: 1, duration: motion.duration.fast, ease: motion.ease.enter },
-        '-=0.35'
-      );
-    }
-  }, [phase]);
+    if (!navRef.current || hasNavAnimated.current) return;
+    hasNavAnimated.current = true;
+    const tl = gsap.timeline({ defaults: { ease: motion.ease.enter } });
+    tl.fromTo(
+      navRef.current,
+      { y: -20, opacity: 0 },
+      { y: 0, opacity: 1, duration: motion.duration.normal, ease: motion.ease.enter }
+    ).fromTo(
+      logoRef.current,
+      { scale: 0.95, opacity: 0 },
+      { scale: 1, opacity: 1, duration: motion.duration.fast, ease: motion.ease.enter },
+      '-=0.35'
+    );
+  }, []);
 
   const navLinks = [
     { label: 'Oportunidad', href: '#oportunidad' },

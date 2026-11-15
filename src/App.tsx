@@ -1,13 +1,11 @@
 import React from 'react';
 import { Navbar } from '@/components/navigation/Navbar';
-import { Hero } from '@/components/hero/Hero';
+import { CinematicHero } from '@/components/hero/CinematicHero';
 import { Opportunity } from '@/components/opportunity/Opportunity';
 import { Solution } from '@/components/solution/Solution';
 import { MetricsProof } from '@/components/metrics/MetricsProof';
 import { Audiences } from '@/components/audiences/Audiences';
 import { Footer } from '@/components/footer/Footer';
-import { UrboPreloader } from '@/components/ui/UrboPreloader';
-import { IntroProvider } from '@/motion/useIntroSequence';
 import { useMotionSystem } from '@/motion/useMotionSystem';
 
 // Code Splitting for heavy below-the-fold modules (reduces initial JS payload by >40%)
@@ -43,10 +41,9 @@ export const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--navy-bg)] text-[var(--text-primary)] transition-colors duration-300 flex flex-col selection:bg-urbo-teal/30">
-      <UrboPreloader />
       <Navbar />
       <main className="flex-1">
-        <Hero />
+        <CinematicHero />
         <Opportunity />
         <Solution />
         <MetricsProof />
@@ -76,11 +73,7 @@ export const AppContent: React.FC = () => {
 };
 
 export const App: React.FC = () => {
-  return (
-    <IntroProvider>
-      <AppContent />
-    </IntroProvider>
-  );
+  return <AppContent />;
 };
 
 export default App;
