@@ -119,7 +119,7 @@ export const Solution: React.FC = () => {
     <section 
       ref={sectionRef} 
       id="solucion" 
-      className="relative py-20 lg:py-28 overflow-hidden bg-[#FAF5EC] text-[#0F1D36] transition-colors duration-300"
+      className="relative py-20 lg:py-28 overflow-hidden bg-[#070B14] text-white transition-colors duration-300"
     >
       {/* Anchor alias */}
       <span id="como-funciona" className="absolute -top-32" />
@@ -127,40 +127,40 @@ export const Solution: React.FC = () => {
       {/* Atmospheric lighting */}
       <div
         aria-hidden="true"
-        className="absolute top-1/4 right-0 w-[550px] h-[550px] rounded-full bg-emerald-500/5 blur-[160px] pointer-events-none"
+        className="absolute top-1/4 right-0 w-[550px] h-[550px] rounded-full bg-[#00C9A7]/10 blur-[180px] pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute bottom-1/4 -left-32 w-[500px] h-[500px] rounded-full bg-[#0F1D36]/5 blur-[150px] pointer-events-none"
+        className="absolute bottom-1/4 -left-32 w-[500px] h-[500px] rounded-full bg-[#38BDF8]/10 blur-[160px] pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
         <div className="solution-header max-w-3xl mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0F1D36]/5 border border-[#0F1D36]/15 text-[#0F1D36] text-xs font-mono font-semibold tracking-wider uppercase mb-5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1426] border border-white/10 text-[#00E5BE] text-xs font-mono font-bold tracking-wider uppercase mb-5">
+            <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-pulse" />
             <span>TECNOLOGÍA DE MOVILIDAD</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0F1D36] tracking-tight leading-[1.08] mb-5 font-tech">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] mb-5 font-tech">
             Menos tiempo en la esquina.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-700 to-[#0F1D36] font-tech">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5BE] via-[#38BDF8] to-[#00E5BE] font-tech">
               Más control en tu viaje.
             </span>
           </h2>
 
-          <p className="text-base sm:text-xl text-[#2B3B55] leading-relaxed font-normal">
+          <p className="text-base sm:text-xl text-slate-300 leading-relaxed font-normal font-sans">
             Una plataforma diseñada para la realidad urbana de Santa Cruz: simple para el pasajero, segura y con manos libres para el chofer, y transparente para las líneas.
           </p>
         </div>
 
         {/* =================================================================
             HERO INNOVATION SHOWCASE: MODO "ESPERAR AQUÍ" (PROTAGONIST CARD)
-            Deep Navy #0F1D36 Luxury Cockpit over Cream Canvas
+            Deep Navy #0B1426 Luxury Cockpit
             ================================================================= */}
         <div className="solution-hero-glass mb-14">
-          <div className="p-6 sm:p-10 rounded-3xl bg-[#0F1D36] border border-white/12 shadow-2xl relative overflow-hidden text-white">
+          <div className="p-6 sm:p-10 rounded-3xl bg-[#0B1426] border border-[#00C9A7]/30 shadow-2xl relative overflow-hidden text-white">
             {/* Interactive Tab Switcher */}
             <div className="flex items-center gap-2 mb-8 bg-white/5 p-1 rounded-full border border-white/10 w-fit">
               <button
@@ -169,7 +169,7 @@ export const Solution: React.FC = () => {
                 className={cn(
                   'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
                   activeTab === 'esperar'
-                    ? 'bg-amber-400 text-slate-950 shadow-md'
+                    ? 'bg-[#F4C430] text-slate-950 shadow-md'
                     : 'text-slate-300 hover:text-white'
                 )}
               >
@@ -181,7 +181,7 @@ export const Solution: React.FC = () => {
                 className={cn(
                   'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
                   activeTab === 'rutas'
-                    ? 'bg-amber-400 text-slate-950 shadow-md'
+                    ? 'bg-[#F4C430] text-slate-950 shadow-md'
                     : 'text-slate-300 hover:text-white'
                 )}
               >
@@ -193,7 +193,7 @@ export const Solution: React.FC = () => {
                 className={cn(
                   'px-4 py-1.5 rounded-full text-xs font-mono font-bold transition-all',
                   activeTab === 'seguridad'
-                    ? 'bg-amber-400 text-slate-950 shadow-md'
+                    ? 'bg-[#F4C430] text-slate-950 shadow-md'
                     : 'text-slate-300 hover:text-white'
                 )}
               >
@@ -315,40 +315,40 @@ export const Solution: React.FC = () => {
         <div className="solution-pillars-grid grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           
           {/* Card A: GPS en tiempo real */}
-          <div className="solution-pillar-card p-7 sm:p-8 rounded-3xl bg-white border border-[#0F1D36]/10 shadow-[0_10px_35px_rgba(15,29,54,0.06)] hover:shadow-[0_15px_45px_rgba(15,29,54,0.12)] transition-all flex flex-col justify-between">
+          <div className="solution-pillar-card p-7 sm:p-8 rounded-3xl bg-[#0B1426] border border-white/10 shadow-xl hover:border-[#00C9A7]/40 transition-all flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 mb-5">
+              <div className="w-12 h-12 rounded-2xl bg-[#00C9A7]/15 border border-[#00C9A7]/30 flex items-center justify-center text-[#00E5BE] mb-5">
                 <Radio className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-[#0F1D36] mb-3">
+              <h3 className="text-xl font-bold text-white mb-3 font-sans">
                 GPS en tiempo real y mapa en vivo
               </h3>
-              <p className="text-sm sm:text-base text-[#374A67] leading-relaxed font-normal">
+              <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
                 Visualización fluida de los micros acercándose en el mapa. Cálculo exacto de minutos y metros restantes para salir de casa justo a tiempo. Actualización constante con optimización extrema de batería y consumo de datos móviles.
               </p>
             </div>
-            <div className="pt-5 mt-5 border-t border-[#0F1D36]/10 flex items-center justify-between text-xs font-mono text-[#374A67]">
+            <div className="pt-5 mt-5 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400">
               <span>Telemetría de baja latencia</span>
-              <span className="text-emerald-600 font-bold">ACTUALIZACIÓN CONTINUA</span>
+              <span className="text-[#00E5BE] font-bold">ACTUALIZACIÓN CONTINUA</span>
             </div>
           </div>
 
           {/* Card B: Dashboard institucional para la línea */}
-          <div className="solution-pillar-card p-7 sm:p-8 rounded-3xl bg-white border border-[#0F1D36]/10 shadow-[0_10px_35px_rgba(15,29,54,0.06)] hover:shadow-[0_15px_45px_rgba(15,29,54,0.12)] transition-all flex flex-col justify-between">
+          <div className="solution-pillar-card p-7 sm:p-8 rounded-3xl bg-[#0B1426] border border-white/10 shadow-xl hover:border-[#38BDF8]/40 transition-all flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 mb-5">
+              <div className="w-12 h-12 rounded-2xl bg-[#38BDF8]/15 border border-[#38BDF8]/30 flex items-center justify-center text-[#38BDF8] mb-5">
                 <LayoutDashboard className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-[#0F1D36] mb-3">
+              <h3 className="text-xl font-bold text-white mb-3 font-sans">
                 Dashboard de línea y gestión de flota
               </h3>
-              <p className="text-sm sm:text-base text-[#374A67] leading-relaxed font-normal">
+              <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
                 La directiva visualiza toda su flota en vivo, regularidad de frecuencias, mapa de calor de pasajeros y métricas con evidencia documentada para gestiones con el municipio y control de vueltas completadas.
               </p>
             </div>
-            <div className="pt-5 mt-5 border-t border-[#0F1D36]/10 flex items-center justify-between text-xs font-mono text-[#374A67]">
+            <div className="pt-5 mt-5 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400">
               <span>Gestión institucional</span>
-              <span className="text-emerald-600 font-bold">CONTROL DE FLOTA</span>
+              <span className="text-[#38BDF8] font-bold">CONTROL DE FLOTA</span>
             </div>
           </div>
 
@@ -357,29 +357,29 @@ export const Solution: React.FC = () => {
         {/* 2 Compact Feature Strips */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          <div className="solution-pillar-card p-6 rounded-2xl bg-white/70 border border-[#0F1D36]/10 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
-            <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 flex-shrink-0">
+          <div className="solution-pillar-card p-6 rounded-2xl bg-[#0B1426]/70 border border-white/10 flex items-center gap-4 shadow-sm hover:border-white/20 transition-all">
+            <div className="w-11 h-11 rounded-xl bg-[#00C9A7]/15 border border-[#00C9A7]/30 flex items-center justify-center text-[#00E5BE] flex-shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-base font-bold text-[#0F1D36] mb-1">
+              <h4 className="text-base font-bold text-white mb-1 font-sans">
                 Seguridad urbana y tranquilidad familiar
               </h4>
-              <p className="text-xs text-[#374A67] leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed font-sans">
                 Seguimiento de viaje compartido con familiares en traslados nocturnos para saber en qué interno viajas.
               </p>
             </div>
           </div>
 
-          <div className="solution-pillar-card p-6 rounded-2xl bg-white/70 border border-[#0F1D36]/10 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
-            <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 flex-shrink-0">
+          <div className="solution-pillar-card p-6 rounded-2xl bg-[#0B1426]/70 border border-white/10 flex items-center gap-4 shadow-sm hover:border-white/20 transition-all">
+            <div className="w-11 h-11 rounded-xl bg-[#F4C430]/15 border border-[#F4C430]/30 flex items-center justify-center text-[#F4C430] flex-shrink-0">
               <Zap className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-base font-bold text-[#0F1D36] mb-1">
+              <h4 className="text-base font-bold text-white mb-1 font-sans">
                 Rutas más inteligentes y ahorro diésel
               </h4>
-              <p className="text-xs text-[#374A67] leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed font-sans">
                 Anticipación de cuellos de botella en anillos y rotondas para reducir combustible quemado en vacío.
               </p>
             </div>

@@ -16,31 +16,31 @@
 
 :root, .dark, [data-theme="dark"] {
   --font-display: "SD Dystopian", "Syne", sans-serif;
-  --navy-bg: #0F1D36;
-  --navy-base: #0F1D36;
-  --navy-surface: #162444;
-  --navy-elevated: #1B2A47;
-  --cream-bg: #FAF5EC;
+  --navy-bg: #070B14;
+  --navy-base: #0B1426;
+  --navy-surface: #0F1C35;
+  --navy-elevated: #162040;
+  --cream-bg: #0B1426;
   
-  --emerald-primary: #10B981;
-  --emerald-bright: #34D399;
-  --emerald-deep: #059669;
-  --teal-primary: #10B981;
-  --teal-bright: #34D399;
-  --teal-deep: #059669;
-  --amber-accent: #F59E0B;
-  --radioactive-green: #10B981;
-  --radioactive-bright: #34D399;
+  --emerald-primary: #00C9A7;
+  --emerald-bright: #00E5BE;
+  --emerald-deep: #009E85;
+  --teal-primary: #00C9A7;
+  --teal-bright: #00E5BE;
+  --teal-deep: #009E85;
+  --amber-accent: #F4C430;
+  --radioactive-green: #A6FF00;
+  --radioactive-bright: #B8FF21;
   
   --text-primary: #FFFFFF;
-  --text-secondary: #94A3B8;
+  --text-secondary: #94A3C0;
   --text-muted: #64748B;
   
-  --glass-fill: rgba(15, 29, 54, 0.65);
-  --glass-fill-elevated: rgba(22, 36, 68, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-border-bright: rgba(16, 185, 129, 0.45);
-  --glass-highlight: rgba(255, 255, 255, 0.25);
+  --glass-fill: rgba(11, 20, 38, 0.75);
+  --glass-fill-elevated: rgba(15, 28, 53, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-border-bright: rgba(0, 201, 167, 0.40);
+  --glass-highlight: rgba(255, 255, 255, 0.20);
   --glass-blur: 24px;
 }
 

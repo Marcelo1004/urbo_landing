@@ -8,7 +8,8 @@ import {
   ArrowRight, 
   Radio, 
   Activity, 
-  ShieldCheck 
+  ShieldCheck,
+  Compass
 } from 'lucide-react';
 import { GlassBadge } from '@/components/ui/Glass';
 import { UrboLogo } from '@/components/ui/UrboLogo';
@@ -37,27 +38,31 @@ export const CinematicHero: React.FC = () => {
         trigger: runway,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 0.5,
+        scrub: 0.6,
         onUpdate: (self) => {
           const p = self.progress;
           setScrollProgress(p);
 
-          // Update chapter thresholds
+          // 4 Chapter landmarks
+          // 0: Catedral Metropolitana (0% - 25%)
+          // 1: Av. Monseñor Rivero / René Moreno (25% - 55%)
+          // 2: Monumento Cristo Redentor (55% - 80%)
+          // 3: Corredor Norte / Handoff a Producto (80% - 100%)
           if (p < 0.25) setActiveChapter(0);
           else if (p < 0.55) setActiveChapter(1);
-          else if (p < 0.82) setActiveChapter(2);
+          else if (p < 0.80) setActiveChapter(2);
           else setActiveChapter(3);
         },
       });
 
-      // Chapter 0 (Main Title): Transforms down into the road plane as scroll begins
+      // Chapter 0 (Main Title): Tilts into the street pavement as scroll begins
       gsap.fromTo(
         '.hero-title-group',
         { opacity: 1, y: 0, scale: 1, rotateX: 0 },
         {
           opacity: 0,
-          y: -120,
-          scale: 0.88,
+          y: -110,
+          scale: 0.90,
           rotateX: 20,
           ease: 'power1.in',
           scrollTrigger: {
@@ -69,7 +74,7 @@ export const CinematicHero: React.FC = () => {
         }
       );
 
-      // Chapter 1 Reveal: La espera a ciegas
+      // Chapter 1 Reveal: Casco Viejo & Av. Monseñor Rivero (22% - 48%)
       gsap.fromTo(
         '.chapter-card-1',
         { opacity: 0, y: 50, scale: 0.94 },
@@ -81,7 +86,7 @@ export const CinematicHero: React.FC = () => {
           scrollTrigger: {
             trigger: runway,
             start: '20% top',
-            end: '38% top',
+            end: '36% top',
             scrub: true,
           },
         }
@@ -92,13 +97,13 @@ export const CinematicHero: React.FC = () => {
         ease: 'power2.in',
         scrollTrigger: {
           trigger: runway,
-          start: '45% top',
-          end: '55% top',
+          start: '44% top',
+          end: '53% top',
           scrub: true,
         },
       });
 
-      // Chapter 2 Reveal: Telemetría en cabina
+      // Chapter 2 Reveal: Monumento Cristo Redentor (52% - 78%)
       gsap.fromTo(
         '.chapter-card-2',
         { opacity: 0, y: 50, scale: 0.94 },
@@ -110,7 +115,7 @@ export const CinematicHero: React.FC = () => {
           scrollTrigger: {
             trigger: runway,
             start: '52% top',
-            end: '68% top',
+            end: '66% top',
             scrub: true,
           },
         }
@@ -121,13 +126,13 @@ export const CinematicHero: React.FC = () => {
         ease: 'power2.in',
         scrollTrigger: {
           trigger: runway,
-          start: '75% top',
-          end: '84% top',
+          start: '73% top',
+          end: '82% top',
           scrub: true,
         },
       });
 
-      // Chapter 3 Reveal: Destino & CTA
+      // Chapter 3 Reveal: Corredor Norte & CTA Handoff (80% - 100%)
       gsap.fromTo(
         '.chapter-card-3',
         { opacity: 0, y: 60, scale: 0.92 },
@@ -138,8 +143,8 @@ export const CinematicHero: React.FC = () => {
           ease: 'power2.out',
           scrollTrigger: {
             trigger: runway,
-            start: '82% top',
-            end: '96% top',
+            start: '80% top',
+            end: '95% top',
             scrub: true,
           },
         }
@@ -154,132 +159,138 @@ export const CinematicHero: React.FC = () => {
       ref={runwayRef}
       id="inicio"
       className="relative w-full"
-      style={{ height: '360vh' }} // Extended runway for smooth scrubbing
+      style={{ height: '380vh' }}
     >
       {/* Pinned Cinematic Stage (100dvh sticky) */}
       <div
         ref={stageRef}
         className="sticky top-0 h-screen h-[100dvh] w-full overflow-hidden bg-[#070B14] flex flex-col justify-between select-none"
       >
-        {/* Three.js Nocturnal Isometric City Canvas */}
+        {/* Three.js Nocturnal Santa Cruz Isometric City Canvas */}
         <UrboCityScene3D scrollProgress={scrollProgress} />
 
-        {/* Top Scrim Gradient (Protects Navbar readability) */}
+        {/* Top Scrim Gradient */}
         <div
-          className="absolute top-0 inset-x-0 h-36 bg-gradient-to-b from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none z-10"
+          className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-[#070B14] via-[#070B14]/85 to-transparent pointer-events-none z-10"
           aria-hidden="true"
         />
 
-        {/* Bottom Scrim Gradient (Blends into following sections) */}
+        {/* Bottom Scrim Gradient */}
         <div
-          className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#070B14] to-transparent pointer-events-none z-10"
+          className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-[#070B14] to-transparent pointer-events-none z-10"
           aria-hidden="true"
         />
 
         {/* HUD Telemetry Top Bar */}
         <div className="relative z-20 pt-24 px-6 md:px-12 max-w-7xl mx-auto w-full flex justify-between items-start pointer-events-none">
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#0F1D36]/80 backdrop-blur-md border border-[#1B2A47] text-xs font-mono text-[#FAF5EC]/90 shadow-lg pointer-events-auto">
-            <span className="w-2 h-2 rounded-full bg-[#38BDF8] animate-ping" />
-            <span className="text-[#38BDF8] font-bold">LÍNEA 30</span>
-            <span className="text-white/30">|</span>
-            <span>CASCO VIEJO · SANTA CRUZ</span>
+          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#0B1426]/85 backdrop-blur-md border border-white/10 text-xs font-mono text-slate-200 shadow-xl pointer-events-auto">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#38BDF8] animate-ping" />
+            <span className="text-[#38BDF8] font-bold font-tech tracking-wider">LÍNEA 30</span>
+            <span className="text-white/20">|</span>
+            <span className="text-white/90">CATEDRAL → CRISTO REDENTOR → NORTE</span>
           </div>
 
           {/* Chapter Progression Tracker */}
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F1D36]/80 backdrop-blur-md border border-[#1B2A47] text-[11px] font-mono text-white/70 pointer-events-auto">
-            <span className="text-[#10B981] font-semibold">CAPÍTULO 0{activeChapter + 1}</span>
-            <span className="text-white/20">/</span>
-            <span>04</span>
+          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1426]/85 backdrop-blur-md border border-white/10 text-[11px] font-mono text-white/70 pointer-events-auto">
+            <Compass className="w-3.5 h-3.5 text-[#00E5BE]" />
+            <span className="text-[#00E5BE] font-bold font-tech tracking-wider">
+              {activeChapter === 0 && 'CATEDRAL METROPOLITANA'}
+              {activeChapter === 1 && 'MONSEÑOR RIVERO'}
+              {activeChapter === 2 && 'CRISTO REDENTOR'}
+              {activeChapter === 3 && 'CORREDOR NORTE'}
+            </span>
+            <span className="text-white/20">·</span>
+            <span>0{activeChapter + 1}/04</span>
           </div>
         </div>
 
         {/* Dynamic Center Stage Overlays (Narrative Chapters) */}
         <div className="relative z-20 flex-1 flex flex-col justify-center items-center px-4 md:px-8 text-center pointer-events-none">
-          {/* Chapter 0: Editorial Hero Headline (Scrolls away into the city floor) */}
+          {/* Chapter 0: Editorial Hero Headline with SD Dystopian Cyberpunk Brand */}
           <div className="hero-title-group max-w-3xl flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-xs font-medium mb-4 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00C9A7]/10 border border-[#00C9A7]/30 text-[#00E5BE] text-xs font-mono font-bold tracking-widest uppercase mb-4 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>CIUDAD 3D INTERACTIVA · SCROLL STORYTELLING</span>
+              <span>CIUDAD 3D EN TIEMPO REAL · SANTA CRUZ</span>
             </div>
 
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-4">
               Tu micro.{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] via-[#38BDF8] to-[#10B981]">
+              <span className="font-tech text-transparent bg-clip-text bg-gradient-to-r from-[#00E5BE] via-[#38BDF8] to-[#00E5BE] tracking-wider uppercase font-black">
                 EN TIEMPO REAL.
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-[#FAF5EC]/80 max-w-xl font-light leading-relaxed mb-6">
+            <p className="text-base sm:text-lg text-slate-300 max-w-xl font-light leading-relaxed mb-6 font-sans">
               URBO conecta la movilidad urbana de Santa Cruz con información accesible para pasajeros, choferes y líneas de transporte.
             </p>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-white/50 animate-bounce">
+            <div className="flex items-center gap-2 text-xs font-mono text-slate-400 animate-bounce">
               <ChevronDown className="w-4 h-4 text-[#38BDF8]" />
               <span>Desplaza hacia abajo para iniciar el recorrido</span>
             </div>
           </div>
 
-          {/* Chapter 1 Card: La Incertidumbre (20% - 45%) */}
-          <div className="chapter-card-1 absolute max-w-md w-full p-6 rounded-2xl bg-[#0F1D36]/90 backdrop-blur-xl border border-[#1B2A47] text-left shadow-2xl pointer-events-auto">
+          {/* Chapter 1 Card: La Incertidumbre & Casco Viejo (20% - 50%) */}
+          <div className="chapter-card-1 absolute max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/90 backdrop-blur-xl border border-white/10 text-left shadow-2xl pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-mono text-[#F59E0B] flex items-center gap-1.5">
+              <span className="text-xs font-mono text-[#F4C430] flex items-center gap-1.5 font-bold">
                 <Activity className="w-3.5 h-3.5" />
-                <span>01 · DIAGNÓSTICO URBANO</span>
+                <span>01 · PLAZA 24 DE SEPTIEMBRE</span>
               </span>
-              <span className="text-xs text-white/40">Casco Viejo</span>
+              <span className="text-[11px] font-mono text-slate-400">Casco Viejo</span>
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug">
               Esperar a ciegas en la esquina cuesta 35 minutos al día.
             </h2>
-            <p className="text-sm text-[#FAF5EC]/70 leading-relaxed">
-              El 83% de los pasajeros en Santa Cruz no tiene certeza sobre el paso de su línea. URBO digitaliza el recorrido sin alterar las costumbres del usuario.
+            <p className="text-sm text-slate-300 leading-relaxed font-sans">
+              El 83% de los pasajeros en Santa Cruz no tiene certeza sobre el paso de su línea. La ruta inicia frente a la Catedral Metropolitana de San Lorenzo conectando hacia el norte.
             </p>
           </div>
 
-          {/* Chapter 2 Card: Telemetría en Cabina (52% - 75%) */}
-          <div className="chapter-card-2 absolute max-w-md w-full p-6 rounded-2xl bg-[#0F1D36]/90 backdrop-blur-xl border border-[#10B981]/40 text-left shadow-2xl pointer-events-auto">
+          {/* Chapter 2 Card: Monumento Cristo Redentor (52% - 80%) */}
+          <div className="chapter-card-2 absolute max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/90 backdrop-blur-xl border border-[#00E5BE]/40 text-left shadow-2xl pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-mono text-[#10B981] flex items-center gap-1.5">
+              <span className="text-xs font-mono text-[#00E5BE] flex items-center gap-1.5 font-bold">
                 <Radio className="w-3.5 h-3.5" />
-                <span>02 · TELEMETRÍA EN CABINA</span>
+                <span>02 · MONUMENTO CRISTO REDENTOR</span>
               </span>
-              <span className="text-xs text-[#38BDF8] font-mono">Int. 32 Don Neyer</span>
+              <span className="text-xs text-[#38BDF8] font-mono font-bold">2do Anillo</span>
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">
-              Avisos por voz a 300 metros, manos libres.
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug">
+              Telemetría audible en el nudo vial de la ciudad.
             </h2>
-            <p className="text-sm text-[#FAF5EC]/70 leading-relaxed mb-4">
-              El chofer no toca pantallas mientras conduce. Una alerta audible anuncia paradas y concentración de pasajeros en tiempo real.
+            <p className="text-sm text-slate-300 leading-relaxed mb-4 font-sans">
+              El chofer no toca pantallas mientras conduce. Una alerta audible anuncia paradas y concentración de pasajeros con aviso a 300 metros.
             </p>
-            <div className="inline-flex items-center gap-2 text-xs font-mono text-[#38BDF8] bg-[#38BDF8]/10 px-2.5 py-1 rounded-md border border-[#38BDF8]/20">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-[#38BDF8] bg-[#38BDF8]/10 px-3 py-1.5 rounded-lg border border-[#38BDF8]/20">
               <Volume2 className="w-3.5 h-3.5 animate-pulse" />
-              <span>Beacon activo en René Moreno & Sucre</span>
+              <span>Int. 32 Don Neyer cruzando Av. Monseñor Rivero</span>
             </div>
           </div>
 
-          {/* Chapter 3 Card: Destino & CTA (82% - 100%) */}
-          <div className="chapter-card-3 absolute max-w-lg w-full p-8 rounded-3xl bg-gradient-to-b from-[#102340] to-[#0B1526] backdrop-blur-2xl border border-[#10B981]/50 text-center shadow-2xl pointer-events-auto">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/20 text-[#10B981] text-xs font-semibold mb-4">
+          {/* Chapter 3 Card: Corredor Norte & CTA Handoff (80% - 100%) */}
+          <div className="chapter-card-3 absolute max-w-lg w-full p-8 rounded-3xl bg-gradient-to-b from-[#0F1C35] to-[#070B14] backdrop-blur-2xl border border-[#00E5BE]/40 text-center shadow-2xl pointer-events-auto">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00C9A7]/20 text-[#00E5BE] text-xs font-mono font-bold tracking-wider mb-4">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>VALIDACIÓN DE CAMPO COMPLETADA</span>
+              <span>CORREDOR NORTE INTEGRADO</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
               Una red viva de transporte para toda Bolivia.
             </h2>
-            <p className="text-sm text-[#FAF5EC]/80 leading-relaxed mb-6">
-              140 choferes, 1.239 usuarios y 5 meses de pruebas en la Línea 30 demostraron que la tecnología simple resuelve problemas reales.
+            <p className="text-sm text-slate-300 leading-relaxed mb-6 font-sans">
+              140 choferes, 1.239 usuarios y 5 meses de pruebas en la Línea 30 demostraron que la tecnología simple resuelve problemas reales de movilidad.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
                 href="#oportunidad"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#10B981] hover:bg-[#059669] text-[#070B14] font-semibold text-sm transition-all shadow-lg hover:shadow-[#10B981]/30 active:scale-95"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#00C9A7] hover:bg-[#00E5BE] text-[#070B14] font-semibold text-sm transition-all shadow-lg hover:shadow-[#00C9A7]/30 active:scale-95"
               >
                 <span>Descubre cómo funciona URBO</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
               <a
                 href="#contacto"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#1B2A47]/60 hover:bg-[#1B2A47] text-white font-medium text-sm border border-white/10 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#162040]/80 hover:bg-[#1E2D52] text-white font-medium text-sm border border-white/10 transition-colors"
               >
                 <span>Contáctanos</span>
               </a>
@@ -288,21 +299,21 @@ export const CinematicHero: React.FC = () => {
         </div>
 
         {/* HUD Bottom Status Bar */}
-        <div className="relative z-20 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-mono text-white/50 pointer-events-none">
+        <div className="relative z-20 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-mono text-slate-400 pointer-events-none">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-            <span>ESTADO: RUTA LÍNEA 30 ACTIVA · VELOCIDAD MEDIA 18 KM/H</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5BE]" />
+            <span>ESTADO: RUTA LÍNEA 30 ACTIVA · CORREDOR URBANO SCZ</span>
           </div>
 
           {/* Scrub Progress Bar */}
           <div className="flex items-center gap-3 w-full sm:w-64">
-            <div className="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+            <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-[#10B981] to-[#38BDF8] transition-all duration-75"
+                className="h-full bg-gradient-to-r from-[#00C9A7] via-[#00E5BE] to-[#38BDF8] transition-all duration-75"
                 style={{ width: `${Math.round(scrollProgress * 100)}%` }}
               />
             </div>
-            <span className="text-[10px] text-[#38BDF8]">
+            <span className="text-[10px] text-[#38BDF8] font-bold">
               {Math.round(scrollProgress * 100)}%
             </span>
           </div>
