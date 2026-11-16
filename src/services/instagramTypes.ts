@@ -18,9 +18,14 @@ export interface InstagramPost {
 
 export interface InstagramFeedResponse {
   success: boolean;
-  source: 'meta_graph_api' | 'cached_official_feed';
+  authenticated?: boolean;
+  source: 'meta_graph_api' | 'pending_authorization' | 'cached_official_feed';
   account: string;
+  profileUrl?: string;
   lastUpdated: string;
-  expiresInSeconds: number;
-  data: InstagramPost[];
+  expiresInSeconds?: number;
+  message?: string;
+  requiredPermissions?: string[];
+  posts?: InstagramPost[];
+  data?: InstagramPost[];
 }

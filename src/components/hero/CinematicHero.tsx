@@ -96,43 +96,45 @@ export const CinematicHero: React.FC = () => {
         },
       });
 
-      // Chapter 0 (Main Title): Soft fade and rise as scroll starts
+      // Chapter 0 (Main Title): Soft fade and rise as scroll starts, completely hidden by 14%
       gsap.fromTo(
         '.hero-title-group',
         { opacity: 1, y: 0, scale: 1 },
         {
           opacity: 0,
-          y: -90,
+          y: -80,
           scale: 0.92,
           ease: 'power1.in',
           scrollTrigger: {
             trigger: runway,
             start: 'top top',
-            end: '15% top',
+            end: '14% top',
             scrub: true,
+            onLeave: () => gsap.set('.hero-title-group', { display: 'none' }),
+            onEnterBack: () => gsap.set('.hero-title-group', { display: 'flex' }),
           },
         }
       );
 
-      // Chapter 1 Reveal (LEFT): Plaza del Estudiante (16% - 37%)
+      // Chapter 1 Reveal (LEFT): Plaza del Estudiante (17% - 37%)
       gsap.fromTo(
         '.chapter-card-1',
-        { opacity: 0, x: -35, scale: 0.95 },
+        { autoAlpha: 0, x: -35, scale: 0.95 },
         {
-          opacity: 1,
+          autoAlpha: 1,
           x: 0,
           scale: 1,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: runway,
-            start: '16% top',
-            end: '25% top',
+            start: '17% top',
+            end: '26% top',
             scrub: true,
           },
         }
       );
       gsap.to('.chapter-card-1', {
-        opacity: 0,
+        autoAlpha: 0,
         y: -35,
         ease: 'power2.in',
         scrollTrigger: {
@@ -143,77 +145,77 @@ export const CinematicHero: React.FC = () => {
         },
       });
 
-      // Chapter 2 Reveal (RIGHT): Monumento Cristo Redentor (38% - 59%)
+      // Chapter 2 Reveal (RIGHT): Monumento Cristo Redentor (40% - 60%)
       gsap.fromTo(
         '.chapter-card-2',
-        { opacity: 0, x: 35, scale: 0.95 },
+        { autoAlpha: 0, x: 35, scale: 0.95 },
         {
-          opacity: 1,
+          autoAlpha: 1,
           x: 0,
           scale: 1,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: runway,
-            start: '38% top',
-            end: '47% top',
+            start: '40% top',
+            end: '49% top',
             scrub: true,
           },
         }
       );
       gsap.to('.chapter-card-2', {
-        opacity: 0,
+        autoAlpha: 0,
         y: -35,
         ease: 'power2.in',
         scrollTrigger: {
           trigger: runway,
-          start: '54% top',
-          end: '59% top',
+          start: '55% top',
+          end: '60% top',
           scrub: true,
         },
       });
 
-      // Chapter 3 Reveal (LEFT): Corredor Norte & Evidencia del Piloto (60% - 81%)
+      // Chapter 3 Reveal (LEFT): Corredor Norte & Evidencia del Piloto (63% - 82%)
       gsap.fromTo(
         '.chapter-card-3',
-        { opacity: 0, x: -35, scale: 0.95 },
+        { autoAlpha: 0, x: -35, scale: 0.95 },
         {
-          opacity: 1,
+          autoAlpha: 1,
           x: 0,
           scale: 1,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: runway,
-            start: '60% top',
-            end: '69% top',
+            start: '63% top',
+            end: '72% top',
             scrub: true,
           },
         }
       );
       gsap.to('.chapter-card-3', {
-        opacity: 0,
+        autoAlpha: 0,
         y: -35,
         ease: 'power2.in',
         scrollTrigger: {
           trigger: runway,
-          start: '76% top',
-          end: '81% top',
+          start: '77% top',
+          end: '82% top',
           scrub: true,
         },
       });
 
-      // Chapter 4 Reveal (CENTER FINALE): Visión de URBO & Cuarto Anillo (82% - 100%)
+      // Chapter 4 Reveal (CENTER FINALE): Visión de URBO & Cuarto Anillo (84% - 100%)
       gsap.fromTo(
         '.chapter-card-4',
-        { opacity: 0, y: 50, scale: 0.92 },
+        { autoAlpha: 0, y: 50, scale: 0.92 },
         {
-          opacity: 1,
+          autoAlpha: 1,
           y: 0,
           scale: 1,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: runway,
-            start: '82% top',
-            end: '93% top',
+            start: '84% top',
+            end: '94% top',
             scrub: true,
           },
         }
@@ -248,20 +250,20 @@ export const CinematicHero: React.FC = () => {
           onTimeChange={handleTimeChange}
         />
 
-        {/* Dynamic Top Scrim (Crisp dark vignette, zero white haze) */}
+        {/* Dynamic Top Scrim (Transitions smoothly from daylight sky to dark navy) */}
         <div
           className="absolute top-0 inset-x-0 h-44 pointer-events-none z-10 transition-all duration-700"
           style={{
-            background: 'linear-gradient(to bottom, rgba(7, 11, 20, 0.92) 0%, rgba(7, 11, 20, 0.40) 60%, transparent 100%)',
+            background: dayNightState.scrimTop,
           }}
           aria-hidden="true"
         />
 
-        {/* Dynamic Bottom Scrim (Crisp dark vignette, zero milky scrim) */}
+        {/* Dynamic Bottom Scrim */}
         <div
           className="absolute bottom-0 inset-x-0 h-40 pointer-events-none z-10 transition-all duration-700"
           style={{
-            background: 'linear-gradient(to top, rgba(7, 11, 20, 0.95) 0%, rgba(7, 11, 20, 0.45) 60%, transparent 100%)',
+            background: dayNightState.scrimBottom,
           }}
           aria-hidden="true"
         />
@@ -310,25 +312,25 @@ export const CinematicHero: React.FC = () => {
         {/* Dynamic Center Stage Overlays (5 Narrative Chapters with Alternating Layout) */}
         <div className="relative z-20 flex-1 flex flex-col justify-center items-center px-4 md:px-8 text-center pointer-events-none">
           
-          {/* Chapter 0: Editorial Hero Headline (Catedral Metropolitana · 0% - 18%) */}
-          <div className="hero-title-group max-w-3xl flex flex-col items-center -mt-6 sm:-mt-12">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00C9A7]/15 border border-[#00C9A7]/30 text-[#00E5BE] text-xs font-mono font-bold tracking-widest uppercase mb-4 backdrop-blur-md">
+          {/* Chapter 0: Editorial Hero Headline (Catedral Metropolitana · 0% - 14%) */}
+          <div className="hero-title-group max-w-3xl flex flex-col items-center -mt-8 sm:-mt-16 pointer-events-auto select-none">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1426]/90 border border-white/20 text-[#00E5BE] text-xs font-mono font-bold tracking-widest uppercase mb-4 shadow-xl backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5" />
               <span>CIUDAD 3D EN TIEMPO REAL · SANTA CRUZ</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-4">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-4 drop-shadow-[0_4px_20px_rgba(0,0,0,0.85)]">
               Tu micro.{' '}
               <span className="font-tech text-transparent bg-clip-text bg-gradient-to-r from-[#00E5BE] via-[#38BDF8] to-[#00E5BE] tracking-wider uppercase font-black">
                 EN TIEMPO REAL.
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-200 max-w-xl font-light leading-relaxed mb-6 font-sans">
+            <p className="text-base sm:text-lg text-slate-100 max-w-xl font-normal leading-relaxed mb-6 font-sans drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] bg-[#0B1426]/75 px-5 py-2.5 rounded-2xl backdrop-blur-md border border-white/10 shadow-lg">
               URBO conecta la movilidad urbana de Santa Cruz con información accesible para pasajeros, choferes y líneas de transporte.
             </p>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-300 animate-bounce">
+            <div className="flex items-center gap-2 text-xs font-mono text-slate-200 bg-[#0B1426]/85 px-4 py-2 rounded-full backdrop-blur-md border border-white/15 animate-bounce shadow-xl">
               <ChevronDown className="w-4 h-4 text-[#38BDF8]" />
               <span>Desplaza hacia abajo para iniciar el recorrido</span>
             </div>
@@ -443,16 +445,16 @@ export const CinematicHero: React.FC = () => {
         </div>
 
         {/* HUD Bottom Status Bar */}
-        <div className="relative z-20 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-mono text-slate-300 pointer-events-none">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5BE]" />
-            <span ref={distanceTextRef}>
+        <div className="relative z-20 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-mono text-slate-200 pointer-events-none">
+          <div className="flex items-center gap-2 bg-[#0B1426]/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
+            <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-pulse" />
+            <span ref={distanceTextRef} className="tracking-wide">
               DISTANCIA EN RUTA: 0.00 KM / 5.04 KM · SCZ TRONCAL
             </span>
           </div>
 
           {/* Scrub Progress Bar */}
-          <div className="flex items-center gap-3 w-full sm:w-64">
+          <div className="flex items-center gap-3 w-full sm:w-64 bg-[#0B1426]/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
             <div className="flex-1 h-1.5 rounded-full bg-white/20 overflow-hidden">
               <div
                 ref={progressBarRef}
@@ -460,7 +462,7 @@ export const CinematicHero: React.FC = () => {
                 style={{ width: '0%' }}
               />
             </div>
-            <span ref={progressTextRef} className="text-[10px] text-[#38BDF8] font-bold">
+            <span ref={progressTextRef} className="text-[10px] text-[#38BDF8] font-bold font-tech">
               0%
             </span>
           </div>

@@ -94,34 +94,40 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
       isMapLoadedRef.current = true;
 
       // Filter out minor street labels and non-essential POIs to keep cartography crisp and uncluttered
-      try {
-        const style = map.getStyle();
-        if (style && style.layers) {
-          style.layers.forEach((layer) => {
-            if (layer.type === 'symbol') {
-              const id = layer.id.toLowerCase();
-              const isMinorLabel =
-                id.includes('minor') ||
-                id.includes('residential') ||
-                id.includes('service') ||
-                id.includes('unclassified') ||
-                id.includes('track') ||
-                id.includes('path') ||
-                id.includes('footway') ||
-                id.includes('poi') ||
-                id.includes('house') ||
-                id.includes('subway') ||
-                id.includes('ferry') ||
-                id.includes('place_label_other');
-
-              if (isMinorLabel) {
-                map.setLayoutProperty(layer.id, 'visibility', 'none');
-              }
-            }
-          });
+      const layersToHide = [
+        'highway_name_other',
+        'place_other',
+        'place_suburb',
+        'place_village',
+        'road_oneway',
+        'road_oneway_opposite',
+      ];
+      layersToHide.forEach((id) => {
+        if (map.getLayer(id)) {
+          try {
+            map.setLayoutProperty(id, 'visibility', 'none');
+          } catch (e) {}
         }
-      } catch (err) {
-        console.warn('UrboNavMap3D label filter notice:', err);
+      });
+
+      // Apply initial Day cartography paint colors (pavement, terrain, parks, avenues)
+      if (map.getLayer('background')) {
+        map.setPaintProperty('background', 'background-color', initialState.dayNight.backgroundColor);
+      }
+      if (map.getLayer('landuse_residential')) {
+        map.setPaintProperty('landuse_residential', 'fill-color', initialState.dayNight.residentialColor);
+      }
+      if (map.getLayer('landuse_park')) {
+        map.setPaintProperty('landuse_park', 'fill-color', initialState.dayNight.parkColor);
+      }
+      if (map.getLayer('highway_minor')) {
+        map.setPaintProperty('highway_minor', 'line-color', initialState.dayNight.minorRoadColor);
+      }
+      if (map.getLayer('highway_major_inner')) {
+        map.setPaintProperty('highway_major_inner', 'line-color', initialState.dayNight.majorRoadInnerColor);
+      }
+      if (map.getLayer('highway_major_casing')) {
+        map.setPaintProperty('highway_major_casing', 'line-color', initialState.dayNight.majorRoadCasingColor);
       }
 
       // 1. ADD URBAN GREENERY LAYER (Plazas & Boulevards of Santa Cruz)
@@ -521,6 +527,12 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         gpsMarkerRef.current.setLngLat(navState.beacon);
       }
 
+      // Hide Catedral landmark marker while hero title is prominent (0% to 14%) to avoid visual collision
+      if (landmarkMarkersRef.current[0]) {
+        const catEl = landmarkMarkersRef.current[0].getElement();
+        if (catEl) catEl.style.opacity = p < 0.14 ? '0' : '1';
+      }
+
       // 2. Smoothly Update Map Camera to look-ahead center (Google Maps 3D navigation perspective)
       mapRef.current.jumpTo({
         center: navState.center,
@@ -529,38 +541,44 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         zoom: navState.zoom,
       });
 
-      // 3. Dynamic Day-to-Night Transitions (Throttled for maximum 60fps performance)
+      // 3. Dynamic Day-to-Night Real Atmosphere & Cartography Transformations (Throttled for 60-120fps)
       const dn = navState.dayNight;
       if (Math.abs(dn.dayNightProgress - lastAppliedDayNightRef.current) > 0.015) {
         lastAppliedDayNightRef.current = dn.dayNightProgress;
+        const m = mapRef.current;
 
-        // Update 3D buildings color
-        if (mapRef.current.getLayer('3d-buildings')) {
-          mapRef.current.setPaintProperty('3d-buildings', 'fill-extrusion-color', dn.buildingColor);
-        }
+        const safeSetPaint = (layerId: string, prop: string, val: any) => {
+          if (m.getLayer(layerId)) {
+            try { m.setPaintProperty(layerId, prop, val); } catch (e) {}
+          }
+        };
 
-        // Update navigation route colors
-        if (mapRef.current.getLayer('nav-route-main')) {
-          mapRef.current.setPaintProperty('nav-route-main', 'line-color', dn.routeColor);
-        }
-        if (mapRef.current.getLayer('nav-route-casing')) {
-          mapRef.current.setPaintProperty('nav-route-casing', 'line-color', dn.routeGlowColor);
-        }
+        // A. Pavement, terrain & urban landuse layers (Real Day/Night transformation)
+        safeSetPaint('background', 'background-color', dn.backgroundColor);
+        safeSetPaint('landuse_residential', 'fill-color', dn.residentialColor);
+        safeSetPaint('landuse_park', 'fill-color', dn.parkColor);
+        safeSetPaint('urban-greenery-fill', 'fill-color', dn.urbanGreeneryColor);
+        safeSetPaint('highway_minor', 'line-color', dn.minorRoadColor);
+        safeSetPaint('highway_major_inner', 'line-color', dn.majorRoadInnerColor);
+        safeSetPaint('highway_major_casing', 'line-color', dn.majorRoadCasingColor);
 
-        // Update street lamps illumination
-        if (mapRef.current.getLayer('street-lamps-glow')) {
-          mapRef.current.setPaintProperty('street-lamps-glow', 'circle-opacity', dn.streetLampOpacity * 0.75);
-        }
-        if (mapRef.current.getLayer('street-lamps-core')) {
-          mapRef.current.setPaintProperty('street-lamps-core', 'circle-opacity', dn.streetLampOpacity);
-        }
+        // B. 3D Architectural Buildings (Sunlight facade relief in day, nocturnal obsidian in night)
+        safeSetPaint('3d-buildings', 'fill-extrusion-color', dn.buildingColor);
 
-        // Update 3D map lighting
-        mapRef.current.setLight({
+        // C. Navigation Route (Crisp emerald-cyan in daylight, brilliant neon in night)
+        safeSetPaint('nav-route-main', 'line-color', dn.routeColor);
+        safeSetPaint('nav-route-casing', 'line-color', dn.routeGlowColor);
+
+        // D. Street lamps illumination along Monseñor Rivero & Av. Banzer
+        safeSetPaint('street-lamps-glow', 'circle-opacity', dn.streetLampOpacity * 0.85);
+        safeSetPaint('street-lamps-core', 'circle-opacity', dn.streetLampOpacity);
+
+        // E. 3D Map Directional Sun/Moon Lighting
+        m.setLight({
           anchor: 'map',
           color: dn.lightColor,
           intensity: dn.lightIntensity,
-          position: [1.3, 180 - dn.dayNightProgress * 90, 50 - dn.dayNightProgress * 25],
+          position: dn.sunPosition,
         });
 
         // Notify parent hero for HUD telemetry & atmosphere updates

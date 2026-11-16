@@ -69,92 +69,179 @@ export function lerpColor(hexA: string, hexB: string, t: number): string {
 export interface DayNightVisuals {
   dayNightProgress: number; // 0 (day) to 1 (night)
   timeOfDayLabel: string;
-  backgroundColor: string;
-  buildingColor: string;
-  lightColor: string;
+  isDay: boolean;
+  isSunset: boolean;
+  isNight: boolean;
+  backgroundColor: string; // MapLibre 'background'
+  residentialColor: string; // MapLibre 'landuse_residential'
+  parkColor: string; // MapLibre 'landuse_park'
+  urbanGreeneryColor: string; // 'urban-greenery-fill'
+  minorRoadColor: string; // MapLibre 'highway_minor'
+  majorRoadInnerColor: string; // MapLibre 'highway_major_inner'
+  majorRoadCasingColor: string; // MapLibre 'highway_major_casing'
+  buildingColor: string; // '3d-buildings' fill-extrusion
+  lightColor: string; // 3D directional light
   lightIntensity: number;
+  sunPosition: [number, number, number]; // [radial, azimuthal, polar]
   streetLampOpacity: number;
   routeColor: string;
   routeGlowColor: string;
+  scrimTop: string;
+  scrimBottom: string;
 }
 
 /**
  * Computes Day to Night visual parameters based on scroll progress
+ * 0.00 - 0.25: Día pleno (Cielo slate claro, pavimento gris azulado claro, luz solar brillante)
+ * 0.25 - 0.55: Tarde dorada (Golden hour, sombras cálidas, farolas encendiéndose)
+ * 0.55 - 0.78: Atardecer / Sunset (Tonos ámbar/violeta, farolas iluminadas, ruta destacada)
+ * 0.78 - 1.00: Noche profunda (Deep midnight navy, luces urbanas vivas, ruta neón)
  */
 export function getDayNightVisuals(progress: number): DayNightVisuals {
   const clamped = Math.max(0, Math.min(1, progress));
   
-  // Transition progression:
-  // 0.0 - 0.25: Día pleno (cielo slate claro, luz cálida)
-  // 0.25 - 0.55: Tarde dorada (golden hour)
-  // 0.55 - 0.78: Atardecer / Sunset (tonos azulados / violetas, lámparas encendiéndose)
-  // 0.78 - 1.00: Noche profunda (deep navy URBO #070B14, luces vivas, ruta neón)
-
   let timeOfDayLabel = 'DÍA · 14:30';
-  let backgroundColor = '#0A0F1D';
-  let buildingColor = '#243447';
-  let lightColor = '#E2E8F0';
-  let lightIntensity = 0.70;
+  let isDay = true;
+  let isSunset = false;
+  let isNight = false;
+
+  let backgroundColor = '#D6E0EA';
+  let residentialColor = '#E2E8F0';
+  let parkColor = '#86EFAC';
+  let urbanGreeneryColor = '#16A34A';
+  let minorRoadColor = '#CBD5E1';
+  let majorRoadInnerColor = '#FFFFFF';
+  let majorRoadCasingColor = '#94A3B8';
+  let buildingColor = '#CBD5E1';
+  let lightColor = '#FFFBEB';
+  let lightIntensity = 0.85;
+  let sunPosition: [number, number, number] = [1.2, 135, 60];
   let streetLampOpacity = 0.0;
-  let routeColor = '#00E5BE'; // High-contrast Emerald Cyan on dark map
-  let routeGlowColor = '#38BDF8';
+  let routeColor = '#059669'; // High-contrast emerald cyan that pops on daylight pavement
+  let routeGlowColor = '#0284C7';
+  let scrimTop = 'linear-gradient(to bottom, rgba(214, 224, 234, 0.85) 0%, rgba(214, 224, 234, 0.20) 60%, transparent 100%)';
+  let scrimBottom = 'linear-gradient(to top, rgba(214, 224, 234, 0.88) 0%, transparent 100%)';
 
   if (clamped < 0.25) {
-    // Stage 1: Día
+    // Stage 1: DÍA PLENO (0% - 25%)
     const t = clamped / 0.25;
     timeOfDayLabel = 'DÍA · 14:30';
-    backgroundColor = lerpColor('#0A0F1D', '#0D1527', t);
-    buildingColor = lerpColor('#243447', '#2A3B53', t);
-    lightColor = '#E2E8F0';
-    lightIntensity = 0.70 - (t * 0.08);
+    isDay = true;
+    isSunset = false;
+    isNight = false;
+
+    backgroundColor = lerpColor('#D6E0EA', '#CAD5E2', t);
+    residentialColor = lerpColor('#E2E8F0', '#D9E2EC', t);
+    parkColor = lerpColor('#86EFAC', '#6EE7B7', t);
+    urbanGreeneryColor = lerpColor('#16A34A', '#15803D', t);
+    minorRoadColor = lerpColor('#CBD5E1', '#BAC7D5', t);
+    majorRoadInnerColor = '#FFFFFF';
+    majorRoadCasingColor = lerpColor('#94A3B8', '#8596A9', t);
+    buildingColor = lerpColor('#CBD5E1', '#B8C5D3', t);
+    lightColor = '#FFFBEB';
+    lightIntensity = 0.85 - t * 0.10;
+    sunPosition = [1.2, 135 + t * 30, 60 - t * 10];
     streetLampOpacity = 0.0;
-    routeColor = '#00E5BE';
-    routeGlowColor = '#38BDF8';
+    routeColor = '#059669';
+    routeGlowColor = '#0284C7';
+    scrimTop = 'linear-gradient(to bottom, rgba(214, 224, 234, 0.85) 0%, rgba(214, 224, 234, 0.20) 60%, transparent 100%)';
+    scrimBottom = 'linear-gradient(to top, rgba(214, 224, 234, 0.88) 0%, transparent 100%)';
   } else if (clamped < 0.55) {
-    // Stage 2: Tarde / Golden Hour
+    // Stage 2: TARDE DORADA / GOLDEN HOUR (25% - 55%)
     const t = (clamped - 0.25) / 0.30;
     timeOfDayLabel = 'TARDE · 17:15';
-    backgroundColor = lerpColor('#0D1527', '#13192B', t);
-    buildingColor = lerpColor('#2A3B53', '#323048', t);
-    lightColor = lerpColor('#E2E8F0', '#FDE68A', t);
-    lightIntensity = 0.62 - (t * 0.12);
-    streetLampOpacity = t * 0.40; // Lamp filaments start glowing
-    routeColor = lerpColor('#00E5BE', '#00E5BE', t);
-    routeGlowColor = lerpColor('#38BDF8', '#00E5BE', t);
+    isDay = false;
+    isSunset = true;
+    isNight = false;
+
+    backgroundColor = lerpColor('#CAD5E2', '#4D425E', t);
+    residentialColor = lerpColor('#D9E2EC', '#413752', t);
+    parkColor = lerpColor('#6EE7B7', '#254737', t);
+    urbanGreeneryColor = lerpColor('#15803D', '#166534', t);
+    minorRoadColor = lerpColor('#BAC7D5', '#574A6B', t);
+    majorRoadInnerColor = lerpColor('#FFFFFF', '#FDE68A', t);
+    majorRoadCasingColor = lerpColor('#8596A9', '#66577D', t);
+    buildingColor = lerpColor('#B8C5D3', '#6A5B75', t);
+    lightColor = lerpColor('#FFFBEB', '#FDBA74', t);
+    lightIntensity = 0.75 - t * 0.18;
+    sunPosition = [1.3, 165 + t * 40, 50 - t * 20];
+    streetLampOpacity = t * 0.40;
+    routeColor = lerpColor('#059669', '#00E5BE', t);
+    routeGlowColor = lerpColor('#0284C7', '#38BDF8', t);
+    scrimTop = 'linear-gradient(to bottom, rgba(77, 66, 94, 0.85) 0%, rgba(77, 66, 94, 0.20) 60%, transparent 100%)';
+    scrimBottom = 'linear-gradient(to top, rgba(77, 66, 94, 0.88) 0%, transparent 100%)';
   } else if (clamped < 0.78) {
-    // Stage 3: Atardecer / Sunset
+    // Stage 3: ATARDECER / SUNSET (55% - 78%)
     const t = (clamped - 0.55) / 0.23;
     timeOfDayLabel = 'ATARDECER · 18:45';
-    backgroundColor = lerpColor('#13192B', '#111728', t);
-    buildingColor = lerpColor('#323048', '#25253D', t);
-    lightColor = lerpColor('#FDE68A', '#FB923C', t);
-    lightIntensity = 0.50 - (t * 0.18);
-    streetLampOpacity = 0.40 + (t * 0.50); // Streetlight activation
-    routeColor = lerpColor('#00E5BE', '#38BDF8', t);
-    routeGlowColor = '#00E5BE';
+    isDay = false;
+    isSunset = true;
+    isNight = false;
+
+    backgroundColor = lerpColor('#4D425E', '#191528', t);
+    residentialColor = lerpColor('#413752', '#141021', t);
+    parkColor = lerpColor('#254737', '#0C2018', t);
+    urbanGreeneryColor = lerpColor('#166534', '#0D3D2B', t);
+    minorRoadColor = lerpColor('#574A6B', '#251E38', t);
+    majorRoadInnerColor = lerpColor('#FDE68A', '#FB923C', t);
+    majorRoadCasingColor = lerpColor('#66577D', '#3E3154', t);
+    buildingColor = lerpColor('#6A5B75', '#2E243D', t);
+    lightColor = lerpColor('#FDBA74', '#FB7185', t);
+    lightIntensity = 0.57 - t * 0.22;
+    sunPosition = [1.3, 205 + t * 45, 30 - t * 15];
+    streetLampOpacity = 0.40 + t * 0.45;
+    routeColor = '#00E5BE';
+    routeGlowColor = '#38BDF8';
+    scrimTop = 'linear-gradient(to bottom, rgba(25, 21, 40, 0.90) 0%, rgba(25, 21, 40, 0.30) 60%, transparent 100%)';
+    scrimBottom = 'linear-gradient(to top, rgba(25, 21, 40, 0.92) 0%, transparent 100%)';
   } else {
-    // Stage 4: Noche profunda
+    // Stage 4: NOCHE PROFUNDA (78% - 100%)
     const t = (clamped - 0.78) / 0.22;
     timeOfDayLabel = 'NOCHE · 20:30';
-    backgroundColor = lerpColor('#111728', '#070B14', t);
-    buildingColor = lerpColor('#25253D', '#162035', t);
-    lightColor = lerpColor('#FB923C', '#38BDF8', t);
-    lightIntensity = 0.32 - (t * 0.08);
-    streetLampOpacity = 0.90 + (t * 0.10);
-    routeColor = '#38BDF8'; // Full cyberpunk URBO Cyan
+    isDay = false;
+    isSunset = false;
+    isNight = true;
+
+    backgroundColor = lerpColor('#191528', '#070B14', t);
+    residentialColor = lerpColor('#141021', '#0A1020', t);
+    parkColor = lerpColor('#0C2018', '#041B16', t);
+    urbanGreeneryColor = lerpColor('#0D3D2B', '#064E3B', t);
+    minorRoadColor = lerpColor('#251E38', '#131E35', t);
+    majorRoadInnerColor = lerpColor('#FB923C', '#1D2D4E', t);
+    majorRoadCasingColor = lerpColor('#3E3154', '#263B66', t);
+    buildingColor = lerpColor('#2E243D', '#0F172A', t);
+    lightColor = lerpColor('#FB7185', '#38BDF8', t);
+    lightIntensity = 0.35 - t * 0.13;
+    sunPosition = [1.3, 250 + t * 20, 15 + t * 35];
+    streetLampOpacity = 0.85 + t * 0.15;
+    routeColor = '#38BDF8';
     routeGlowColor = '#00E5BE';
+    scrimTop = 'linear-gradient(to bottom, rgba(7, 11, 20, 0.94) 0%, rgba(7, 11, 20, 0.35) 60%, transparent 100%)';
+    scrimBottom = 'linear-gradient(to top, rgba(7, 11, 20, 0.96) 0%, rgba(7, 11, 20, 0.45) 60%, transparent 100%)';
   }
 
   return {
     dayNightProgress: clamped,
     timeOfDayLabel,
+    isDay,
+    isSunset,
+    isNight,
     backgroundColor,
+    residentialColor,
+    parkColor,
+    urbanGreeneryColor,
+    minorRoadColor,
+    majorRoadInnerColor,
+    majorRoadCasingColor,
     buildingColor,
     lightColor,
     lightIntensity,
+    sunPosition,
     streetLampOpacity,
     routeColor,
     routeGlowColor,
+    scrimTop,
+    scrimBottom,
   };
 }
 
