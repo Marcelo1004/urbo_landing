@@ -1,0 +1,889 @@
+{
+  "streetLamps": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18189383036789,
+            -17.7762
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182493830367896,
+            -17.7762
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18188292282168,
+            -17.77585
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182482922821684,
+            -17.77585
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18186802323273,
+            -17.775499999999997
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18246802323274,
+            -17.775499999999997
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.181850938244374,
+            -17.775149999999996
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18245093824438,
+            -17.775149999999996
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18183373948959,
+            -17.774799999999995
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182433739489596,
+            -17.774799999999995
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18181851239608,
+            -17.774449999999995
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18241851239608,
+            -17.774449999999995
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.181807103318576,
+            -17.774099999999994
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18240710331858,
+            -17.774099999999994
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18180089565992,
+            -17.773749999999993
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182400895659924,
+            -17.773749999999993
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18180064212711,
+            -17.77339999999999
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182400642127114,
+            -17.77339999999999
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.181806373462166,
+            -17.77304999999999
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18240637346217,
+            -17.77304999999999
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.1818173947145,
+            -17.77269999999999
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182417394714506,
+            -17.77269999999999
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18183236950685,
+            -17.77234999999999
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182432369506856,
+            -17.77234999999999
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18184948207713,
+            -17.771999999999988
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18244948207714,
+            -17.771999999999988
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.181866657447934,
+            -17.771649999999987
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18246665744794,
+            -17.771649999999987
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18188181302698,
+            -17.771299999999986
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18248181302699,
+            -17.771299999999986
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "east"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18189311113098,
+            -17.770949999999985
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "west"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18249311113099,
+            -17.770949999999985
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18205,
+            -17.77055
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182110288568296,
+            -17.77035
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182275,
+            -17.770203589838488
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.1825,
+            -17.77015
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182725,
+            -17.770203589838488
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.1828897114317,
+            -17.77035
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.18295,
+            -17.77055
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.1828897114317,
+            -17.77075
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182725,
+            -17.770896410161512
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.1825,
+            -17.77095
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182275,
+            -17.770896410161512
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "type": "lamp",
+          "side": "roundabout"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -63.182110288568296,
+            -17.77075
+          ]
+        }
+      }
+    ]
+  },
+  "urbanGreenery": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Plaza 24 de Septiembre",
+          "type": "park"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -63.1827,
+                -17.7835
+              ],
+              [
+                -63.1819,
+                -17.7836
+              ],
+              [
+                -63.18175,
+                -17.78265
+              ],
+              [
+                -63.18255,
+                -17.78255
+              ],
+              [
+                -63.1827,
+                -17.7835
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Plaza del Estudiante",
+          "type": "park"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -63.1826,
+                -17.7766
+              ],
+              [
+                -63.1821,
+                -17.7767
+              ],
+              [
+                -63.18195,
+                -17.7758
+              ],
+              [
+                -63.18245,
+                -17.7757
+              ],
+              [
+                -63.1826,
+                -17.7766
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Camellón Central Monseñor Rivero",
+          "type": "median"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              -63.18205,
+              -17.7757
+            ],
+            [
+              -63.1821,
+              -17.7748
+            ],
+            [
+              -63.18218,
+              -17.7738
+            ],
+            [
+              -63.18228,
+              -17.7725
+            ],
+            [
+              -63.1824,
+              -17.7712
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Jardín Cristo Redentor",
+          "type": "roundabout_garden"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -63.182249999999996,
+                -17.77055
+              ],
+              [
+                -63.182271613635585,
+                -17.770460517938524
+              ],
+              [
+                -63.18233271734841,
+                -17.770386508138394
+              ],
+              [
+                -63.1824227457514,
+                -17.770340767566417
+              ],
+              [
+                -63.18252613211581,
+                -17.77033120518302
+              ],
+              [
+                -63.182624999999994,
+                -17.77035947441117
+              ],
+              [
+                -63.18270225424859,
+                -17.770420687244496
+              ],
+              [
+                -63.18274453690018,
+                -17.77050425942802
+              ],
+              [
+                -63.18274453690018,
+                -17.77059574057198
+              ],
+              [
+                -63.18270225424859,
+                -17.770679312755504
+              ],
+              [
+                -63.182624999999994,
+                -17.77074052558883
+              ],
+              [
+                -63.18252613211581,
+                -17.77076879481698
+              ],
+              [
+                -63.1824227457514,
+                -17.770759232433583
+              ],
+              [
+                -63.18233271734841,
+                -17.770713491861606
+              ],
+              [
+                -63.182271613635585,
+                -17.770639482061476
+              ],
+              [
+                -63.182249999999996,
+                -17.77055
+              ]
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "pedestrians": [
+    {
+      "id": "ped-1",
+      "base": [
+        -63.1823,
+        -17.7831
+      ],
+      "radius": 0.00018,
+      "speed": 1.2
+    },
+    {
+      "id": "ped-2",
+      "base": [
+        -63.18215,
+        -17.7829
+      ],
+      "radius": 0.00022,
+      "speed": 0.9
+    },
+    {
+      "id": "ped-3",
+      "base": [
+        -63.18245,
+        -17.7833
+      ],
+      "radius": 0.00015,
+      "speed": 1.5
+    },
+    {
+      "id": "ped-4",
+      "base": [
+        -63.18235,
+        -17.7762
+      ],
+      "radius": 0.0002,
+      "speed": 1.1
+    },
+    {
+      "id": "ped-5",
+      "base": [
+        -63.18218,
+        -17.77605
+      ],
+      "radius": 0.00017,
+      "speed": 1.4
+    },
+    {
+      "id": "ped-6",
+      "base": [
+        -63.1819,
+        -17.7745
+      ],
+      "radius": 0.00012,
+      "speed": 1
+    },
+    {
+      "id": "ped-7",
+      "base": [
+        -63.1824,
+        -17.7735
+      ],
+      "radius": 0.00014,
+      "speed": 0.8
+    },
+    {
+      "id": "ped-8",
+      "base": [
+        -63.18195,
+        -17.7725
+      ],
+      "radius": 0.00011,
+      "speed": 1.3
+    },
+    {
+      "id": "ped-9",
+      "base": [
+        -63.18245,
+        -17.7718
+      ],
+      "radius": 0.00013,
+      "speed": 0.95
+    }
+  ]
+}

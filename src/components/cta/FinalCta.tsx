@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Mail, 
   MessageCircle, 
@@ -20,89 +20,103 @@ import { gsap } from 'gsap';
 
 export const FinalCta: React.FC = () => {
   const [isProjected, setIsProjected] = useState(false);
-  const [animating, setAnimating] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const hologramStageRef = useRef<HTMLDivElement>(null);
   const laserBeamRef = useRef<HTMLDivElement>(null);
+  const coneRef = useRef<HTMLDivElement>(null);
   const holoPanelRef = useRef<HTMLDivElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  // Emerge real holographic projection from the card's top edge
-  const openHologram = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (animating || isProjected) return;
-    setAnimating(true);
-    setIsProjected(true);
+  // Setup single reversible GSAP timeline for physical emergence from URBO card
+  useEffect(() => {
+    const stage = hologramStageRef.current;
+    const panel = holoPanelRef.current;
+    const beam = laserBeamRef.current;
+    const cone = coneRef.current;
+    if (!stage || !panel || !beam || !cone) return;
 
-    const tl = gsap.timeline({
-      onComplete: () => setAnimating(false),
-    });
-
-    // 1. Energize card top border with neon laser beam
-    tl.fromTo(
-      laserBeamRef.current,
-      { scaleX: 0, opacity: 0 },
-      { scaleX: 1, opacity: 1, duration: 0.35, ease: 'power3.out' }
-    );
-
-    // 2. Holographic panel projects vertically upward with perspective elevation
-    tl.fromTo(
-      holoPanelRef.current,
-      {
+    const ctx = gsap.context(() => {
+      // Initial state: hidden in perspective resting right above the card emitter
+      gsap.set(panel, {
         opacity: 0,
-        y: 40,
-        scaleY: 0.2,
-        scaleX: 0.85,
+        y: 45,
+        scaleY: 0.12,
+        scaleX: 0.88,
+        rotateX: 18,
         transformOrigin: '50% 100%',
-      },
-      {
+        pointerEvents: 'none',
+      });
+      gsap.set(beam, { scaleX: 0, opacity: 0 });
+      gsap.set(cone, { scaleY: 0, opacity: 0, transformOrigin: '50% 100%' });
+      gsap.set('.holo-channel-item', { opacity: 0, y: 15 });
+
+      const tl = gsap.timeline({
+        paused: true,
+        onStart: () => setIsProjected(true),
+        onReverseComplete: () => setIsProjected(false),
+      });
+
+      // Stage 1: Energize card top border with laser emitter
+      tl.to(beam, {
+        scaleX: 1,
+        opacity: 1,
+        duration: 0.28,
+        ease: 'power3.out',
+      })
+      // Stage 2: Volumetric emitter light cone projects upwards
+      .to(cone, {
+        scaleY: 1,
+        opacity: 0.85,
+        duration: 0.35,
+        ease: 'power2.out',
+      }, '-=0.12')
+      // Stage 3 & 4: Holographic panel elevates with 3D perspective
+      .to(panel, {
         opacity: 1,
         y: 0,
         scaleY: 1,
         scaleX: 1,
+        rotateX: 0,
+        pointerEvents: 'auto',
         duration: 0.55,
-        ease: 'back.out(1.2)',
-      },
-      '-=0.15'
-    );
+        ease: 'back.out(1.15)',
+      }, '-=0.22')
+      // Stage 5: Channels stagger in
+      .to('.holo-channel-item', {
+        opacity: 1,
+        y: 0,
+        stagger: 0.08,
+        duration: 0.28,
+        ease: 'power2.out',
+      }, '-=0.25')
+      // Stage 6: Specular sheen sweep
+      .fromTo('.holo-specular-sweep', 
+        { x: '-100%', opacity: 0 },
+        { x: '200%', opacity: 0.45, duration: 0.70, ease: 'power1.inOut' },
+        '-=0.15'
+      );
 
-    // 3. Stagger channels reveal
-    tl.fromTo(
-      '.holo-channel-item',
-      { opacity: 0, y: 15 },
-      { opacity: 1, y: 0, stagger: 0.08, duration: 0.3, ease: 'power2.out' },
-      '-=0.25'
-    );
+      tlRef.current = tl;
+    }, stage);
+
+    return () => ctx.revert();
+  }, []);
+
+  const toggleHologram = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!tlRef.current) return;
+    if (isProjected) {
+      tlRef.current.reverse();
+    } else {
+      tlRef.current.play();
+    }
   };
 
   const closeHologram = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (animating || !isProjected) return;
-    setAnimating(true);
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setIsProjected(false);
-        setAnimating(false);
-      },
-    });
-
-    // Collapse holographic projection back into the card emitter
-    tl.to(holoPanelRef.current, {
-      opacity: 0,
-      y: 35,
-      scaleY: 0.1,
-      scaleX: 0.9,
-      duration: 0.35,
-      ease: 'power2.in',
-    });
-
-    tl.to(laserBeamRef.current, {
-      scaleX: 0,
-      opacity: 0,
-      duration: 0.2,
-      ease: 'power2.in',
-    }, '-=0.1');
+    if (!tlRef.current) return;
+    tlRef.current.reverse();
   };
 
   return (
@@ -125,7 +139,7 @@ export const FinalCta: React.FC = () => {
         {/* Section Headline */}
         <div className="mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1426] border border-white/10 text-[#00E5BE] text-xs font-mono font-bold tracking-wider uppercase mb-5">
-            <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] animate-pulse" />
             <span>ALIANZAS, LÍNEAS & INVERSIÓN</span>
           </div>
 
@@ -137,27 +151,27 @@ export const FinalCta: React.FC = () => {
           </h2>
 
           <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto font-sans">
-            Haz clic en <span className="text-[#00E5BE] font-semibold">Contáctanos</span> para desplegar los canales oficiales y enlaces directos con el equipo fundador de URBO.
+            Haz clic en <span className="text-[#00E5BE] font-semibold">Contáctanos</span> para desplegar la interfaz holográfica con los canales oficiales y enlaces directos con el equipo fundador de URBO.
           </p>
         </div>
 
         {/* =================================================================
             HOLOGRAM & CARD APPARATUS CONTAINER
             ================================================================= */}
-        <div ref={hologramStageRef} className="relative flex flex-col items-center justify-center max-w-[840px] mx-auto mb-12">
+        <div ref={hologramStageRef} className="relative flex flex-col items-center justify-center max-w-[840px] mx-auto mb-12 overflow-visible">
           
           {/* =============================================================
               EMERGING STAR WARS HOLOGRAPHIC PROJECTION PANEL (EMERGES UPWARD)
               ============================================================= */}
           <div
             ref={holoPanelRef}
-            className={cn(
-              'w-full max-w-[800px] rounded-[32px] p-6 sm:p-8 mb-4 bg-gradient-to-b from-[#0F1C35]/95 via-[#0B1426]/95 to-[#070B14]/95 border-2 border-[#38BDF8]/60 backdrop-blur-2xl shadow-[0_0_60px_rgba(56,189,248,0.35),inset_0_0_30px_rgba(0,229,190,0.2)] text-left transition-all relative z-30 star-wars-hologram',
-              isProjected ? 'block' : 'hidden opacity-0 pointer-events-none'
-            )}
+            className="w-full max-w-[800px] rounded-[32px] p-6 sm:p-8 mb-4 bg-gradient-to-b from-[#0F1C35]/95 via-[#0B1426]/95 to-[#070B14]/95 border-2 border-[#38BDF8]/60 backdrop-blur-2xl shadow-[0_0_60px_rgba(56,189,248,0.35),inset_0_0_30px_rgba(0,229,190,0.2)] text-left relative z-30 star-wars-hologram overflow-hidden"
           >
             {/* Holographic Emitter Light Cone at the bottom */}
-            <div className="holo-emitter-cone" aria-hidden="true" />
+            <div ref={coneRef} className="holo-emitter-cone" aria-hidden="true" />
+
+            {/* Specular sheen sweep */}
+            <div className="holo-specular-sweep pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg]" />
 
             {/* Header: Projection Tag & Close Button */}
             <div className="relative z-10 flex items-center justify-between border-b border-[#38BDF8]/30 pb-4 mb-5">
@@ -251,7 +265,7 @@ export const FinalCta: React.FC = () => {
             </div>
 
             {/* Projection Footer Status */}
-            <div className="relative z-10 pt-3 border-t border-[#00E5BE]/30 flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-slate-300 gap-2">
+            <div className="relative z-10 pt-3 border-t border-[#38BDF8]/30 flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-slate-300 gap-2">
               <span>Santa Cruz de la Sierra · Bolivia</span>
               <span className="text-[#00E5BE] font-bold flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
@@ -266,10 +280,7 @@ export const FinalCta: React.FC = () => {
           <div
             ref={laserBeamRef}
             aria-hidden="true"
-            className={cn(
-              'w-[92%] h-[3px] bg-gradient-to-r from-transparent via-[#00E5BE] to-transparent shadow-[0_0_20px_#00E5BE,0_0_35px_#38BDF8] z-20 mb-[-1.5px] transition-all',
-              isProjected ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
-            )}
+            className="w-[92%] h-[3px] bg-gradient-to-r from-transparent via-[#00E5BE] to-transparent shadow-[0_0_20px_#00E5BE,0_0_35px_#38BDF8] z-20 mb-[-1.5px]"
           />
 
           {/* =============================================================
@@ -335,17 +346,17 @@ export const FinalCta: React.FC = () => {
             <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-white/10 text-xs font-mono text-slate-300 gap-3">
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-[#00E5BE]" />
-                <span>Casco Viejo & Zona Norte (Línea 30)</span>
+                <span>Casco Viejo a 4to Anillo (5.04 km Troncal)</span>
               </div>
 
               {/* Exact user requested CTA button: "Contáctanos" */}
               <button
                 type="button"
-                onClick={isProjected ? closeHologram : openHologram}
+                onClick={toggleHologram}
                 className="flex items-center gap-2 text-slate-950 font-bold transition-all bg-[#00C9A7] hover:bg-[#00E5BE] px-6 py-2.5 rounded-full shadow-[0_0_20px_rgba(0,201,167,0.5)] hover:shadow-[0_0_30px_rgba(0,229,190,0.8)] hover:scale-105 active:scale-95 cursor-pointer text-xs uppercase tracking-wider"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{isProjected ? 'Ocultar canales' : 'Contáctanos'}</span>
+                <span>{isProjected ? 'Cerrar canales' : 'Contáctanos'}</span>
               </button>
             </div>
 
@@ -387,4 +398,5 @@ export const FinalCta: React.FC = () => {
     </section>
   );
 };
+
 export default FinalCta;
