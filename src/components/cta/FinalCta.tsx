@@ -9,11 +9,10 @@ import {
   Sparkles, 
   Instagram,
   Radio,
-  Cpu,
-  Zap,
-  CheckCircle2
+  CheckCircle2,
+  ShieldCheck,
+  Send
 } from 'lucide-react';
-import { GlassBadge } from '@/components/ui/Glass';
 import { UrboLogo } from '@/components/ui/UrboLogo';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
@@ -21,81 +20,152 @@ import { gsap } from 'gsap';
 export const FinalCta: React.FC = () => {
   const [isProjected, setIsProjected] = useState(false);
 
+  const stageRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const hologramStageRef = useRef<HTMLDivElement>(null);
-  const laserBeamRef = useRef<HTMLDivElement>(null);
-  const coneRef = useRef<HTMLDivElement>(null);
-  const holoPanelRef = useRef<HTMLDivElement>(null);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
+  const rightPanelRef = useRef<HTMLDivElement>(null);
+  const socialPanelRef = useRef<HTMLDivElement>(null);
+
+  const leftBeamRef = useRef<HTMLDivElement>(null);
+  const rightBeamRef = useRef<HTMLDivElement>(null);
+  const socialBeamRef = useRef<HTMLDivElement>(null);
+
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  // Setup single reversible GSAP timeline for physical emergence from URBO card
+  // Setup single coordinated reversible GSAP timeline for lateral independent projections
   useEffect(() => {
-    const stage = hologramStageRef.current;
-    const panel = holoPanelRef.current;
-    const beam = laserBeamRef.current;
-    const cone = coneRef.current;
-    if (!stage || !panel || !beam || !cone) return;
+    const stage = stageRef.current;
+    const card = cardRef.current;
+    const leftP = leftPanelRef.current;
+    const rightP = rightPanelRef.current;
+    const socialP = socialPanelRef.current;
+    const leftB = leftBeamRef.current;
+    const rightB = rightBeamRef.current;
+    const socialB = socialBeamRef.current;
+
+    if (!stage || !card || !leftP || !rightP || !socialP) return;
 
     const ctx = gsap.context(() => {
-      // Initial state: hidden in perspective resting right above the card emitter
-      gsap.set(panel, {
-        opacity: 0,
-        y: 45,
-        scaleY: 0.12,
-        scaleX: 0.88,
-        rotateX: 18,
-        transformOrigin: '50% 100%',
-        pointerEvents: 'none',
-      });
-      gsap.set(beam, { scaleX: 0, opacity: 0 });
-      gsap.set(cone, { scaleY: 0, opacity: 0, transformOrigin: '50% 100%' });
-      gsap.set('.holo-channel-item', { opacity: 0, y: 15 });
+      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+
+      if (isDesktop) {
+        // Desktop 3D Spatial Lateral layout
+        gsap.set(leftP, {
+          opacity: 0,
+          x: 40,
+          scale: 0.88,
+          rotateY: 18,
+          transformOrigin: '100% 50%',
+          pointerEvents: 'none',
+        });
+        gsap.set(rightP, {
+          opacity: 0,
+          x: -40,
+          scale: 0.88,
+          rotateY: -18,
+          transformOrigin: '0% 50%',
+          pointerEvents: 'none',
+        });
+        gsap.set(socialP, {
+          opacity: 0,
+          y: -25,
+          scale: 0.88,
+          transformOrigin: '50% 0%',
+          pointerEvents: 'none',
+        });
+        if (leftB) gsap.set(leftB, { scaleX: 0, opacity: 0 });
+        if (rightB) gsap.set(rightB, { scaleX: 0, opacity: 0 });
+        if (socialB) gsap.set(socialB, { scaleY: 0, opacity: 0 });
+      } else {
+        // Mobile / Tablet stacked presentation
+        gsap.set([leftP, rightP, socialP], {
+          opacity: 0,
+          y: 25,
+          scale: 0.95,
+          pointerEvents: 'none',
+          display: 'none',
+        });
+      }
 
       const tl = gsap.timeline({
         paused: true,
-        onStart: () => setIsProjected(true),
-        onReverseComplete: () => setIsProjected(false),
+        onStart: () => {
+          setIsProjected(true);
+          if (!isDesktop) {
+            gsap.set([leftP, rightP, socialP], { display: 'block' });
+          }
+        },
+        onReverseComplete: () => {
+          setIsProjected(false);
+          if (!isDesktop) {
+            gsap.set([leftP, rightP, socialP], { display: 'none' });
+          }
+        },
       });
 
-      // Stage 1: Energize card top border with laser emitter
-      tl.to(beam, {
-        scaleX: 1,
-        opacity: 1,
-        duration: 0.28,
-        ease: 'power3.out',
-      })
-      // Stage 2: Volumetric emitter light cone projects upwards
-      .to(cone, {
-        scaleY: 1,
-        opacity: 0.85,
-        duration: 0.35,
-        ease: 'power2.out',
-      }, '-=0.12')
-      // Stage 3 & 4: Holographic panel elevates with 3D perspective
-      .to(panel, {
-        opacity: 1,
-        y: 0,
-        scaleY: 1,
-        scaleX: 1,
-        rotateX: 0,
-        pointerEvents: 'auto',
-        duration: 0.55,
-        ease: 'back.out(1.15)',
-      }, '-=0.22')
-      // Stage 5: Channels stagger in
-      .to('.holo-channel-item', {
-        opacity: 1,
-        y: 0,
-        stagger: 0.08,
-        duration: 0.28,
-        ease: 'power2.out',
-      }, '-=0.25')
-      // Stage 6: Specular sheen sweep
-      .fromTo('.holo-specular-sweep', 
-        { x: '-100%', opacity: 0 },
-        { x: '200%', opacity: 0.45, duration: 0.70, ease: 'power1.inOut' },
-        '-=0.15'
-      );
+      if (isDesktop) {
+        // Step 1: Fire lateral and downward laser emitters
+        if (leftB && rightB && socialB) {
+          tl.to([leftB, rightB], {
+            scaleX: 1,
+            opacity: 1,
+            duration: 0.25,
+            ease: 'power3.out',
+          }).to(socialB, {
+            scaleY: 1,
+            opacity: 1,
+            duration: 0.25,
+            ease: 'power3.out',
+          }, '-=0.15');
+        }
+
+        // Step 2: Project Left Panel (Email)
+        tl.to(leftP, {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          rotateY: 6,
+          pointerEvents: 'auto',
+          duration: 0.45,
+          ease: 'back.out(1.15)',
+        }, '-=0.15')
+        // Step 3: Project Right Panel (WhatsApp)
+        .to(rightP, {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          rotateY: -6,
+          pointerEvents: 'auto',
+          duration: 0.45,
+          ease: 'back.out(1.15)',
+        }, '-=0.35')
+        // Step 4: Project Social Satellite (Instagram)
+        .to(socialP, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          pointerEvents: 'auto',
+          duration: 0.40,
+          ease: 'back.out(1.15)',
+        }, '-=0.30')
+        // Step 5: Specular sheen sweep across all holograms
+        .fromTo('.holo-specular-sweep', 
+          { x: '-100%', opacity: 0 },
+          { x: '250%', opacity: 0.45, duration: 0.65, ease: 'power1.inOut' },
+          '-=0.15'
+        );
+      } else {
+        // Mobile sequence
+        tl.to([leftP, rightP, socialP], {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          pointerEvents: 'auto',
+          stagger: 0.12,
+          duration: 0.35,
+          ease: 'power2.out',
+        });
+      }
 
       tlRef.current = tl;
     }, stage);
@@ -120,7 +190,7 @@ export const FinalCta: React.FC = () => {
   };
 
   return (
-    <section id="contacto" className="relative py-24 lg:py-32 overflow-visible bg-[#070B14]">
+    <section id="contacto" className="relative py-16 lg:py-20 overflow-x-clip bg-[#070B14]">
       {/* Anchor alias */}
       <span id="unirse" className="absolute -top-32" />
 
@@ -134,12 +204,12 @@ export const FinalCta: React.FC = () => {
         className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-[#38BDF8]/10 blur-[180px] pointer-events-none"
       />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         
         {/* Section Headline */}
-        <div className="mb-12 sm:mb-16">
+        <div className="mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1426] border border-white/10 text-[#00E5BE] text-xs font-mono font-bold tracking-wider uppercase mb-5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] animate-pulse shadow-[0_0_8px_#00E5BE]" />
             <span>ALIANZAS, LÍNEAS & INVERSIÓN</span>
           </div>
 
@@ -151,144 +221,167 @@ export const FinalCta: React.FC = () => {
           </h2>
 
           <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto font-sans">
-            Haz clic en <span className="text-[#00E5BE] font-semibold">Contáctanos</span> para desplegar la interfaz holográfica con los canales oficiales y enlaces directos con el equipo fundador de URBO.
+            Haz clic en <span className="text-[#00E5BE] font-semibold">Contáctanos</span> para proyectar los canales oficiales y entablar contacto directo con el equipo fundador.
           </p>
         </div>
 
         {/* =================================================================
-            HOLOGRAM & CARD APPARATUS CONTAINER
+            SPATIAL CONTACT APPARATUS (CENTRAL CARD + 3 LATERAL HOLOGRAPHIC PROJECTIONS)
             ================================================================= */}
-        <div ref={hologramStageRef} className="relative flex flex-col items-center justify-center max-w-[840px] mx-auto mb-12 overflow-visible">
-          
+        <div 
+          ref={stageRef} 
+          className="relative flex flex-col items-center justify-center max-w-[560px] mx-auto mb-16 lg:mb-28"
+          style={{ perspective: '1200px' }}
+        >
+
           {/* =============================================================
-              EMERGING STAR WARS HOLOGRAPHIC PROJECTION PANEL (EMERGES UPWARD)
+              1. LEFT LATERAL PROJECTION: OFFICIAL EMAIL (DESKTOP LATERAL / MOBILE STACK)
               ============================================================= */}
           <div
-            ref={holoPanelRef}
-            className="w-full max-w-[800px] rounded-[32px] p-6 sm:p-8 mb-4 bg-gradient-to-b from-[#0F1C35]/95 via-[#0B1426]/95 to-[#070B14]/95 border-2 border-[#38BDF8]/60 backdrop-blur-2xl shadow-[0_0_60px_rgba(56,189,248,0.35),inset_0_0_30px_rgba(0,229,190,0.2)] text-left relative z-30 star-wars-hologram overflow-hidden"
+            ref={leftPanelRef}
+            className="w-full max-w-sm lg:w-[325px] lg:absolute lg:right-[calc(100%+3.2rem)] lg:top-4 z-30 mb-4 lg:mb-0 rounded-3xl p-6 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/96 border-2 border-[#00C9A7]/50 backdrop-blur-2xl shadow-[0_0_40px_rgba(0,201,167,0.3),inset_0_0_20px_rgba(0,229,190,0.15)] text-left relative star-wars-hologram overflow-hidden"
           >
-            {/* Holographic Emitter Light Cone at the bottom */}
-            <div ref={coneRef} className="holo-emitter-cone" aria-hidden="true" />
-
             {/* Specular sheen sweep */}
-            <div className="holo-specular-sweep pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg]" />
+            <div className="holo-specular-sweep pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg]" />
 
-            {/* Header: Projection Tag & Close Button */}
-            <div className="relative z-10 flex items-center justify-between border-b border-[#38BDF8]/30 pb-4 mb-5">
-              <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#38BDF8] animate-ping" />
-                <span className="text-xs sm:text-sm font-mono font-bold tracking-widest text-[#38BDF8] uppercase font-tech">
-                  CANALES DIRECTOS · PROTOCOLO URBO
+            {/* Header */}
+            <div className="relative z-10 flex items-center justify-between border-b border-[#00C9A7]/30 pb-3 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-ping" />
+                <span className="text-[11px] font-mono font-bold tracking-widest text-[#00E5BE] uppercase font-tech">
+                  CANAL ENCRIPTADO · 01
                 </span>
               </div>
-
               <button
                 type="button"
                 onClick={closeHologram}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs font-mono text-slate-200 transition-colors cursor-pointer border border-white/15"
+                className="lg:hidden p-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 transition-colors"
+                aria-label="Cerrar panel"
               >
-                <X className="w-3.5 h-3.5 text-[#38BDF8]" />
-                <span>Cerrar</span>
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            {/* Channels Grid (Email, WhatsApp, Instagram) */}
-            <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-              
-              {/* 1. Official Email */}
-              <a
-                href="mailto:josemariorc@urbocorp.com"
-                className="holo-channel-item p-4 sm:p-5 rounded-2xl bg-[#070B14]/80 border border-[#00C9A7]/30 hover:border-[#00E5BE] transition-all flex flex-col justify-between group shadow-lg hover:shadow-[0_10px_30px_rgba(0,201,167,0.25)]"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#00C9A7]/20 text-[#00E5BE] flex items-center justify-center">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#00E5BE] transition-colors" />
+            {/* Channel Body */}
+            <a
+              href="mailto:josemariorc@urbocorp.com"
+              className="relative z-10 flex flex-col gap-3 group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-11 h-11 rounded-2xl bg-[#00C9A7]/20 text-[#00E5BE] flex items-center justify-center border border-[#00C9A7]/40 shadow-[0_0_15px_rgba(0,201,167,0.3)] group-hover:scale-105 transition-transform">
+                  <Mail className="w-5 h-5" />
                 </div>
-                <div>
-                  <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold">
-                    Correo Fundadores
-                  </span>
-                  <span className="text-xs sm:text-sm font-bold text-white group-hover:text-[#00E5BE] transition-colors font-mono break-all">
-                    josemariorc@urbocorp.com
-                  </span>
+                <div className="flex items-center gap-1 text-xs font-mono text-[#00E5BE] group-hover:underline">
+                  <span>Escribir</span>
+                  <ArrowUpRight className="w-4 h-4" />
                 </div>
-              </a>
+              </div>
 
-              {/* 2. WhatsApp Directo */}
-              <a
-                href="https://wa.me/59178556677"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="holo-channel-item p-4 sm:p-5 rounded-2xl bg-[#070B14]/80 border border-[#00C9A7]/30 hover:border-[#00E5BE] transition-all flex flex-col justify-between group shadow-lg hover:shadow-[0_10px_30px_rgba(0,201,167,0.25)]"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#00C9A7]/20 text-[#00E5BE] flex items-center justify-center">
-                    <MessageCircle className="w-5 h-5" />
-                  </div>
-                  <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-[#00E5BE] transition-colors" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold">
-                    WhatsApp Directo
-                  </span>
-                  <span className="text-xs sm:text-sm font-bold text-white group-hover:text-[#00E5BE] transition-colors font-mono">
-                    +591 78556677 · SCZ
-                  </span>
-                </div>
-              </a>
+              <div>
+                <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold tracking-wider">
+                  Correo Fundadores
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-white group-hover:text-[#00E5BE] transition-colors font-mono break-all">
+                  josemariorc@urbocorp.com
+                </span>
+              </div>
+            </a>
 
-              {/* 3. Instagram Oficial */}
-              <a
-                href="https://www.instagram.com/urbo.corp/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="holo-channel-item p-4 sm:p-5 rounded-2xl bg-[#070B14]/80 border border-pink-500/30 hover:border-pink-500 transition-all flex flex-col justify-between group shadow-lg hover:shadow-[0_10px_30px_rgba(225,48,108,0.25)]"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow-md">
-                    <Instagram className="w-5 h-5 fill-current stroke-none" />
-                  </div>
-                  <ArrowUpRight className="w-4 h-4 text-pink-300 group-hover:text-white transition-colors" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-mono text-pink-300 block uppercase font-bold">
-                    Instagram Oficial
-                  </span>
-                  <span className="text-xs sm:text-sm font-bold text-white group-hover:text-pink-300 transition-colors font-mono">
-                    @urbo.corp
-                  </span>
-                </div>
-              </a>
-
-            </div>
-
-            {/* Projection Footer Status */}
-            <div className="relative z-10 pt-3 border-t border-[#38BDF8]/30 flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-slate-300 gap-2">
-              <span>Santa Cruz de la Sierra · Bolivia</span>
-              <span className="text-[#00E5BE] font-bold flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                RESPUESTA &lt; 24H · EQUIPO FUNDADOR
+            {/* Footer status */}
+            <div className="relative z-10 pt-3 mt-4 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-slate-300">
+              <span className="flex items-center gap-1.5 text-[#00E5BE] font-semibold">
+                <CheckCircle2 className="w-3 h-3" />
+                Respuesta &lt; 24h
               </span>
+              <span className="text-slate-400">Equipo Directivo</span>
             </div>
           </div>
 
-          {/* =============================================================
-              LASER EMITTER BEAM (APPEARS ON TOP EDGE OF BASE CARD)
-              ============================================================= */}
+          {/* Left Laser Emitter Beam (Desktop) */}
           <div
-            ref={laserBeamRef}
+            ref={leftBeamRef}
             aria-hidden="true"
-            className="w-[92%] h-[3px] bg-gradient-to-r from-transparent via-[#00E5BE] to-transparent shadow-[0_0_20px_#00E5BE,0_0_35px_#38BDF8] z-20 mb-[-1.5px]"
+            className="hidden lg:block absolute right-full top-24 w-14 h-[2.5px] bg-gradient-to-l from-[#00E5BE] to-transparent shadow-[0_0_15px_#00E5BE] z-20 origin-right pointer-events-none"
           />
 
           {/* =============================================================
-              BASE URBO CARD (PERMANENT PHYSICAL FLAGSHIP ANCHOR)
+              2. RIGHT LATERAL PROJECTION: WHATSAPP DIRECTO (DESKTOP LATERAL / MOBILE STACK)
+              ============================================================= */}
+          <div
+            ref={rightPanelRef}
+            className="w-full max-w-sm lg:w-[325px] lg:absolute lg:left-[calc(100%+3.2rem)] lg:top-4 z-30 mb-4 lg:mb-0 rounded-3xl p-6 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/96 border-2 border-[#38BDF8]/50 backdrop-blur-2xl shadow-[0_0_40px_rgba(56,189,248,0.3),inset_0_0_20px_rgba(56,189,248,0.15)] text-left relative star-wars-hologram overflow-hidden"
+          >
+            {/* Specular sheen sweep */}
+            <div className="holo-specular-sweep pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg]" />
+
+            {/* Header */}
+            <div className="relative z-10 flex items-center justify-between border-b border-[#38BDF8]/30 pb-3 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#38BDF8] animate-ping" />
+                <span className="text-[11px] font-mono font-bold tracking-widest text-[#38BDF8] uppercase font-tech">
+                  CANAL DIRECTO · 02
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={closeHologram}
+                className="lg:hidden p-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 transition-colors"
+                aria-label="Cerrar panel"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Channel Body */}
+            <a
+              href="https://wa.me/59178556677"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 flex flex-col gap-3 group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-11 h-11 rounded-2xl bg-[#00E5BE]/20 text-[#00E5BE] flex items-center justify-center border border-[#00E5BE]/40 shadow-[0_0_15px_rgba(0,229,190,0.3)] group-hover:scale-105 transition-transform">
+                  <MessageCircle className="w-5 h-5" />
+                </div>
+                <div className="flex items-center gap-1 text-xs font-mono text-[#38BDF8] group-hover:underline">
+                  <span>Abrir chat</span>
+                  <ExternalLink className="w-4 h-4" />
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold tracking-wider">
+                  WhatsApp Oficial
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-white group-hover:text-[#38BDF8] transition-colors font-mono">
+                  +591 78556677 · SCZ
+                </span>
+              </div>
+            </a>
+
+            {/* Footer status */}
+            <div className="relative z-10 pt-3 mt-4 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-slate-300">
+              <span className="flex items-center gap-1.5 text-[#38BDF8] font-semibold">
+                <Radio className="w-3 h-3 animate-pulse" />
+                Enlace Directo
+              </span>
+              <span className="text-slate-400">Santa Cruz</span>
+            </div>
+          </div>
+
+          {/* Right Laser Emitter Beam (Desktop) */}
+          <div
+            ref={rightBeamRef}
+            aria-hidden="true"
+            className="hidden lg:block absolute left-full top-24 w-14 h-[2.5px] bg-gradient-to-r from-[#38BDF8] to-transparent shadow-[0_0_15px_#38BDF8] z-20 origin-left pointer-events-none"
+          />
+
+          {/* =============================================================
+              3. BASE URBO FLAGSHIP CARD (CENTRAL ANCHOR, PROPORTIONED & BALANCED)
               ============================================================= */}
           <div
             ref={cardRef}
-            className="relative w-full max-w-[820px] min-h-[360px] sm:min-h-[380px] rounded-[36px] p-6 sm:p-10 bg-gradient-to-b from-[#0F1C35] via-[#0B1426] to-[#070B14] border border-[#00C9A7]/40 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_40px_rgba(0,201,167,0.18)] overflow-hidden select-none z-10 flex flex-col justify-between"
+            className="relative w-full min-h-[440px] rounded-[36px] p-7 sm:p-9 bg-gradient-to-b from-[#0F1C35] via-[#0B1426] to-[#070B14] border border-[#00C9A7]/40 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_40px_rgba(0,201,167,0.18)] overflow-hidden select-none z-20 flex flex-col justify-between"
           >
             {/* Top Beveled Specular Edge */}
             <span
@@ -322,11 +415,11 @@ export const FinalCta: React.FC = () => {
             </div>
 
             {/* Center: Protagonist Official Logo & Identity */}
-            <div className="relative z-10 my-auto flex flex-col items-center justify-center py-4">
+            <div className="relative z-10 my-auto flex flex-col items-center justify-center py-6">
               <div className="relative group flex items-center justify-center">
                 <div className="absolute -inset-6 rounded-full bg-[#00C9A7]/25 blur-2xl group-hover:bg-[#00C9A7]/40 transition-all duration-500" />
                 <UrboLogo
-                  size={92}
+                  size={96}
                   className="relative transition-transform duration-500 group-hover:scale-105 shadow-[0_0_35px_rgba(0,201,167,0.5)]"
                 />
               </div>
@@ -334,22 +427,21 @@ export const FinalCta: React.FC = () => {
               <h3 className="font-tech text-3xl sm:text-4xl font-black text-white tracking-[0.25em] uppercase mt-4 leading-none">
                 URBO
               </h3>
-              <p className="text-xs sm:text-sm font-mono tracking-[0.3em] text-[#00E5BE] uppercase mt-1.5 font-bold">
+              <p className="text-xs sm:text-sm font-mono tracking-[0.3em] text-[#00E5BE] uppercase mt-2 font-bold">
                 SANTA CRUZ DE LA SIERRA · BOLIVIA
               </p>
-              <div className="text-[11px] font-mono text-slate-400 mt-2 font-sans">
+              <div className="text-[11px] font-mono text-slate-400 mt-2.5 font-sans">
                 Mapeo en vivo · Aviso por voz a 300m · Red Troncal
               </div>
             </div>
 
-            {/* Bottom Row: Location & Mandatory "Contáctanos" Button */}
+            {/* Bottom Row: Location & Mandatory "Contáctanos" Trigger */}
             <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-white/10 text-xs font-mono text-slate-300 gap-3">
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-[#00E5BE]" />
-                <span>Casco Viejo a 4to Anillo (5.04 km Troncal)</span>
+                <span className="text-[11px]">Casco Viejo a 4to Anillo (5.04 km)</span>
               </div>
 
-              {/* Exact user requested CTA button: "Contáctanos" */}
               <button
                 type="button"
                 onClick={toggleHologram}
@@ -361,37 +453,76 @@ export const FinalCta: React.FC = () => {
             </div>
 
           </div>
-        </div>
 
-        {/* Quick Action Direct Links below Card */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          <a
-            href="mailto:josemariorc@urbocorp.com"
-            className="px-6 sm:px-7 py-3 rounded-full bg-[#00C9A7] text-slate-950 text-xs sm:text-sm font-black flex items-center gap-2 shadow-[0_0_20px_rgba(0,201,167,0.35)] hover:bg-[#00E5BE] hover:scale-105 transition-all"
-          >
-            <span>Escribir al equipo fundador</span>
-            <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
-          </a>
+          {/* Downward Laser Emitter Beam to Social Satellite (Desktop) */}
+          <div
+            ref={socialBeamRef}
+            aria-hidden="true"
+            className="hidden lg:block absolute top-full left-1/2 -translate-x-1/2 w-[2.5px] h-9 bg-gradient-to-b from-[#00E5BE] to-transparent shadow-[0_0_15px_#00E5BE] z-20 origin-top pointer-events-none"
+          />
 
-          <a
-            href="https://wa.me/59178556677"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 sm:px-6 py-3 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all hover:scale-105 shadow-md"
+          {/* =============================================================
+              4. SOCIAL SATELLITE PROJECTION: INSTAGRAM OFICIAL
+              ============================================================= */}
+          <div
+            ref={socialPanelRef}
+            className="w-full max-w-sm lg:w-[380px] lg:absolute lg:top-[calc(100%+2.2rem)] lg:left-1/2 lg:-translate-x-1/2 z-30 mt-4 lg:mt-0 rounded-3xl p-5 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/96 border-2 border-pink-500/40 backdrop-blur-2xl shadow-[0_0_40px_rgba(225,48,108,0.25),inset_0_0_20px_rgba(225,48,108,0.12)] text-left relative star-wars-hologram overflow-hidden"
           >
-            <MessageCircle className="w-4 h-4 text-[#00E5BE]" />
-            <span>Hablar por WhatsApp</span>
-          </a>
+            {/* Specular sheen sweep */}
+            <div className="holo-specular-sweep pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg]" />
 
-          <a
-            href="https://www.instagram.com/urbo.corp/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 sm:px-6 py-3 rounded-full bg-gradient-to-r from-[#833ab4]/80 via-[#fd1d1d]/80 to-[#fcb045]/80 text-white text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all hover:scale-105 shadow-md hover:shadow-[0_0_20px_rgba(253,29,29,0.35)]"
-          >
-            <Instagram className="w-4 h-4 fill-current stroke-none" />
-            <span>Instagram @urbo.corp</span>
-          </a>
+            {/* Header */}
+            <div className="relative z-10 flex items-center justify-between border-b border-pink-500/30 pb-2.5 mb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-pink-500 animate-ping" />
+                <span className="text-[11px] font-mono font-bold tracking-widest text-pink-400 uppercase font-tech">
+                  CANAL COMUNITARIO · 03
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={closeHologram}
+                className="lg:hidden p-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 transition-colors"
+                aria-label="Cerrar panel"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Channel Body */}
+            <a
+              href="https://www.instagram.com/urbo.corp/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                  <Instagram className="w-5 h-5 fill-current stroke-none" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono text-pink-300 block uppercase font-bold">
+                    Instagram Oficial
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-white group-hover:text-pink-300 transition-colors font-mono">
+                    @urbo.corp
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 text-xs font-mono text-pink-400 group-hover:underline">
+                <span>Ver perfil</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </div>
+            </a>
+
+            {/* Footer status */}
+            <div className="relative z-10 pt-2.5 mt-3 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-slate-300">
+              <span className="text-slate-400">Avances del piloto & comunidad</span>
+              <span className="text-pink-400 font-bold">@urbo.corp</span>
+            </div>
+          </div>
+
         </div>
 
       </div>

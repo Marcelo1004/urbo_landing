@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { Map, Marker, setWorkerUrl } from 'maplibre-gl';
 import maplibreWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import {
@@ -19,19 +19,23 @@ if (typeof window !== 'undefined') {
   setWorkerUrl(maplibreWorker);
 }
 
-interface UrboNavMap3DProps {
-  scrollProgress: number; // 0 to 1
+export interface UrboNavMap3DHandle {
+  setProgress: (progress: number) => void;
+}
+
+export interface UrboNavMap3DProps {
+  scrollProgress?: number; // 0 to 1 (optional when using imperative handle)
   className?: string;
   onReady?: () => void;
   onTimeChange?: (visuals: DayNightVisuals, chapter: number, distMeters: number) => void;
 }
 
-export const UrboNavMap3D: React.FC<UrboNavMap3DProps> = ({
-  scrollProgress,
+export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
+  scrollProgress = 0,
   className = '',
   onReady,
   onTimeChange,
-}) => {
+}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<Map | null>(null);
   const gpsMarkerRef = useRef<Marker | null>(null);
@@ -46,9 +50,18 @@ export const UrboNavMap3D: React.FC<UrboNavMap3DProps> = ({
   const currentProgressRef = useRef(0);
   const lastAppliedDayNightRef = useRef<number>(-1);
 
-  // Sync prop changes
+  // Expose imperative handle for 120 FPS buttery smooth updates without React re-renders
+  useImperativeHandle(ref, () => ({
+    setProgress: (progress: number) => {
+      targetProgressRef.current = Math.max(0, Math.min(1, progress));
+    },
+  }));
+
+  // Sync prop changes if passed via prop
   useEffect(() => {
-    targetProgressRef.current = Math.max(0, Math.min(1, scrollProgress));
+    if (typeof scrollProgress === 'number') {
+      targetProgressRef.current = Math.max(0, Math.min(1, scrollProgress));
+    }
   }, [scrollProgress]);
 
   useEffect(() => {
@@ -79,6 +92,37 @@ export const UrboNavMap3D: React.FC<UrboNavMap3DProps> = ({
 
     map.on('load', () => {
       isMapLoadedRef.current = true;
+
+      // Filter out minor street labels and non-essential POIs to keep cartography crisp and uncluttered
+      try {
+        const style = map.getStyle();
+        if (style && style.layers) {
+          style.layers.forEach((layer) => {
+            if (layer.type === 'symbol') {
+              const id = layer.id.toLowerCase();
+              const isMinorLabel =
+                id.includes('minor') ||
+                id.includes('residential') ||
+                id.includes('service') ||
+                id.includes('unclassified') ||
+                id.includes('track') ||
+                id.includes('path') ||
+                id.includes('footway') ||
+                id.includes('poi') ||
+                id.includes('house') ||
+                id.includes('subway') ||
+                id.includes('ferry') ||
+                id.includes('place_label_other');
+
+              if (isMinorLabel) {
+                map.setLayoutProperty(layer.id, 'visibility', 'none');
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('UrboNavMap3D label filter notice:', err);
+      }
 
       // 1. ADD URBAN GREENERY LAYER (Plazas & Boulevards of Santa Cruz)
       if (!map.getSource('urban-greenery-source')) {
@@ -461,8 +505,13 @@ export const UrboNavMap3D: React.FC<UrboNavMap3DProps> = ({
       }
 
       const target = targetProgressRef.current;
-      // Smooth lerp for camera & beacon
-      currentProgressRef.current += (target - currentProgressRef.current) * 0.08;
+      // High-performance responsive lerp (0.24 for instant buttery tracking, zero drag/lag)
+      const diff = target - currentProgressRef.current;
+      if (Math.abs(diff) < 0.0002) {
+        currentProgressRef.current = target;
+      } else {
+        currentProgressRef.current += diff * 0.24;
+      }
       const p = currentProgressRef.current;
 
       const navState = getNavStateAtProgress(p);
@@ -540,6 +589,8 @@ export const UrboNavMap3D: React.FC<UrboNavMap3DProps> = ({
       style={{ touchAction: 'pan-y' }}
     />
   );
-};
+});
+
+UrboNavMap3D.displayName = 'UrboNavMap3D';
 
 export default UrboNavMap3D;

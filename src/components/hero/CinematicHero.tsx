@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { GlassBadge } from '@/components/ui/Glass';
 import { UrboLogo } from '@/components/ui/UrboLogo';
-import { UrboNavMap3D } from './UrboNavMap3D';
+import { UrboNavMap3D, UrboNavMap3DHandle } from './UrboNavMap3D';
 import { DayNightVisuals, getDayNightVisuals } from './SantaCruzNavData';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -28,20 +28,23 @@ gsap.registerPlugin(ScrollTrigger);
 export const CinematicHero: React.FC = () => {
   const runwayRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const mapHandleRef = useRef<UrboNavMap3DHandle>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const progressTextRef = useRef<HTMLSpanElement>(null);
+  const distanceTextRef = useRef<HTMLSpanElement>(null);
+  const currentChapterRef = useRef<number>(0);
+
   const [activeChapter, setActiveChapter] = useState(0);
   const [timeLabel, setTimeLabel] = useState('DÍA · 14:30');
-  const [distMeters, setDistMeters] = useState(0);
   const [dayNightState, setDayNightState] = useState<DayNightVisuals>(() => getDayNightVisuals(0));
 
-  // Handler for dynamic time updates from the 3D map engine
-  const handleTimeChange = (visuals: DayNightVisuals, chapter: number, traveledM: number) => {
-    setTimeLabel(visuals.timeOfDayLabel);
-    setDistMeters(traveledM);
-    setDayNightState(visuals);
+  // Handler for dynamic time updates from the 3D map engine (discrete, avoids unnecessary re-renders)
+  const handleTimeChange = (visuals: DayNightVisuals) => {
+    setTimeLabel((prev) => (prev !== visuals.timeOfDayLabel ? visuals.timeOfDayLabel : prev));
+    setDayNightState((prev) => (prev.timeOfDayLabel !== visuals.timeOfDayLabel ? visuals : prev));
   };
 
-  // Setup GSAP ScrollTrigger timeline to scrub the 3D scene & 5 narrative chapters
+  // Setup GSAP ScrollTrigger timeline to scrub the 3D scene & 5 narrative chapters at 120 FPS
   useEffect(() => {
     const runway = runwayRef.current;
     if (!runway) return;
@@ -54,22 +57,42 @@ export const CinematicHero: React.FC = () => {
         trigger: runway,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 0.6,
+        scrub: 0.4,
         onUpdate: (self) => {
           const p = self.progress;
-          setScrollProgress(p);
 
-          // 5 Distinct Chapter Milestones:
+          // Direct imperative map scrub (zero React virtual DOM re-renders during high-speed scrolling)
+          mapHandleRef.current?.setProgress(p);
+
+          // Direct DOM updates for telemetry HUD
+          if (progressBarRef.current) {
+            progressBarRef.current.style.width = `${Math.round(p * 100)}%`;
+          }
+          if (progressTextRef.current) {
+            progressTextRef.current.textContent = `${Math.round(p * 100)}%`;
+          }
+          if (distanceTextRef.current) {
+            const km = ((p * 5041.8) / 1000).toFixed(2);
+            distanceTextRef.current.textContent = `DISTANCIA EN RUTA: ${km} KM / 5.04 KM · SCZ TRONCAL`;
+          }
+
+          // Discrete Chapter Milestones:
           // 0: Catedral Metropolitana (0% - 18%) -> 0m to 900m
           // 1: Plaza del Estudiante & 1er Anillo (18% - 38%) -> 900m to 1,900m
           // 2: Monumento Cristo Redentor (38% - 60%) -> 1,900m to 3,000m
           // 3: Corredor Norte & 3er Anillo (60% - 82%) -> 3,000m to 4,100m
           // 4: Visión URBO & Cuarto Anillo (82% - 100%) -> 4,100m to 5,042m
-          if (p < 0.18) setActiveChapter(0);
-          else if (p < 0.38) setActiveChapter(1);
-          else if (p < 0.60) setActiveChapter(2);
-          else if (p < 0.82) setActiveChapter(3);
-          else setActiveChapter(4);
+          let chap = 0;
+          if (p < 0.18) chap = 0;
+          else if (p < 0.38) chap = 1;
+          else if (p < 0.60) chap = 2;
+          else if (p < 0.82) chap = 3;
+          else chap = 4;
+
+          if (chap !== currentChapterRef.current) {
+            currentChapterRef.current = chap;
+            setActiveChapter(chap);
+          }
         },
       });
 
@@ -91,13 +114,13 @@ export const CinematicHero: React.FC = () => {
         }
       );
 
-      // Chapter 1 Reveal: Plaza del Estudiante (16% - 36%)
+      // Chapter 1 Reveal (LEFT): Plaza del Estudiante (16% - 37%)
       gsap.fromTo(
         '.chapter-card-1',
-        { opacity: 0, y: 50, scale: 0.94 },
+        { opacity: 0, x: -35, scale: 0.95 },
         {
           opacity: 1,
-          y: 0,
+          x: 0,
           scale: 1,
           ease: 'power2.out',
           scrollTrigger: {
@@ -110,23 +133,23 @@ export const CinematicHero: React.FC = () => {
       );
       gsap.to('.chapter-card-1', {
         opacity: 0,
-        y: -40,
+        y: -35,
         ease: 'power2.in',
         scrollTrigger: {
           trigger: runway,
           start: '32% top',
-          end: '38% top',
+          end: '37% top',
           scrub: true,
         },
       });
 
-      // Chapter 2 Reveal: Monumento Cristo Redentor (38% - 58%)
+      // Chapter 2 Reveal (RIGHT): Monumento Cristo Redentor (38% - 59%)
       gsap.fromTo(
         '.chapter-card-2',
-        { opacity: 0, y: 50, scale: 0.94 },
+        { opacity: 0, x: 35, scale: 0.95 },
         {
           opacity: 1,
-          y: 0,
+          x: 0,
           scale: 1,
           ease: 'power2.out',
           scrollTrigger: {
@@ -139,23 +162,23 @@ export const CinematicHero: React.FC = () => {
       );
       gsap.to('.chapter-card-2', {
         opacity: 0,
-        y: -40,
+        y: -35,
         ease: 'power2.in',
         scrollTrigger: {
           trigger: runway,
           start: '54% top',
-          end: '60% top',
+          end: '59% top',
           scrub: true,
         },
       });
 
-      // Chapter 3 Reveal: Corredor Norte & Evidencia del Piloto (60% - 80%)
+      // Chapter 3 Reveal (LEFT): Corredor Norte & Evidencia del Piloto (60% - 81%)
       gsap.fromTo(
         '.chapter-card-3',
-        { opacity: 0, y: 50, scale: 0.94 },
+        { opacity: 0, x: -35, scale: 0.95 },
         {
           opacity: 1,
-          y: 0,
+          x: 0,
           scale: 1,
           ease: 'power2.out',
           scrollTrigger: {
@@ -168,20 +191,20 @@ export const CinematicHero: React.FC = () => {
       );
       gsap.to('.chapter-card-3', {
         opacity: 0,
-        y: -40,
+        y: -35,
         ease: 'power2.in',
         scrollTrigger: {
           trigger: runway,
           start: '76% top',
-          end: '82% top',
+          end: '81% top',
           scrub: true,
         },
       });
 
-      // Chapter 4 Reveal: Visión de URBO & Cuarto Anillo (82% - 100%)
+      // Chapter 4 Reveal (CENTER FINALE): Visión de URBO & Cuarto Anillo (82% - 100%)
       gsap.fromTo(
         '.chapter-card-4',
-        { opacity: 0, y: 60, scale: 0.92 },
+        { opacity: 0, y: 50, scale: 0.92 },
         {
           opacity: 1,
           y: 0,
@@ -190,7 +213,7 @@ export const CinematicHero: React.FC = () => {
           scrollTrigger: {
             trigger: runway,
             start: '82% top',
-            end: '94% top',
+            end: '93% top',
             scrub: true,
           },
         }
@@ -214,35 +237,31 @@ export const CinematicHero: React.FC = () => {
       {/* Pinned Cinematic Stage (100dvh sticky) */}
       <div
         ref={stageRef}
-        className="sticky top-0 h-screen h-[100dvh] w-full overflow-hidden flex flex-col justify-between select-none transition-colors duration-700"
+        className="sticky top-0 h-screen h-[100dvh] w-full overflow-hidden flex flex-col justify-between select-none transition-colors duration-700 bg-[#070B14]"
         style={{
           backgroundColor: dayNightState.backgroundColor,
         }}
       >
-        {/* MapLibre GL 3D Urban Navigation Canvas (Google Maps 3D style) */}
+        {/* MapLibre GL 3D Urban Navigation Canvas (Imperative Ref for 120 FPS Buttery Scroll) */}
         <UrboNavMap3D
-          scrollProgress={scrollProgress}
+          ref={mapHandleRef}
           onTimeChange={handleTimeChange}
         />
 
-        {/* Dynamic Top Scrim (Transitions smoothly from daylight sky to dark navy) */}
+        {/* Dynamic Top Scrim (Crisp dark vignette, zero white haze) */}
         <div
           className="absolute top-0 inset-x-0 h-44 pointer-events-none z-10 transition-all duration-700"
           style={{
-            background: isDayOrAfternoon
-              ? 'linear-gradient(to bottom, rgba(216, 226, 236, 0.85) 0%, rgba(216, 226, 236, 0.3) 50%, transparent 100%)'
-              : 'linear-gradient(to bottom, rgba(7, 11, 20, 0.95) 0%, rgba(7, 11, 20, 0.6) 60%, transparent 100%)',
+            background: 'linear-gradient(to bottom, rgba(7, 11, 20, 0.92) 0%, rgba(7, 11, 20, 0.40) 60%, transparent 100%)',
           }}
           aria-hidden="true"
         />
 
-        {/* Dynamic Bottom Scrim */}
+        {/* Dynamic Bottom Scrim (Crisp dark vignette, zero milky scrim) */}
         <div
           className="absolute bottom-0 inset-x-0 h-40 pointer-events-none z-10 transition-all duration-700"
           style={{
-            background: isDayOrAfternoon
-              ? 'linear-gradient(to top, rgba(216, 226, 236, 0.9) 0%, transparent 100%)'
-              : 'linear-gradient(to top, rgba(7, 11, 20, 0.95) 0%, transparent 100%)',
+            background: 'linear-gradient(to top, rgba(7, 11, 20, 0.95) 0%, rgba(7, 11, 20, 0.45) 60%, transparent 100%)',
           }}
           aria-hidden="true"
         />
@@ -288,7 +307,7 @@ export const CinematicHero: React.FC = () => {
           </div>
         </div>
 
-        {/* Dynamic Center Stage Overlays (5 Narrative Chapters) */}
+        {/* Dynamic Center Stage Overlays (5 Narrative Chapters with Alternating Layout) */}
         <div className="relative z-20 flex-1 flex flex-col justify-center items-center px-4 md:px-8 text-center pointer-events-none">
           
           {/* Chapter 0: Editorial Hero Headline (Catedral Metropolitana · 0% - 18%) */}
@@ -315,7 +334,7 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Chapter 1 Card: Plaza del Estudiante & Reducción de Incertidumbre (18% - 38%) */}
+          {/* Chapter 1 Card (LEFT): Plaza del Estudiante & Reducción de Incertidumbre (18% - 38%) */}
           <div className="chapter-card-1 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/94 backdrop-blur-xl border border-white/15 text-left shadow-2xl pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#F4C430] flex items-center gap-1.5 font-bold">
@@ -336,8 +355,8 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Chapter 2 Card: Monumento Cristo Redentor & Choferes (38% - 60%) */}
-          <div className="chapter-card-2 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/94 backdrop-blur-xl border border-[#00E5BE]/40 text-left shadow-2xl pointer-events-auto">
+          {/* Chapter 2 Card (RIGHT): Monumento Cristo Redentor & Choferes (38% - 60%) */}
+          <div className="chapter-card-2 absolute right-4 sm:right-8 md:right-12 lg:right-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/94 backdrop-blur-xl border border-[#00E5BE]/40 text-left shadow-2xl pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#00E5BE] flex items-center gap-1.5 font-bold">
                 <Radio className="w-3.5 h-3.5" />
@@ -357,7 +376,7 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Chapter 3 Card: Corredor Norte & Evidencia del Piloto (60% - 82%) */}
+          {/* Chapter 3 Card (LEFT): Corredor Norte & Evidencia del Piloto (60% - 82%) */}
           <div className="chapter-card-3 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#0B1426]/94 backdrop-blur-xl border border-[#38BDF8]/50 text-left shadow-2xl pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#38BDF8] flex items-center gap-1.5 font-bold">
@@ -392,8 +411,8 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Chapter 4 Card: Visión de URBO & Cuarto Anillo Handoff (82% - 100%) */}
-          <div className="chapter-card-4 absolute max-w-lg w-full p-8 rounded-3xl bg-gradient-to-b from-[#0F1C35] to-[#070B14] backdrop-blur-2xl border border-[#00E5BE]/40 text-center shadow-2xl pointer-events-auto">
+          {/* Chapter 4 Card (CENTER FINALE): Visión de URBO & Cuarto Anillo Handoff (82% - 100%) */}
+          <div className="chapter-card-4 absolute inset-x-4 max-w-lg w-full bottom-20 md:bottom-28 mx-auto p-8 rounded-3xl bg-gradient-to-b from-[#0F1C35] to-[#070B14] backdrop-blur-2xl border border-[#00E5BE]/40 text-center shadow-2xl pointer-events-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00C9A7]/20 text-[#00E5BE] text-xs font-mono font-bold tracking-wider mb-4">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>05 · VISIÓN DE ESCALA · BOLIVIA</span>
@@ -427,8 +446,8 @@ export const CinematicHero: React.FC = () => {
         <div className="relative z-20 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-mono text-slate-300 pointer-events-none">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00E5BE]" />
-            <span>
-              DISTANCIA EN RUTA: {(distMeters / 1000).toFixed(2)} KM / 5.04 KM · SCZ TRONCAL
+            <span ref={distanceTextRef}>
+              DISTANCIA EN RUTA: 0.00 KM / 5.04 KM · SCZ TRONCAL
             </span>
           </div>
 
@@ -436,12 +455,13 @@ export const CinematicHero: React.FC = () => {
           <div className="flex items-center gap-3 w-full sm:w-64">
             <div className="flex-1 h-1.5 rounded-full bg-white/20 overflow-hidden">
               <div
+                ref={progressBarRef}
                 className="h-full bg-gradient-to-r from-[#00C9A7] via-[#00E5BE] to-[#38BDF8] transition-all duration-75"
-                style={{ width: `${Math.round(scrollProgress * 100)}%` }}
+                style={{ width: '0%' }}
               />
             </div>
-            <span className="text-[10px] text-[#38BDF8] font-bold">
-              {Math.round(scrollProgress * 100)}%
+            <span ref={progressTextRef} className="text-[10px] text-[#38BDF8] font-bold">
+              0%
             </span>
           </div>
         </div>

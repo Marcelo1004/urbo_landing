@@ -91,55 +91,55 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
   // 0.78 - 1.00: Noche profunda (deep navy URBO #070B14, luces vivas, ruta neón)
 
   let timeOfDayLabel = 'DÍA · 14:30';
-  let backgroundColor = '#D8E2EC';
-  let buildingColor = '#CBD5E1';
-  let lightColor = '#FFF6E6';
-  let lightIntensity = 0.65;
+  let backgroundColor = '#0A0F1D';
+  let buildingColor = '#243447';
+  let lightColor = '#E2E8F0';
+  let lightIntensity = 0.70;
   let streetLampOpacity = 0.0;
-  let routeColor = '#0284C7'; // Deep cyan for daylight visibility
-  let routeGlowColor = '#009E85';
+  let routeColor = '#00E5BE'; // High-contrast Emerald Cyan on dark map
+  let routeGlowColor = '#38BDF8';
 
   if (clamped < 0.25) {
     // Stage 1: Día
     const t = clamped / 0.25;
     timeOfDayLabel = 'DÍA · 14:30';
-    backgroundColor = lerpColor('#D8E2EC', '#D4DEEA', t);
-    buildingColor = lerpColor('#CBD5E1', '#B0BEC5', t);
-    lightColor = '#FFF6E6';
-    lightIntensity = 0.65 - (t * 0.08);
+    backgroundColor = lerpColor('#0A0F1D', '#0D1527', t);
+    buildingColor = lerpColor('#243447', '#2A3B53', t);
+    lightColor = '#E2E8F0';
+    lightIntensity = 0.70 - (t * 0.08);
     streetLampOpacity = 0.0;
-    routeColor = '#0284C7';
-    routeGlowColor = '#009E85';
+    routeColor = '#00E5BE';
+    routeGlowColor = '#38BDF8';
   } else if (clamped < 0.55) {
     // Stage 2: Tarde / Golden Hour
     const t = (clamped - 0.25) / 0.30;
     timeOfDayLabel = 'TARDE · 17:15';
-    backgroundColor = lerpColor('#D4DEEA', '#C7A27C', t);
-    buildingColor = lerpColor('#B0BEC5', '#7E7A8E', t);
-    lightColor = lerpColor('#FFF6E6', '#FFD199', t);
-    lightIntensity = 0.57 - (t * 0.15);
-    streetLampOpacity = t * 0.35; // Lamp filaments start glowing
-    routeColor = lerpColor('#0284C7', '#0EA5E9', t);
-    routeGlowColor = lerpColor('#009E85', '#00C9A7', t);
+    backgroundColor = lerpColor('#0D1527', '#13192B', t);
+    buildingColor = lerpColor('#2A3B53', '#323048', t);
+    lightColor = lerpColor('#E2E8F0', '#FDE68A', t);
+    lightIntensity = 0.62 - (t * 0.12);
+    streetLampOpacity = t * 0.40; // Lamp filaments start glowing
+    routeColor = lerpColor('#00E5BE', '#00E5BE', t);
+    routeGlowColor = lerpColor('#38BDF8', '#00E5BE', t);
   } else if (clamped < 0.78) {
     // Stage 3: Atardecer / Sunset
     const t = (clamped - 0.55) / 0.23;
     timeOfDayLabel = 'ATARDECER · 18:45';
-    backgroundColor = lerpColor('#C7A27C', '#3A345B', t);
-    buildingColor = lerpColor('#7E7A8E', '#3D3852', t);
-    lightColor = lerpColor('#FFD199', '#FF8C69', t);
-    lightIntensity = 0.42 - (t * 0.18);
-    streetLampOpacity = 0.35 + (t * 0.55); // Full streetlight activation
-    routeColor = lerpColor('#0EA5E9', '#38BDF8', t);
+    backgroundColor = lerpColor('#13192B', '#111728', t);
+    buildingColor = lerpColor('#323048', '#25253D', t);
+    lightColor = lerpColor('#FDE68A', '#FB923C', t);
+    lightIntensity = 0.50 - (t * 0.18);
+    streetLampOpacity = 0.40 + (t * 0.50); // Streetlight activation
+    routeColor = lerpColor('#00E5BE', '#38BDF8', t);
     routeGlowColor = '#00E5BE';
   } else {
     // Stage 4: Noche profunda
     const t = (clamped - 0.78) / 0.22;
     timeOfDayLabel = 'NOCHE · 20:30';
-    backgroundColor = lerpColor('#3A345B', '#070B14', t);
-    buildingColor = lerpColor('#3D3852', '#162035', t);
-    lightColor = lerpColor('#FF8C69', '#38BDF8', t);
-    lightIntensity = 0.24 - (t * 0.06);
+    backgroundColor = lerpColor('#111728', '#070B14', t);
+    buildingColor = lerpColor('#25253D', '#162035', t);
+    lightColor = lerpColor('#FB923C', '#38BDF8', t);
+    lightIntensity = 0.32 - (t * 0.08);
     streetLampOpacity = 0.90 + (t * 0.10);
     routeColor = '#38BDF8'; // Full cyberpunk URBO Cyan
     routeGlowColor = '#00E5BE';
