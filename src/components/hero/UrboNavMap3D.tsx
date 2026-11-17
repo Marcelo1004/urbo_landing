@@ -49,6 +49,13 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
   const currentProgressRef = useRef(0);
   const lastAppliedDayNightRef = useRef<number>(-1);
 
+  // Persistent smoothed camera gimbal state for buttery 120 FPS drone tracking
+  const cameraLngRef = useRef(0);
+  const cameraLatRef = useRef(0);
+  const cameraBearingRef = useRef(0);
+  const cameraPitchRef = useRef(56);
+  const cameraZoomRef = useRef(16.5);
+
   // Expose imperative handle for 120 FPS buttery smooth updates without React re-renders
   useImperativeHandle(ref, () => ({
     setProgress: (progress: number) => {
@@ -91,6 +98,13 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
 
     map.on('load', () => {
       isMapLoadedRef.current = true;
+
+      // Initialize gimbal camera refs to starting position
+      cameraLngRef.current = initialState.center[0];
+      cameraLatRef.current = initialState.center[1];
+      cameraBearingRef.current = initialState.bearing;
+      cameraPitchRef.current = initialState.pitch;
+      cameraZoomRef.current = initialState.zoom;
 
       // Filter out noisy street labels and non-essential POIs to keep cartography pure and editorial
       const layersToHide = [
@@ -428,12 +442,27 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         gpsMarkerRef.current.setLngLat(navState.beacon);
       }
 
-      // 2. Smoothly Update Map Camera to look-ahead center (Google Maps 3D navigation perspective)
+      // 2. Smooth gimbal camera — drone-follow with angular lerp (zero sharp jumps)
+      // Shortest angular distance prevents 350°→0° flipping
+      const angleDiff = ((navState.bearing - cameraBearingRef.current + 540) % 360) - 180;
+      cameraBearingRef.current = (cameraBearingRef.current + angleDiff * 0.05 + 360) % 360;
+
+      // Look-ahead offset: camera center leads the beacon slightly in its current heading
+      const rad = (cameraBearingRef.current * Math.PI) / 180;
+      const forwardDist = 0.0014;
+      const targetCenterLng = navState.beacon[0] + Math.sin(rad) * forwardDist;
+      const targetCenterLat = navState.beacon[1] + Math.cos(rad) * forwardDist;
+
+      cameraLngRef.current += (targetCenterLng - cameraLngRef.current) * 0.09;
+      cameraLatRef.current += (targetCenterLat - cameraLatRef.current) * 0.09;
+      cameraPitchRef.current += (navState.pitch - cameraPitchRef.current) * 0.06;
+      cameraZoomRef.current += (navState.zoom - cameraZoomRef.current) * 0.06;
+
       mapRef.current.jumpTo({
-        center: navState.center,
-        bearing: navState.bearing,
-        pitch: navState.pitch,
-        zoom: navState.zoom,
+        center: [cameraLngRef.current, cameraLatRef.current],
+        bearing: cameraBearingRef.current,
+        pitch: cameraPitchRef.current,
+        zoom: cameraZoomRef.current,
       });
 
       // 3. Dynamic Day-to-Night Real Atmosphere & Cartography Transformations (Throttled for 60-120fps)

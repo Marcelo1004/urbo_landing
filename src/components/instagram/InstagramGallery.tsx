@@ -1,16 +1,13 @@
 import React, { useRef, useEffect } from 'react';
-import { 
-  Instagram, 
-  ExternalLink, 
-  Video, 
+import {
+  Instagram,
+  ExternalLink,
+  Video,
   Sparkles,
   ArrowUpRight,
-  MessageSquare,
   Users,
-  Compass,
-  Radio,
   TrendingUp,
-  CheckCircle2
+  CheckCircle2,
 } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -27,6 +24,7 @@ interface InstagramFeatureCard {
   title: string;
   description: string;
   ctaText: string;
+  animationType: 'sparkle' | 'equalizer' | 'rec' | 'radar';
 }
 
 const INSTAGRAM_THEMES: InstagramFeatureCard[] = [
@@ -39,6 +37,7 @@ const INSTAGRAM_THEMES: InstagramFeatureCard[] = [
     title: 'Novedades de URBO',
     description: 'Actualizaciones directas sobre el sistema en tiempo real, nuevas funciones en desarrollo y la hoja de ruta de cobertura urbana.',
     ctaText: 'Ver lanzamientos',
+    animationType: 'sparkle',
   },
   {
     tag: 'MÉTRICAS & RESULTADOS',
@@ -49,6 +48,7 @@ const INSTAGRAM_THEMES: InstagramFeatureCard[] = [
     title: 'Avances del Piloto',
     description: 'Datos reales de telemetría en calle, reducción de tiempos de espera de pasajeros y lecciones aprendidas durante meses de pruebas continuas.',
     ctaText: 'Ver mediciones',
+    animationType: 'equalizer',
   },
   {
     tag: 'EN CABINA · REELS',
@@ -59,6 +59,7 @@ const INSTAGRAM_THEMES: InstagramFeatureCard[] = [
     title: 'Videos de Campo',
     description: 'Grabaciones de la vida a bordo del micro, pruebas del asistente por voz manos libres para choferes y recorridos en avenidas troncales.',
     ctaText: 'Ver videos en ruta',
+    animationType: 'rec',
   },
   {
     tag: 'SANTA CRUZ · PASAJEROS',
@@ -69,8 +70,86 @@ const INSTAGRAM_THEMES: InstagramFeatureCard[] = [
     title: 'Comunidad y Movilidad',
     description: 'Historias de vecinos de Santa Cruz de la Sierra, diálogo abierto sobre transporte público y cómo construimos una ciudad más conectada.',
     ctaText: 'Conocer historias',
+    animationType: 'radar',
   },
 ];
+
+// ── Sparkle overlay: 3 floating particles that drift and fade in loop
+const SparkleAnimation: React.FC<{ color: string }> = ({ color }) => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
+    {[0, 1, 2].map((i) => (
+      <div
+        key={i}
+        className="animate-ambient-drift absolute rounded-full"
+        style={{
+          width: 4 + i * 2,
+          height: 4 + i * 2,
+          background: color,
+          opacity: 0.6,
+          left: `${20 + i * 28}%`,
+          top: `${30 + i * 15}%`,
+          animationDelay: `${i * 0.9}s`,
+          animationDuration: `${3.2 + i * 0.6}s`,
+          boxShadow: `0 0 8px ${color}`,
+        }}
+      />
+    ))}
+  </div>
+);
+
+// ── Equalizer: 4 pulsing bars synced to telemetry rhythm
+const EqualizerAnimation: React.FC<{ color: string }> = ({ color }) => (
+  <div className="absolute bottom-14 right-5 flex items-end gap-[3px] pointer-events-none">
+    {(['animate-equalizer-1', 'animate-equalizer-2', 'animate-equalizer-3', 'animate-equalizer-4'] as const).map(
+      (cls, i) => (
+        <div
+          key={i}
+          className={`${cls} rounded-sm`}
+          style={{
+            width: 4,
+            background: color,
+            opacity: 0.75,
+            minHeight: 6,
+          }}
+        />
+      )
+    )}
+  </div>
+);
+
+// ── REC dot: blinking live recording indicator
+const RecAnimation: React.FC = () => (
+  <div className="absolute top-5 right-5 flex items-center gap-1.5 pointer-events-none">
+    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_6px_rgba(239,68,68,0.9)]" />
+    <span className="text-[9px] font-mono font-bold text-red-400 tracking-widest uppercase">REC</span>
+  </div>
+);
+
+// ── Radar: concentric expanding ring ping
+const RadarAnimation: React.FC<{ color: string }> = ({ color }) => (
+  <div className="absolute bottom-14 right-5 pointer-events-none">
+    <div
+      className="animate-radar-wave absolute rounded-full border"
+      style={{ width: 32, height: 32, top: -16, left: -16, borderColor: color, opacity: 0.5 }}
+    />
+    <div
+      className="animate-radar-wave absolute rounded-full border"
+      style={{ width: 32, height: 32, top: -16, left: -16, borderColor: color, opacity: 0.5, animationDelay: '0.8s' }}
+    />
+    <div
+      className="rounded-full"
+      style={{ width: 8, height: 8, background: color, boxShadow: `0 0 10px ${color}` }}
+    />
+  </div>
+);
+
+function CardAnimation({ type, color }: { type: InstagramFeatureCard['animationType']; color: string }) {
+  if (type === 'sparkle') return <SparkleAnimation color={color} />;
+  if (type === 'equalizer') return <EqualizerAnimation color={color} />;
+  if (type === 'rec') return <RecAnimation />;
+  if (type === 'radar') return <RadarAnimation color={color} />;
+  return null;
+}
 
 export const InstagramGallery: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -84,6 +163,7 @@ export const InstagramGallery: React.FC = () => {
     if (reduce) return;
 
     const ctx = gsap.context(() => {
+      // Header entrance
       gsap.fromTo(
         '.instagram-header',
         { opacity: 0, y: 24 },
@@ -100,6 +180,7 @@ export const InstagramGallery: React.FC = () => {
         }
       );
 
+      // Cards staggered entrance
       gsap.fromTo(
         '.instagram-theme-card',
         { opacity: 0, y: 28, scale: 0.97 },
@@ -108,7 +189,7 @@ export const InstagramGallery: React.FC = () => {
           y: 0,
           scale: 1,
           duration: motion.duration.normal,
-          stagger: 0.08,
+          stagger: 0.09,
           ease: motion.ease.enter,
           scrollTrigger: {
             trigger: cardsRef.current,
@@ -117,34 +198,83 @@ export const InstagramGallery: React.FC = () => {
           },
         }
       );
+
+      // Footer footer card entrance
+      gsap.fromTo(
+        '.instagram-footer-card',
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: motion.duration.normal,
+          ease: motion.ease.enter,
+          scrollTrigger: {
+            trigger: '.instagram-footer-card',
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+
+      // Ambient orbs drift continuously while visible (using ScrollTrigger pin-spacer trick)
+      gsap.to('.ig-orb-pink', {
+        x: 30,
+        y: -20,
+        duration: 6,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut',
+      });
+      gsap.to('.ig-orb-teal', {
+        x: -25,
+        y: 15,
+        duration: 7.5,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut',
+        delay: 1.5,
+      });
+
+      // Badge radar glow pulse on the @urbo.corp badge
+      gsap.to('.ig-badge-dot', {
+        scale: 1.5,
+        opacity: 0.4,
+        duration: 1.1,
+        yoyo: true,
+        repeat: -1,
+        ease: 'power1.inOut',
+      });
     }, sec);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section 
-      ref={sectionRef} 
-      id="instagram" 
+    <section
+      ref={sectionRef}
+      id="instagram"
       className="relative py-20 lg:py-28 overflow-hidden bg-[#070B14] text-white transition-colors duration-300"
     >
-      {/* Subtle ambient lighting */}
+      {/* Drifting ambient orbs */}
       <div
         aria-hidden="true"
-        className="absolute top-1/4 -right-20 w-[550px] h-[550px] rounded-full bg-pink-500/10 blur-[180px] pointer-events-none"
+        className="ig-orb-pink absolute top-1/4 -right-20 w-[550px] h-[550px] rounded-full bg-pink-500/10 blur-[180px] pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute bottom-10 -left-20 w-[500px] h-[500px] rounded-full bg-[#00C9A7]/10 blur-[160px] pointer-events-none"
+        className="ig-orb-teal absolute bottom-10 -left-20 w-[500px] h-[500px] rounded-full bg-[#00C9A7]/10 blur-[160px] pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Section Header */}
         <div className="instagram-header flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 pb-6 border-b border-white/10 gap-6">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#070E1E] border border-white/10 text-white text-xs font-mono font-bold tracking-wider uppercase mb-4">
-              <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] animate-pulse" />
+            {/* Badge with radar dot */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#070E1E] border border-white/10 text-white text-xs font-mono font-bold tracking-wider uppercase mb-4 relative">
+              <span className="ig-badge-dot w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888]" />
+              {/* Radar ring around the dot */}
+              <span className="animate-radar-wave absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border border-pink-400 pointer-events-none" />
               <span>COMUNIDAD EN REDES · @URBO.CORP</span>
             </div>
 
@@ -185,7 +315,7 @@ export const InstagramGallery: React.FC = () => {
           </div>
         </div>
 
-        {/* 4 Thematic Cards */}
+        {/* 4 Thematic Cards with live animation overlays */}
         <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {INSTAGRAM_THEMES.map((theme, i) => {
             const Icon = theme.icon;
@@ -198,31 +328,34 @@ export const InstagramGallery: React.FC = () => {
                 className="instagram-theme-card group flex flex-col justify-between p-7 rounded-3xl bg-[#070E1E] border border-white/10 hover:border-pink-500/40 hover:shadow-[0_20px_45px_rgba(225,48,108,0.15)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
               >
                 {/* Subtle corner aura */}
-                <div 
+                <div
                   className="absolute top-0 right-0 w-28 h-28 rounded-bl-full opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none"
                   style={{ background: theme.tagColor }}
                 />
 
+                {/* Living ambient animation overlay */}
+                <CardAnimation type={theme.animationType} color={theme.tagColor} />
+
                 <div>
                   {/* Icon & Tag */}
                   <div className="flex items-center justify-between mb-5">
-                    <div 
+                    <div
                       className="w-12 h-12 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-105"
-                      style={{ 
-                        background: theme.iconBg, 
+                      style={{
+                        background: theme.iconBg,
                         borderColor: `${theme.iconColor}40`,
-                        color: theme.iconColor 
+                        color: theme.iconColor,
                       }}
                     >
                       <Icon className="w-6 h-6" />
                     </div>
 
-                    <span 
+                    <span
                       className="text-[10px] font-mono font-bold tracking-wider uppercase px-2.5 py-1 rounded-full border"
                       style={{
                         color: theme.tagColor,
                         borderColor: `${theme.tagColor}30`,
-                        background: `${theme.tagColor}10`
+                        background: `${theme.tagColor}10`,
                       }}
                     >
                       {theme.tag}
@@ -252,7 +385,7 @@ export const InstagramGallery: React.FC = () => {
         </div>
 
         {/* Official Brand Anchor Footer Card */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#0F1C35]/90 via-[#0B1426]/90 to-[#070B14]/90 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="instagram-footer-card p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#0F1C35]/90 via-[#0B1426]/90 to-[#070B14]/90 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4 text-left">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex items-center justify-center text-white shrink-0 shadow-lg">
               <Instagram className="w-6 h-6 fill-current stroke-none" />

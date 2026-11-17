@@ -72,8 +72,8 @@ export const CinematicHero: React.FC = () => {
             progressTextRef.current.textContent = `${Math.round(p * 100)}%`;
           }
           if (distanceTextRef.current) {
-            const km = ((p * 7530) / 1000).toFixed(2);
-            distanceTextRef.current.textContent = `DISTANCIA EN RUTA: ${km} KM / 7.53 KM · SCZ METROPOLITANO`;
+            const km = ((p * 7240) / 1000).toFixed(2);
+            distanceTextRef.current.textContent = `DISTANCIA EN RUTA: ${km} KM / 7.24 KM · SCZ METROPOLITANO`;
           }
 
           // Discrete Chapter Milestones:
@@ -234,7 +234,7 @@ export const CinematicHero: React.FC = () => {
       ref={runwayRef}
       id="inicio"
       className="relative w-full"
-      style={{ height: '750vh' }}
+      style={{ height: '950vh' }}
     >
       {/* Pinned Cinematic Stage (100dvh sticky) */}
       <div

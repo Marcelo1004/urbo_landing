@@ -660,6 +660,40 @@ body {
   animation: pingSubtle 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Continuous Living Ambient Animations */
+@keyframes equalizerPulse {
+  0%, 100% { height: 5px; }
+  50% { height: 20px; }
+}
+.animate-equalizer-1 { animation: equalizerPulse 1.1s ease-in-out infinite; }
+.animate-equalizer-2 { animation: equalizerPulse 0.8s ease-in-out infinite 0.25s; }
+.animate-equalizer-3 { animation: equalizerPulse 1.3s ease-in-out infinite 0.45s; }
+.animate-equalizer-4 { animation: equalizerPulse 0.95s ease-in-out infinite 0.15s; }
+
+@keyframes ambientDrift {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(25px, -18px) scale(1.06); }
+}
+.animate-ambient-drift {
+  animation: ambientDrift 8s ease-in-out infinite;
+}
+
+@keyframes borderGlowPulse {
+  0%, 100% { opacity: 0.4; border-color: rgba(255, 255, 255, 0.15); }
+  50% { opacity: 0.9; border-color: rgba(0, 229, 190, 0.45); }
+}
+.animate-border-glow {
+  animation: borderGlowPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes radarWave {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.3); opacity: 0; }
+}
+.animate-radar-wave {
+  animation: radarWave 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
 /* Reduced Motion Safety */
 @media (prefers-reduced-motion: reduce) {
   *,
