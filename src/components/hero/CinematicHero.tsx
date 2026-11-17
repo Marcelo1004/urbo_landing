@@ -72,8 +72,8 @@ export const CinematicHero: React.FC = () => {
             progressTextRef.current.textContent = `${Math.round(p * 100)}%`;
           }
           if (distanceTextRef.current) {
-            const km = ((p * 5041.8) / 1000).toFixed(2);
-            distanceTextRef.current.textContent = `DISTANCIA EN RUTA: ${km} KM / 5.04 KM · SCZ TRONCAL`;
+            const km = ((p * 7530) / 1000).toFixed(2);
+            distanceTextRef.current.textContent = `DISTANCIA EN RUTA: ${km} KM / 7.53 KM · SCZ METROPOLITANO`;
           }
 
           // Discrete Chapter Milestones:
@@ -296,118 +296,118 @@ export const CinematicHero: React.FC = () => {
           
           {/* Chapter 0: Editorial Welcome Headline (0% - 12%) */}
           <div className="hero-title-group max-w-3xl flex flex-col items-center -mt-8 sm:-mt-14 pointer-events-auto select-none">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#070E1E]/92 border border-white/15 text-[#00E5BE] text-xs font-mono font-bold tracking-widest uppercase mb-4 shadow-xl backdrop-blur-md text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#060B18]/98 border border-white/20 text-[#00E5BE] text-xs font-mono font-bold tracking-widest uppercase mb-4 shadow-[0_15px_35px_rgba(0,0,0,0.85)] text-center">
               <Sparkles className="w-3.5 h-3.5 text-[#00E5BE] shrink-0" />
               <span>BIENVENIDO A URBO, DÉJANOS CONTARTE MÁS ACERCA DE NOSOTROS Y NUESTRA MISIÓN</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-4 drop-shadow-[0_4px_20px_rgba(0,0,0,0.85)]">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-4 drop-shadow-[0_4px_25px_rgba(0,0,0,0.95)]">
               Tu micro.{' '}
               <span className="font-tech text-transparent bg-clip-text bg-gradient-to-r from-[#00E5BE] via-[#38BDF8] to-[#00E5BE] tracking-wider uppercase font-black">
                 EN TIEMPO REAL.
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-100 max-w-xl font-normal leading-relaxed mb-6 font-sans drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] bg-[#070E1E]/80 px-5 py-2.5 rounded-2xl backdrop-blur-md border border-white/10 shadow-lg">
+            <p className="text-base sm:text-lg text-slate-100 max-w-xl font-normal leading-relaxed mb-6 font-sans drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] bg-[#060B18]/95 px-6 py-3 rounded-2xl border border-white/15 shadow-2xl">
               Conectamos el transporte público de Santa Cruz con información accesible y transparente para pasajeros, choferes y líneas urbanas.
             </p>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-200 bg-[#070E1E]/90 px-4 py-2 rounded-full backdrop-blur-md border border-white/15 animate-bounce shadow-xl">
+            <div className="flex items-center gap-2 text-xs font-mono text-slate-200 bg-[#060B18]/95 px-4 py-2 rounded-full border border-white/20 animate-bounce shadow-xl">
               <ChevronDown className="w-4 h-4 text-[#38BDF8]" />
               <span>Desplaza hacia abajo para iniciar el recorrido</span>
             </div>
           </div>
 
           {/* Chapter 1 Card (LEFT): Acceso a la Información & Reducción de Incertidumbre (15% - 35%) */}
-          <div className="chapter-card-1 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#070E1E]/94 backdrop-blur-md border border-white/10 text-left shadow-2xl pointer-events-auto">
+          <div className="chapter-card-1 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#060B18]/98 border border-white/20 text-left shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_25px_rgba(0,0,0,0.8)] pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#F4C430] flex items-center gap-1.5 font-bold">
                 <Activity className="w-3.5 h-3.5" />
                 <span>01 · ACCESO A LA INFORMACIÓN</span>
               </span>
-              <span className="text-[11px] font-mono text-slate-400">Casco Viejo & 1er Anillo</span>
+              <span className="text-[11px] font-mono text-slate-300">Casco Viejo & 1er Anillo</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug drop-shadow-md">
               Consultar la ubicación exacta elimina la espera a ciegas.
             </h2>
-            <p className="text-sm text-slate-200 leading-relaxed font-sans mb-3">
+            <p className="text-sm text-slate-100 leading-relaxed font-sans mb-3.5">
               En Santa Cruz, los pasajeros pierden más de 35 minutos al día sin saber cuándo pasará su micro. URBO ofrece visibilidad directa del trayecto para tomar decisiones informadas antes de salir.
             </p>
-            <div className="inline-flex items-center gap-2 text-[11px] font-mono text-[#00E5BE] bg-[#00C9A7]/10 px-2.5 py-1 rounded-md border border-[#00C9A7]/20">
+            <div className="inline-flex items-center gap-2 text-[11px] font-mono text-[#00E5BE] bg-[#00C9A7]/15 px-3 py-1.5 rounded-lg border border-[#00C9A7]/30 font-medium">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Acceso directo sin descargas pesadas</span>
             </div>
           </div>
 
           {/* Chapter 2 Card (RIGHT): Conducción Segura Manos Libres (38% - 58%) */}
-          <div className="chapter-card-2 absolute right-4 sm:right-8 md:right-12 lg:right-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#070E1E]/94 backdrop-blur-md border border-white/10 text-left shadow-2xl pointer-events-auto">
+          <div className="chapter-card-2 absolute right-4 sm:right-8 md:right-12 lg:right-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#060B18]/98 border border-white/20 text-left shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_25px_rgba(0,0,0,0.8)] pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#00E5BE] flex items-center gap-1.5 font-bold">
                 <Radio className="w-3.5 h-3.5" />
                 <span>02 · CONDUCCIÓN SEGURA</span>
               </span>
-              <span className="text-xs text-[#38BDF8] font-mono font-bold">2do Anillo</span>
+              <span className="text-xs text-[#38BDF8] font-mono font-bold">2do Anillo & Cristo</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug drop-shadow-md">
               Telemetría manos libres que cuida la conducción.
             </h2>
-            <p className="text-sm text-slate-200 leading-relaxed mb-4 font-sans">
+            <p className="text-sm text-slate-100 leading-relaxed mb-4 font-sans">
               El chofer no toca pantallas al volante. Una alerta por voz anuncia hitos clave a 300 metros, y la función <span className="text-[#00E5BE] font-semibold">Esperar Aquí</span> anticipa la demanda de pasajeros en ruta.
             </p>
-            <div className="inline-flex items-center gap-2 text-xs font-mono text-[#38BDF8] bg-[#38BDF8]/10 px-3 py-1.5 rounded-lg border border-[#38BDF8]/20">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-[#38BDF8] bg-[#38BDF8]/15 px-3 py-1.5 rounded-lg border border-[#38BDF8]/30 font-medium">
               <Volume2 className="w-3.5 h-3.5 animate-pulse" />
               <span>Asistencia auditiva pasiva en cabina</span>
             </div>
           </div>
 
           {/* Chapter 3 Card (LEFT): Validación Comunitaria en Calle (61% - 81%) */}
-          <div className="chapter-card-3 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#070E1E]/94 backdrop-blur-md border border-white/10 text-left shadow-2xl pointer-events-auto">
+          <div className="chapter-card-3 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#060B18]/98 border border-white/20 text-left shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_25px_rgba(0,0,0,0.8)] pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#38BDF8] flex items-center gap-1.5 font-bold">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>03 · VALIDACIÓN EN CALLE</span>
               </span>
-              <span className="text-xs text-[#F4C430] font-mono font-bold">3er Anillo</span>
+              <span className="text-xs text-[#F4C430] font-mono font-bold">3er Anillo & Equipetrol</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug drop-shadow-md">
               5 meses de pruebas continuas con datos reales.
             </h2>
-            <p className="text-sm text-slate-200 leading-relaxed mb-4 font-sans">
+            <p className="text-sm text-slate-100 leading-relaxed mb-4 font-sans">
               La tecnología simple resuelve problemas reales cuando se construye junto a la comunidad:
             </p>
             <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-200">
-              <div className="bg-white/5 p-2 rounded-lg border border-white/10">
-                <span className="text-[#00E5BE] font-bold text-sm block">140</span>
+              <div className="bg-white/5 p-2.5 rounded-xl border border-white/10">
+                <span className="text-[#00E5BE] font-bold text-base block font-tech">140</span>
                 <span>Usuarios piloto</span>
               </div>
-              <div className="bg-white/5 p-2 rounded-lg border border-white/10">
-                <span className="text-[#38BDF8] font-bold text-sm block">1.239</span>
+              <div className="bg-white/5 p-2.5 rounded-xl border border-white/10">
+                <span className="text-[#38BDF8] font-bold text-base block font-tech">1.239</span>
                 <span>Mensajes analizados</span>
               </div>
-              <div className="bg-white/5 p-2 rounded-lg border border-white/10">
-                <span className="text-[#F4C430] font-bold text-sm block">83</span>
+              <div className="bg-white/5 p-2.5 rounded-xl border border-white/10">
+                <span className="text-[#F4C430] font-bold text-base block font-tech">83</span>
                 <span>Remitentes activos</span>
               </div>
-              <div className="bg-white/5 p-2 rounded-lg border border-white/10">
-                <span className="text-white font-bold text-sm block">Troncal</span>
+              <div className="bg-white/5 p-2.5 rounded-xl border border-white/10">
+                <span className="text-white font-bold text-base block font-tech">7.5 KM</span>
                 <span>Corredor validado</span>
               </div>
             </div>
           </div>
 
           {/* Chapter 4 Card (RIGHT): Visión de Escala Bolivia (84% - 100%) */}
-          <div className="chapter-card-4 absolute right-4 sm:right-8 md:right-12 lg:right-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#070E1E]/94 backdrop-blur-md border border-white/10 text-left shadow-2xl pointer-events-auto">
+          <div className="chapter-card-4 absolute right-4 sm:right-8 md:right-12 lg:right-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#060B18]/98 border border-white/20 text-left shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_25px_rgba(0,0,0,0.8)] pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#00E5BE] flex items-center gap-1.5 font-bold">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>04 · VISIÓN DE ESCALA · BOLIVIA</span>
               </span>
-              <span className="text-xs text-[#38BDF8] font-mono font-bold">4to Anillo</span>
+              <span className="text-xs text-[#38BDF8] font-mono font-bold">4to & 5to Anillo</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug drop-shadow-md">
               Una red viva de transporte para toda Bolivia.
             </h2>
-            <p className="text-sm text-slate-200 leading-relaxed mb-5 font-sans">
+            <p className="text-sm text-slate-100 leading-relaxed mb-5 font-sans">
               Nuestro objetivo es conectar la cobertura de micros en todas las ciudades del país, creando una infraestructura de movilidad abierta, digna y predecible.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5">
@@ -431,15 +431,15 @@ export const CinematicHero: React.FC = () => {
 
         {/* HUD Bottom Status Bar */}
         <div className="relative z-20 pb-6 px-6 md:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-mono text-slate-200 pointer-events-none">
-          <div className="flex items-center gap-2 bg-[#070E1E]/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
+          <div className="flex items-center gap-2 bg-[#060B18]/95 px-4 py-2 rounded-full border border-white/20 shadow-xl">
             <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-pulse" />
-            <span ref={distanceTextRef} className="tracking-wide">
-              DISTANCIA EN RUTA: 0.00 KM / 5.04 KM · SCZ TRONCAL
+            <span ref={distanceTextRef} className="tracking-wide font-tech text-white">
+              DISTANCIA EN RUTA: 0.00 KM / 7.53 KM · SCZ METROPOLITANO
             </span>
           </div>
 
           {/* Scrub Progress Bar */}
-          <div className="flex items-center gap-3 w-full sm:w-64 bg-[#070E1E]/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
+          <div className="flex items-center gap-3 w-full sm:w-64 bg-[#060B18]/95 px-4 py-2 rounded-full border border-white/20 shadow-xl">
             <div className="flex-1 h-1.5 rounded-full bg-white/20 overflow-hidden">
               <div
                 ref={progressBarRef}

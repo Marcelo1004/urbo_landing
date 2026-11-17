@@ -1,18 +1,21 @@
 /**
  * URBO 3D Real Street Coordinates & Navigation Engine
  * Santa Cruz de la Sierra:
- * 1. Catedral Metropolitana (Plaza 24 de Septiembre): [-63.18156, -17.78375]
- * 2. Plaza del Estudiante & Cruce Primer Anillo: [-63.18211, -17.77620]
- * 3. Av. Monseñor Rivero (Boulevard gastronómico & camellón central): [-63.18221, -17.77373]
- * 4. Rotonda Segundo Anillo (Monumento Cristo Redentor): [-63.18240, -17.77058]
- * 5. Corredor Norte / Av. Banzer hacia 3er Anillo: [-63.17935, -17.76008]
- * 6. Viaducto Cuarto Anillo y Cristo Redentor: [-63.17463, -17.74822]
+ * Multi-turn, curved, street-accurate route covering 7.53 kilometers:
+ * 1. Casco Viejo & Catedral Metropolitana: [-63.18180, -17.78380]
+ * 2. Giro Este por Calle Junín (90° turn): [-63.18170, -17.78160] -> [-63.17820, -17.78180]
+ * 3. Giro Norte por Calle Beni / Murillo: [-63.17825, -17.78100] -> [-63.17865, -17.77690]
+ * 4. Curva del Primer Anillo (Av. Uruguay) hacia Plaza del Estudiante: [-63.18215, -17.77620]
+ * 5. Boulevard Monseñor Rivero: [-63.18220, -17.77500] -> [-63.18240, -17.77060]
+ * 6. Rotonda Cristo Redentor & 2do Anillo (Curva envolvente): [-63.18240, -17.77060] -> [-63.18950, -17.77080]
+ * 7. Corredor Equipetrol / Av. San Martín rumbo al 3er Anillo Interno: [-63.18940, -17.76950] -> [-63.18700, -17.76200]
+ * 8. Tercer Anillo Externo hacia Av. Banzer: [-63.18600, -17.76160] -> [-63.17950, -17.76010]
+ * 9. Corredor Metropolitano Norte hacia Viaducto Cuarto Anillo y 5to Anillo: [-63.17460, -17.74820] -> [-63.16940, -17.73720]
  * 
- * Total verified continuous street distance: 5.042 kilometers (5,041.8 m)
- * 100% extracted from OpenStreetMap road centerline nodes.
+ * Total Distance: 7.53 km (7,530 m)
  */
 
-import stitchedData from '../../../scripts/stitched-route.json';
+import extendedRouteData from '../../../scripts/extended-curved-route.json';
 import cityFeatures from '../../../scripts/city-features.json';
 
 export interface NavWaypoint {
@@ -24,14 +27,15 @@ export interface NavWaypoint {
   chapter?: number;
 }
 
-export const SANTA_CRUZ_NAV_ROUTE: [number, number][] = stitchedData.coordinates as [number, number][];
-export const CUMULATIVE_DISTANCES: number[] = stitchedData.cumulativeDistances;
-export const TOTAL_ROUTE_DISTANCE: number = stitchedData.totalDistanceMeters;
+export const SANTA_CRUZ_NAV_ROUTE: [number, number][] = extendedRouteData.coordinates as [number, number][];
+export const CUMULATIVE_DISTANCES: number[] = extendedRouteData.cumulativeDistances;
+export const ROUTE_BEARINGS: number[] = extendedRouteData.bearings;
+export const TOTAL_ROUTE_DISTANCE: number = extendedRouteData.totalDistanceMeters;
 
 export const NAV_ROUTE_GEOJSON: GeoJSON.Feature<GeoJSON.LineString> = {
   type: 'Feature',
   properties: {
-    name: 'Corredor Troncal URBO · Catedral Metropolitana a 4to Anillo',
+    name: 'Corredor Metropolitano URBO · Catedral a 5to Anillo',
     distanceMeters: TOTAL_ROUTE_DISTANCE,
   },
   geometry: {
@@ -40,16 +44,8 @@ export const NAV_ROUTE_GEOJSON: GeoJSON.Feature<GeoJSON.LineString> = {
   },
 };
 
-// Key Landmarks along the 5km corridor
-export const CATEDRAL_COORDS: [number, number] = [-63.18156, -17.78375];
-export const ESTUDIANTE_COORDS: [number, number] = [-63.18211, -17.77620];
-export const CRISTO_COORDS: [number, number] = [-63.18240, -17.77058];
-export const TERCER_ANILLO_COORDS: [number, number] = [-63.17935, -17.76008];
-export const CUARTO_ANILLO_COORDS: [number, number] = [-63.17463, -17.74822];
-
 // City Environment Features
 export const STREET_LAMPS_GEOJSON = cityFeatures.streetLamps as GeoJSON.FeatureCollection;
-export const URBAN_GREENERY_GEOJSON = cityFeatures.urbanGreenery as GeoJSON.FeatureCollection;
 export const PEDESTRIANS_DATA = cityFeatures.pedestrians;
 
 // Hex color interpolator
@@ -74,8 +70,6 @@ export interface DayNightVisuals {
   isNight: boolean;
   backgroundColor: string; // MapLibre 'background'
   residentialColor: string; // MapLibre 'landuse_residential'
-  parkColor: string; // MapLibre 'landuse_park'
-  urbanGreeneryColor: string; // 'urban-greenery-fill'
   minorRoadColor: string; // MapLibre 'highway_minor'
   majorRoadInnerColor: string; // MapLibre 'highway_major_inner'
   majorRoadCasingColor: string; // MapLibre 'highway_major_casing'
@@ -92,14 +86,10 @@ export interface DayNightVisuals {
 
 /**
  * Computes Day to Night visual parameters based on scroll progress
- * Progressive, elegant and reversible 4-stage atmospheric transition:
- * 1. 0.00 - 0.28: MAÑANA (08:30 - 10:45) - Luz natural cálida y suave, cielo claro con tono azul suave,
- *                 sombras ligeras, pavimento cálido, edificios beige/cemento suave, vegetación viva.
- * 2. 0.28 - 0.50: TARDE TEMPRANA (13:00 - 15:45) - Tono neutro, contraste urbano nítido, ciudad activa.
- * 3. 0.50 - 0.76: ATARDECER (16:15 - 19:15) - A partir de las 16:00 la luz se dora, cielo cálido,
- *                 sombras alargadas, reflejos ambarinos, farolas encendiéndose.
- * 4. 0.76 - 1.00: NOCHE (20:15 - 22:30) - A partir de las 20:00 noche profunda, navy #070B14,
- *                 luces urbanas vivas, ruta cyan y punto GPS como protagonistas visuales.
+ * 1. 0.00 - 0.28: MAÑANA (08:30 - 10:45) - Gris asfalto cálido, sin maqueta blanca ni niebla lechosa.
+ * 2. 0.28 - 0.50: TARDE (13:00 - 15:45) - Contraste nítido, micro avanzando por calles y curvas.
+ * 3. 0.50 - 0.76: ATARDECER (16:15 - 19:30) - Luz dorada cálida desde las 16:00, sombras largas, farolas encendiéndose.
+ * 4. 0.76 - 1.00: NOCHE (20:15 - 22:30) - Navy profundo #070B14 desde las 20:00, alumbrado vivo, ruta cyan fluorescente.
  */
 export function getDayNightVisuals(progress: number): DayNightVisuals {
   const clamped = Math.max(0, Math.min(1, progress));
@@ -109,26 +99,24 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
   let isSunset = false;
   let isNight = false;
 
-  let backgroundColor = '#E0DAD0';
-  let residentialColor = '#E7E2D8';
-  let parkColor = '#86EFAC';
-  let urbanGreeneryColor = '#22C55E';
-  let minorRoadColor = '#CFC8BA';
-  let majorRoadInnerColor = '#FFFFFF';
-  let majorRoadCasingColor = '#A89F8F';
-  let buildingColor = '#DDD5C7';
-  let lightColor = '#FFF7ED';
-  let lightIntensity = 0.88;
-  let sunPosition: [number, number, number] = [1.2, 115, 62];
+  let backgroundColor = '#1E2838';
+  let residentialColor = '#182230';
+  let minorRoadColor = '#2A384E';
+  let majorRoadInnerColor = '#556885';
+  let majorRoadCasingColor = '#3B4C63';
+  let buildingColor = '#33435C';
+  let lightColor = '#FDE68A';
+  let lightIntensity = 0.76;
+  let sunPosition: [number, number, number] = [1.2, 115, 52];
   let streetLampOpacity = 0.0;
-  let routeColor = '#059669'; // High-contrast emerald cyan that pops cleanly on daylight pavement
-  let routeGlowColor = '#0284C7';
-  let scrimTop = 'linear-gradient(to bottom, rgba(224, 218, 208, 0.85) 0%, rgba(224, 218, 208, 0.20) 60%, transparent 100%)';
-  let scrimBottom = 'linear-gradient(to top, rgba(224, 218, 208, 0.88) 0%, transparent 100%)';
+  let routeColor = '#00E5BE';
+  let routeGlowColor = '#38BDF8';
+  let scrimTop = 'linear-gradient(to bottom, rgba(11, 18, 32, 0.70) 0%, rgba(11, 18, 32, 0.15) 60%, transparent 100%)';
+  let scrimBottom = 'linear-gradient(to top, rgba(11, 18, 32, 0.80) 0%, transparent 100%)';
 
   if (clamped < 0.28) {
-    // Stage 1: MAÑANA REAL EN SANTA CRUZ (0% - 28%) · 08:30 - 10:45
-    // Luz cálida y suave, no render lavado ni blanco quemado. Textura cálida en pavimento y edificios.
+    // Stage 1: MAÑANA CÁLIDA Y REAL EN SANTA CRUZ (0% - 28%)
+    // Base de suelo gris cálido suave / cemento oscuro cálido. Sin blanco lavado ni overlays lechosos.
     const t = clamped / 0.28;
     const hour = Math.floor(8 + t * 2.5);
     const minute = Math.floor((t * 2.5 * 60) % 60);
@@ -138,25 +126,23 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
     isSunset = false;
     isNight = false;
 
-    backgroundColor = lerpColor('#E0DAD0', '#D6DFE8', t);
-    residentialColor = lerpColor('#E7E2D8', '#DFE6EE', t);
-    parkColor = lerpColor('#86EFAC', '#4ADE80', t);
-    urbanGreeneryColor = lerpColor('#22C55E', '#16A34A', t);
-    minorRoadColor = lerpColor('#CFC8BA', '#C0CBD8', t);
-    majorRoadInnerColor = '#FFFFFF';
-    majorRoadCasingColor = lerpColor('#A89F8F', '#94A3B8', t);
-    buildingColor = lerpColor('#DDD5C7', '#CCD7E3', t);
-    lightColor = lerpColor('#FFF7ED', '#FFFBEB', t);
-    lightIntensity = 0.88 - t * 0.06;
-    sunPosition = [1.2, 115 + t * 35, 62 - t * 7];
+    backgroundColor = lerpColor('#1E2838', '#192233', t);
+    residentialColor = lerpColor('#182230', '#141C2A', t);
+    minorRoadColor = lerpColor('#2A384E', '#26344A', t);
+    majorRoadInnerColor = lerpColor('#556885', '#4E617E', t);
+    majorRoadCasingColor = lerpColor('#3B4C63', '#38475E', t);
+    buildingColor = lerpColor('#33435C', '#2F3D54', t);
+    lightColor = lerpColor('#FDE68A', '#FEF3C7', t);
+    lightIntensity = 0.76 + t * 0.06;
+    sunPosition = [1.2, 115 + t * 40, 52 - t * 10];
     streetLampOpacity = 0.0;
-    routeColor = lerpColor('#059669', '#0D9488', t);
-    routeGlowColor = '#0284C7';
-    scrimTop = 'linear-gradient(to bottom, rgba(224, 218, 208, 0.85) 0%, rgba(224, 218, 208, 0.20) 60%, transparent 100%)';
-    scrimBottom = 'linear-gradient(to top, rgba(224, 218, 208, 0.88) 0%, transparent 100%)';
+    routeColor = '#00E5BE';
+    routeGlowColor = '#38BDF8';
+    scrimTop = 'linear-gradient(to bottom, rgba(11, 18, 32, 0.70) 0%, rgba(11, 18, 32, 0.15) 60%, transparent 100%)';
+    scrimBottom = 'linear-gradient(to top, rgba(11, 18, 32, 0.80) 0%, transparent 100%)';
   } else if (clamped < 0.50) {
-    // Stage 2: MEDIODÍA / TARDE TEMPRANA (28% - 50%) · 13:00 - 15:45
-    // Mayor contraste, sensación urbana activa, ruta protagonista
+    // Stage 2: TARDE (28% - 50%) · 13:00 - 15:45
+    // Contraste equilibrado, sensación urbana viva, curvas del 1er y 2do Anillo
     const t = (clamped - 0.28) / 0.22;
     const hour = Math.floor(13 + t * 2.8);
     const minute = Math.floor((t * 2.8 * 60) % 60);
@@ -166,25 +152,23 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
     isSunset = false;
     isNight = false;
 
-    backgroundColor = lerpColor('#D6DFE8', '#BAC8D7', t);
-    residentialColor = lerpColor('#DFE6EE', '#C6D3E1', t);
-    parkColor = lerpColor('#4ADE80', '#22C55E', t);
-    urbanGreeneryColor = lerpColor('#16A34A', '#15803D', t);
-    minorRoadColor = lerpColor('#C0CBD8', '#A9B9CA', t);
-    majorRoadInnerColor = lerpColor('#FFFFFF', '#FEF3C7', t);
-    majorRoadCasingColor = lerpColor('#94A3B8', '#7E91A6', t);
-    buildingColor = lerpColor('#CCD7E3', '#B0C0D2', t);
-    lightColor = lerpColor('#FFFBEB', '#FEF3C7', t);
+    backgroundColor = lerpColor('#192233', '#221D2F', t);
+    residentialColor = lerpColor('#141C2A', '#1A1525', t);
+    minorRoadColor = lerpColor('#26344A', '#332442', t);
+    majorRoadInnerColor = lerpColor('#4E617E', '#735882', t);
+    majorRoadCasingColor = lerpColor('#38475E', '#4E3A5E', t);
+    buildingColor = lerpColor('#2F3D54', '#3E2F4C', t);
+    lightColor = lerpColor('#FEF3C7', '#FDE68A', t);
     lightIntensity = 0.82 - t * 0.10;
-    sunPosition = [1.2, 150 + t * 25, 55 - t * 15];
+    sunPosition = [1.2, 155 + t * 30, 42 - t * 12];
     streetLampOpacity = t * 0.15;
-    routeColor = lerpColor('#0D9488', '#00C9A7', t);
-    routeGlowColor = lerpColor('#0284C7', '#38BDF8', t);
-    scrimTop = 'linear-gradient(to bottom, rgba(186, 200, 215, 0.85) 0%, rgba(186, 200, 215, 0.20) 60%, transparent 100%)';
-    scrimBottom = 'linear-gradient(to top, rgba(186, 200, 215, 0.88) 0%, transparent 100%)';
+    routeColor = '#00E5BE';
+    routeGlowColor = '#38BDF8';
+    scrimTop = 'linear-gradient(to bottom, rgba(11, 18, 32, 0.75) 0%, rgba(11, 18, 32, 0.15) 60%, transparent 100%)';
+    scrimBottom = 'linear-gradient(to top, rgba(11, 18, 32, 0.85) 0%, transparent 100%)';
   } else if (clamped < 0.76) {
-    // Stage 3: ATARDECER CINEMATOGRÁFICO DESDE LAS 16:00 (50% - 76%) · 16:15 - 19:30
-    // Luz dorada ámbar, sombras alargadas, cielo cálido, farolas empezando a alumbrar
+    // Stage 3: ATARDECER DESDE LAS 16:00 (50% - 76%) · 16:15 - 19:30
+    // Luz dorada, cielo cálido, sombras alargadas, reflejos ámbar en pavimento
     const t = (clamped - 0.50) / 0.26;
     const hour = Math.floor(16 + t * 3.3);
     const minute = Math.floor((t * 3.3 * 60) % 60);
@@ -194,25 +178,23 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
     isSunset = true;
     isNight = false;
 
-    backgroundColor = lerpColor('#BAC8D7', '#382845', t);
-    residentialColor = lerpColor('#C6D3E1', '#2C1F37', t);
-    parkColor = lerpColor('#22C55E', '#143826', t);
-    urbanGreeneryColor = lerpColor('#15803D', '#0F2F20', t);
-    minorRoadColor = lerpColor('#A9B9CA', '#463255', t);
-    majorRoadInnerColor = lerpColor('#FEF3C7', '#FB923C', t);
-    majorRoadCasingColor = lerpColor('#7E91A6', '#593F6C', t);
-    buildingColor = lerpColor('#B0C0D2', '#523E61', t);
-    lightColor = lerpColor('#FEF3C7', '#FB923C', t);
-    lightIntensity = 0.72 - t * 0.25;
-    sunPosition = [1.3, 175 + t * 50, 40 - t * 22];
-    streetLampOpacity = 0.15 + t * 0.70;
-    routeColor = lerpColor('#00C9A7', '#00E5BE', t);
+    backgroundColor = lerpColor('#221D2F', '#2A1E35', t);
+    residentialColor = lerpColor('#1A1525', '#21172B', t);
+    minorRoadColor = lerpColor('#332442', '#3C2B4B', t);
+    majorRoadInnerColor = lerpColor('#735882', '#FB923C', t);
+    majorRoadCasingColor = lerpColor('#4E3A5E', '#553C68', t);
+    buildingColor = lerpColor('#3E2F4C', '#453356', t);
+    lightColor = lerpColor('#FDE68A', '#F97316', t);
+    lightIntensity = 0.72 - t * 0.20;
+    sunPosition = [1.3, 185 + t * 45, 30 - t * 18];
+    streetLampOpacity = 0.15 + t * 0.65;
+    routeColor = '#00E5BE';
     routeGlowColor = '#38BDF8';
-    scrimTop = 'linear-gradient(to bottom, rgba(56, 40, 69, 0.90) 0%, rgba(56, 40, 69, 0.30) 60%, transparent 100%)';
-    scrimBottom = 'linear-gradient(to top, rgba(56, 40, 69, 0.92) 0%, transparent 100%)';
+    scrimTop = 'linear-gradient(to bottom, rgba(28, 18, 38, 0.85) 0%, rgba(28, 18, 38, 0.20) 60%, transparent 100%)';
+    scrimBottom = 'linear-gradient(to top, rgba(28, 18, 38, 0.90) 0%, transparent 100%)';
   } else {
-    // Stage 4: NOCHE URBANA PROFUNDA DESDE LAS 20:00 (76% - 100%) · 20:15 - 22:30
-    // Navy #070B14, luces urbanas vivas, ruta cyan fluorescente, punto GPS protagonista
+    // Stage 4: NOCHE PROFUNDA DESDE LAS 20:00 (76% - 100%) · 20:15 - 22:30
+    // Navy #070B14, farolas encendidas, ruta cyan fluorescente, punto GPS protagonista
     const t = (clamped - 0.76) / 0.24;
     const hour = Math.floor(20 + t * 2.2);
     const minute = Math.floor((t * 2.2 * 60) % 60);
@@ -222,22 +204,20 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
     isSunset = false;
     isNight = true;
 
-    backgroundColor = lerpColor('#382845', '#070B14', t);
-    residentialColor = lerpColor('#2C1F37', '#0A1020', t);
-    parkColor = lerpColor('#143826', '#041B16', t);
-    urbanGreeneryColor = lerpColor('#0F2F20', '#064E3B', t);
-    minorRoadColor = lerpColor('#463255', '#131E35', t);
+    backgroundColor = lerpColor('#2A1E35', '#070B14', t);
+    residentialColor = lerpColor('#21172B', '#0A1020', t);
+    minorRoadColor = lerpColor('#3C2B4B', '#131E35', t);
     majorRoadInnerColor = lerpColor('#FB923C', '#1D2D4E', t);
-    majorRoadCasingColor = lerpColor('#593F6C', '#263B66', t);
-    buildingColor = lerpColor('#523E61', '#0F172A', t);
-    lightColor = lerpColor('#FB923C', '#38BDF8', t);
-    lightIntensity = 0.47 - t * 0.18;
-    sunPosition = [1.3, 225 + t * 35, 18 + t * 32];
-    streetLampOpacity = 0.85 + t * 0.15;
+    majorRoadCasingColor = lerpColor('#553C68', '#263B66', t);
+    buildingColor = lerpColor('#453356', '#0F172A', t);
+    lightColor = lerpColor('#F97316', '#38BDF8', t);
+    lightIntensity = 0.45 - t * 0.15;
+    sunPosition = [1.3, 230 + t * 35, 12 + t * 33];
+    streetLampOpacity = 0.80 + t * 0.20;
     routeColor = '#00E5BE';
     routeGlowColor = '#38BDF8';
-    scrimTop = 'linear-gradient(to bottom, rgba(7, 11, 20, 0.95) 0%, rgba(7, 11, 20, 0.35) 60%, transparent 100%)';
-    scrimBottom = 'linear-gradient(to top, rgba(7, 11, 20, 0.96) 0%, rgba(7, 11, 20, 0.45) 60%, transparent 100%)';
+    scrimTop = 'linear-gradient(to bottom, rgba(7, 11, 20, 0.95) 0%, rgba(7, 11, 20, 0.30) 60%, transparent 100%)';
+    scrimBottom = 'linear-gradient(to top, rgba(7, 11, 20, 0.96) 0%, transparent 100%)';
   }
 
   return {
@@ -248,8 +228,6 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
     isNight,
     backgroundColor,
     residentialColor,
-    parkColor,
-    urbanGreeneryColor,
     minorRoadColor,
     majorRoadInnerColor,
     majorRoadCasingColor,
@@ -267,11 +245,11 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
 
 /**
  * Interpolates [lng, lat], camera look-ahead center, bearing, pitch, zoom, chapter,
- * and day/night visual parameters based on accumulated distance along the 5.042 km route
+ * and day/night visual parameters based on accumulated distance along the 7.53 km route
  */
 export function getNavStateAtProgress(progress: number): {
   beacon: [number, number]; // True GPS coordinate of the micro/beacon
-  center: [number, number]; // Look-ahead camera focus point (Google Maps navigation perspective)
+  center: [number, number]; // Look-ahead camera focus point with cinematic cornering
   bearing: number;
   pitch: number;
   zoom: number;
@@ -281,10 +259,11 @@ export function getNavStateAtProgress(progress: number): {
 } {
   const coords = SANTA_CRUZ_NAV_ROUTE;
   const dists = CUMULATIVE_DISTANCES;
+  const bearings = ROUTE_BEARINGS;
   const clamped = Math.max(0, Math.min(1, progress));
   const targetDist = clamped * TOTAL_ROUTE_DISTANCE;
 
-  // Binary or linear search along cumulative distances
+  // Search along cumulative distances
   let idx = 0;
   while (idx < dists.length - 2 && dists[idx + 1] < targetDist) {
     idx++;
@@ -300,63 +279,52 @@ export function getNavStateAtProgress(progress: number): {
   const currentLng = c1[0] + (c2[0] - c1[0]) * frac;
   const currentLat = c1[1] + (c2[1] - c1[1]) * frac;
 
-  // Tangent bearing calculation along current road segment
-  const dLng = c2[0] - c1[0];
-  const dLat = c2[1] - c1[1];
-  let segmentBearing = (Math.atan2(dLng, dLat) * 180) / Math.PI;
+  // Dynamic smoothed bearing from actual street turns (Junín 90° East, Beni 0° North, 1er Anillo Arc, Equipetrol, Banzer)
+  const b1 = bearings[idx] ?? 0;
+  const b2 = bearings[idx + 1] ?? b1;
+  // Circular interpolation for angles
+  let diff = (b2 - b1 + 540) % 360 - 180;
+  const currentBearing = (b1 + diff * frac + 360) % 360;
 
-  // Camera drift aligning with the corridor (Santa Cruz north corridor has slight eastern angle ~12°)
-  const targetBearing = -5 + (clamped * 16);
+  // Look-ahead camera focus along current heading tangent (Google Maps 3D navigation feel)
+  const forwardLookAhead = 0.0016;
+  const rad = (currentBearing * Math.PI) / 180;
+  const fwdLng = Math.sin(rad) * forwardLookAhead;
+  const fwdLat = Math.cos(rad) * forwardLookAhead;
 
-  // Dynamic pitch & zoom curves:
-  // Starts with an immersive 58° tilt at Catedral, dips to 63° along Monseñor Rivero,
-  // relaxes to 58° at Cristo Redentor for monument visibility, 52° for corridor overview,
-  // and 46° for Cuarto Anillo panoramic handoff
-  let pitch = 58;
-  let zoom = 16.6;
+  // Dynamic pitch & zoom curves tuned for cinematic depth
+  let pitch = 56;
+  let zoom = 16.5;
   let chapter = 0;
-  let forwardLookAhead = 0.0016;
 
-  // 5 Chapter Milestones:
-  // 0: Catedral Metropolitana (0% - 18%) -> 0m to 900m
-  // 1: Plaza del Estudiante & Primer Anillo (18% - 38%) -> 900m to 1,900m
-  // 2: Monumento Cristo Redentor (38% - 60%) -> 1,900m to 3,000m
-  // 3: Corredor Norte & Tercer Anillo (60% - 82%) -> 3,000m to 4,100m
-  // 4: Visión URBO & Cuarto Anillo (82% - 100%) -> 4,100m to 5,042m
-
-  if (clamped < 0.18) {
+  if (clamped < 0.15) {
     chapter = 0;
-    pitch = 58 + (clamped / 0.18) * 4;
-    zoom = 16.7 - (clamped / 0.18) * 0.2;
-    forwardLookAhead = 0.0014;
-  } else if (clamped < 0.38) {
+    pitch = 56 + (clamped / 0.15) * 4;
+    zoom = 16.6;
+  } else if (clamped < 0.36) {
     chapter = 1;
-    pitch = 62;
-    zoom = 16.5;
-    forwardLookAhead = 0.0016;
-  } else if (clamped < 0.60) {
-    chapter = 2;
     pitch = 59;
-    zoom = 16.3;
-    forwardLookAhead = 0.0015;
+    zoom = 16.4;
+  } else if (clamped < 0.59) {
+    chapter = 2;
+    pitch = 57;
+    zoom = 16.2;
   } else if (clamped < 0.82) {
     chapter = 3;
-    pitch = 54;
+    pitch = 53;
     zoom = 15.8;
-    forwardLookAhead = 0.0018;
   } else {
     chapter = 4;
     pitch = 48;
     zoom = 15.3;
-    forwardLookAhead = 0.0022;
   }
 
   const dayNight = getDayNightVisuals(clamped);
 
   return {
     beacon: [currentLng, currentLat],
-    center: [currentLng, currentLat + forwardLookAhead],
-    bearing: targetBearing,
+    center: [currentLng + fwdLng, currentLat + fwdLat],
+    bearing: currentBearing,
     pitch,
     zoom,
     chapter,

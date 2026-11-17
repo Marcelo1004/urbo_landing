@@ -152,30 +152,30 @@ async function run() {
     console.log(`[Runway Height (Elongated Route)]: ${runwayHeight}px`);
 
     // 1. CAPTURE 1: MAÑANA (0% Scroll - 08:30)
-    console.log('\n--- Capture 1: Mañana Real en Santa Cruz (08:30, Luz Suave Cálida, Sin Rótulos Flotantes, Bienvenida Editorial) ---');
+    console.log('\n--- Capture 1: Mañana Real en Santa Cruz (08:30, Gris Asfalto Cálido, Sin Blanco Lavado, Sin Manchas Verdes) ---');
     await cdp.evaluate(`window.scrollTo(0, 0);`);
-    await delay(1800);
+    await delay(2000);
     await cdp.captureScreenshot(path.join(ARTIFACT_DIR, 'final-01-manana.png'));
 
-    // 2. CAPTURE 2: TARDE (25% Scroll - ~14:00, Tarjeta Izquierda Bloque 1, Centro Despejado)
-    console.log('\n--- Capture 2: Tarde (14:00, Contraste Urbano Nítido, Tarjeta Izquierda, Centro Despejado) ---');
-    const scrollTarde = Math.round(runwayHeight * 0.25);
+    // 2. CAPTURE 2: TARDE (22% Scroll - ~14:00, Tarjeta Izquierda Visible, Curvas en Trazado, Centro Despejado)
+    console.log('\n--- Capture 2: Tarde (14:00, Contraste Urbano Nítido, Tarjeta Izquierda Visible, Centro Despejado) ---');
+    const scrollTarde = Math.round(runwayHeight * 0.22);
     await cdp.evaluate(`window.scrollTo({ top: ${scrollTarde}, behavior: 'instant' });`);
-    await delay(1800);
+    await delay(2000);
     await cdp.captureScreenshot(path.join(ARTIFACT_DIR, 'final-02-tarde.png'));
 
-    // 3. CAPTURE 3: ATARDECER (48% Scroll - ~17:45, Luz Dorada Ambarina, Tarjeta Derecha Bloque 2, Centro Despejado)
-    console.log('\n--- Capture 3: Atardecer desde las 16:00 (17:45, Luz Dorada, Sombras Largas, Tarjeta Derecha, Centro Despejado) ---');
-    const scrollAtardecer = Math.round(runwayHeight * 0.48);
+    // 3. CAPTURE 3: ATARDECER (46% Scroll - ~17:45, Luz Dorada Ambarina, Tarjeta Derecha Visible, Giro en Rotonda)
+    console.log('\n--- Capture 3: Atardecer desde las 16:00 (17:45, Luz Dorada, Sombras Largas, Tarjeta Derecha Visible, Centro Despejado) ---');
+    const scrollAtardecer = Math.round(runwayHeight * 0.46);
     await cdp.evaluate(`window.scrollTo({ top: ${scrollAtardecer}, behavior: 'instant' });`);
-    await delay(1800);
+    await delay(2000);
     await cdp.captureScreenshot(path.join(ARTIFACT_DIR, 'final-03-atardecer.png'));
 
-    // 4. CAPTURE 4: NOCHE (88% Scroll - ~21:00, Navy Profundo #070B14, Farolas Vivas, Ruta Cyan Protagonista, Tarjeta Derecha Bloque 4)
-    console.log('\n--- Capture 4: Noche desde las 20:00 (21:00, Navy Profundo, Alumbrado Público, Ruta Cyan, Tarjeta Derecha) ---');
+    // 4. CAPTURE 4: NOCHE (88% Scroll - ~21:00, Navy Profundo #070B14, Farolas Vivas, Ruta Cyan Protagonista, Tarjeta Derecha Visible)
+    console.log('\n--- Capture 4: Noche desde las 20:00 (21:00, Navy Profundo, Alumbrado Público, Ruta Cyan, Tarjeta Derecha Visible) ---');
     const scrollNoche = Math.round(runwayHeight * 0.88);
     await cdp.evaluate(`window.scrollTo({ top: ${scrollNoche}, behavior: 'instant' });`);
-    await delay(1800);
+    await delay(2000);
     await cdp.captureScreenshot(path.join(ARTIFACT_DIR, 'final-04-noche.png'));
 
     // 5. CAPTURE 5: NUEVA SECCIÓN DE INSTAGRAM (@urbo.corp, 4 Tarjetas Temáticas de Marca, Cero Mockups ni APIs)

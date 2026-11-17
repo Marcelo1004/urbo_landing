@@ -114,7 +114,7 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         }
       });
 
-      // Apply initial Day cartography paint colors (pavement, terrain, parks, avenues)
+      // Apply initial cartography paint colors (dark-tech urban pavement, terrain, avenues)
       if (map.getLayer('background')) {
         map.setPaintProperty('background', 'background-color', initialState.dayNight.backgroundColor);
       }
@@ -122,7 +122,8 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         map.setPaintProperty('landuse_residential', 'fill-color', initialState.dayNight.residentialColor);
       }
       if (map.getLayer('landuse_park')) {
-        map.setPaintProperty('landuse_park', 'fill-color', initialState.dayNight.parkColor);
+        // Neutralize park layers to match urban asphalt terrain - ZERO flat green patches
+        map.setPaintProperty('landuse_park', 'fill-color', initialState.dayNight.residentialColor);
       }
       if (map.getLayer('highway_minor')) {
         map.setPaintProperty('highway_minor', 'line-color', initialState.dayNight.minorRoadColor);
@@ -134,41 +135,7 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         map.setPaintProperty('highway_major_casing', 'line-color', initialState.dayNight.majorRoadCasingColor);
       }
 
-      // 1. ADD URBAN GREENERY LAYER (Plazas & Boulevards of Santa Cruz)
-      if (!map.getSource('urban-greenery-source')) {
-        map.addSource('urban-greenery-source', {
-          type: 'geojson',
-          data: URBAN_GREENERY_GEOJSON,
-        });
-
-        // Greenery Fill (Polygons: Plaza 24, Plaza del Estudiante, Cristo Redentor garden)
-        map.addLayer({
-          id: 'urban-greenery-fill',
-          type: 'fill',
-          source: 'urban-greenery-source',
-          filter: ['!=', '$type', 'LineString'],
-          paint: {
-            'fill-color': initialState.dayNight.urbanGreeneryColor,
-            'fill-opacity': 0.65,
-          },
-        });
-
-        // Greenery Median Boulevard Line (Av. Monseñor Rivero camellón central)
-        map.addLayer({
-          id: 'urban-greenery-median',
-          type: 'line',
-          source: 'urban-greenery-source',
-          filter: ['==', '$type', 'LineString'],
-          paint: {
-            'line-color': '#10B981',
-            'line-width': 6,
-            'line-opacity': 0.65,
-            'line-blur': 2,
-          },
-        });
-      }
-
-      // 2. ADD REALISTIC 3D BUILDING EXTRUSION LAYER (Google Maps 3D aesthetics)
+      // 1. ADD REALISTIC 3D BUILDING EXTRUSION LAYER (Google Maps 3D aesthetics)
       if (!map.getLayer('3d-buildings')) {
         map.addLayer(
           {
@@ -196,7 +163,7 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
                 ['get', 'render_min_height'],
                 0,
               ],
-              'fill-extrusion-opacity': 0.82,
+              'fill-extrusion-opacity': 0.85,
             },
           },
           'highway_motorway_inner'
@@ -481,11 +448,10 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
           }
         };
 
-        // A. Pavement, terrain & urban landuse layers (Real Day/Night transformation)
+        // A. Pavement, terrain & urban landuse layers (Clean dark-tech urban canvas, zero green patches)
         safeSetPaint('background', 'background-color', dn.backgroundColor);
         safeSetPaint('landuse_residential', 'fill-color', dn.residentialColor);
-        safeSetPaint('landuse_park', 'fill-color', dn.parkColor);
-        safeSetPaint('urban-greenery-fill', 'fill-color', dn.urbanGreeneryColor);
+        safeSetPaint('landuse_park', 'fill-color', dn.residentialColor);
         safeSetPaint('highway_minor', 'line-color', dn.minorRoadColor);
         safeSetPaint('highway_major_inner', 'line-color', dn.majorRoadInnerColor);
         safeSetPaint('highway_major_casing', 'line-color', dn.majorRoadCasingColor);
