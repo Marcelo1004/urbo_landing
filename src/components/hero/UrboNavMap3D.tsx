@@ -39,7 +39,6 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<Map | null>(null);
   const gpsMarkerRef = useRef<Marker | null>(null);
-  const landmarkMarkersRef = useRef<Marker[]>([]);
   const pedestrianMarkersRef = useRef<Marker[]>([]);
 
   const isMapLoadedRef = useRef(false);
@@ -93,14 +92,19 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
     map.on('load', () => {
       isMapLoadedRef.current = true;
 
-      // Filter out minor street labels and non-essential POIs to keep cartography crisp and uncluttered
+      // Filter out noisy street labels and non-essential POIs to keep cartography pure and editorial
       const layersToHide = [
         'highway_name_other',
+        'highway_name_motorway',
         'place_other',
         'place_suburb',
         'place_village',
+        'place_town',
         'road_oneway',
         'road_oneway_opposite',
+        'poi_level_1',
+        'poi_level_2',
+        'poi_level_3',
       ];
       layersToHide.forEach((id) => {
         if (map.getLayer(id)) {
@@ -144,8 +148,8 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
           source: 'urban-greenery-source',
           filter: ['!=', '$type', 'LineString'],
           paint: {
-            'fill-color': '#059669',
-            'fill-opacity': 0.45,
+            'fill-color': initialState.dayNight.urbanGreeneryColor,
+            'fill-opacity': 0.65,
           },
         });
 
@@ -347,77 +351,7 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         position: [1.3, 180, 50],
       });
 
-      // 6. ADD 5 KEY LANDMARK MARKERS ALONG THE 5KM CORRIDOR
-      const landmarks = [
-        {
-          coords: CATEDRAL_COORDS,
-          name: 'Catedral Metropolitana',
-          badge: '01 · Casco Viejo',
-          color: '#00E5BE',
-          icon: '🏛',
-        },
-        {
-          coords: ESTUDIANTE_COORDS,
-          name: 'Plaza del Estudiante',
-          badge: '02 · 1er Anillo',
-          color: '#38BDF8',
-          icon: '🎓',
-        },
-        {
-          coords: CRISTO_COORDS,
-          name: 'Monumento Cristo Redentor',
-          badge: '03 · 2do Anillo',
-          color: '#F4C430',
-          icon: '✝',
-        },
-        {
-          coords: TERCER_ANILLO_COORDS,
-          name: 'Av. Banzer / 3er Anillo',
-          badge: '04 · Zona Norte',
-          color: '#38BDF8',
-          icon: '🧭',
-        },
-        {
-          coords: CUARTO_ANILLO_COORDS,
-          name: 'Viaducto Cuarto Anillo',
-          badge: '05 · Corredor Metropolitano',
-          color: '#00E5BE',
-          icon: '🚀',
-        },
-      ];
-
-      landmarkMarkersRef.current = landmarks.map((lm) => {
-        const el = document.createElement('div');
-        el.className = 'landmark-marker-pill pointer-events-none select-none transition-transform duration-300';
-        el.innerHTML = `
-          <div style="
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            padding: 5px 12px;
-            border-radius: 9999px;
-            background: rgba(11, 20, 38, 0.94);
-            border: 1.5px solid ${lm.color}80;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 14px ${lm.color}40;
-            color: #FFFFFF;
-            font-family: 'Space Grotesk', Outfit, sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            white-space: nowrap;
-            transform: translateY(-8px);
-          ">
-            <span>${lm.icon}</span>
-            <span style="color:${lm.color}; font-size:10px; font-family:monospace; margin-right:2px;">[${lm.badge}]</span>
-            <span>${lm.name}</span>
-          </div>
-        `;
-        return new Marker({ element: el, anchor: 'bottom' })
-          .setLngLat(lm.coords)
-          .addTo(map);
-      });
-
-      // 7. ADD STYLIZED PEDESTRIANS IN PLAZA 24 & PLAZA DEL ESTUDIANTE
+      // 6. ADD STYLIZED PEDESTRIANS IN PLAZA 24 & PLAZA DEL ESTUDIANTE
       pedestrianMarkersRef.current = PEDESTRIANS_DATA.map((ped) => {
         const pEl = document.createElement('div');
         pEl.className = 'pedestrian-dot pointer-events-none select-none';
@@ -432,7 +366,7 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
           .addTo(map);
       });
 
-      // 8. ADD PROTAGONIST BLUE GPS BEACON (Google Maps style)
+      // 7. ADD PROTAGONIST BLUE GPS BEACON (Google Maps style)
       const gpsEl = document.createElement('div');
       gpsEl.className = 'gps-nav-beacon-container pointer-events-none select-none';
       gpsEl.style.width = '38px';
@@ -525,12 +459,6 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
       // 1. Move GPS Beacon along real street coordinates
       if (gpsMarkerRef.current) {
         gpsMarkerRef.current.setLngLat(navState.beacon);
-      }
-
-      // Hide Catedral landmark marker while hero title is prominent (0% to 14%) to avoid visual collision
-      if (landmarkMarkersRef.current[0]) {
-        const catEl = landmarkMarkersRef.current[0].getElement();
-        if (catEl) catEl.style.opacity = p < 0.14 ? '0' : '1';
       }
 
       // 2. Smoothly Update Map Camera to look-ahead center (Google Maps 3D navigation perspective)
