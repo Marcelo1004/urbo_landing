@@ -1,21 +1,22 @@
 /**
  * URBO 3D Real Street Coordinates & Navigation Engine
  * Santa Cruz de la Sierra:
- * Multi-turn, curved, street-accurate route covering 7.53 kilometers:
- * 1. Casco Viejo & Catedral Metropolitana: [-63.18180, -17.78380]
- * 2. Giro Este por Calle Junín (90° turn): [-63.18170, -17.78160] -> [-63.17820, -17.78180]
- * 3. Giro Norte por Calle Beni / Murillo: [-63.17825, -17.78100] -> [-63.17865, -17.77690]
- * 4. Curva del Primer Anillo (Av. Uruguay) hacia Plaza del Estudiante: [-63.18215, -17.77620]
- * 5. Boulevard Monseñor Rivero: [-63.18220, -17.77500] -> [-63.18240, -17.77060]
- * 6. Rotonda Cristo Redentor & 2do Anillo (Curva envolvente): [-63.18240, -17.77060] -> [-63.18950, -17.77080]
- * 7. Corredor Equipetrol / Av. San Martín rumbo al 3er Anillo Interno: [-63.18940, -17.76950] -> [-63.18700, -17.76200]
- * 8. Tercer Anillo Externo hacia Av. Banzer: [-63.18600, -17.76160] -> [-63.17950, -17.76010]
- * 9. Corredor Metropolitano Norte hacia Viaducto Cuarto Anillo y 5to Anillo: [-63.17460, -17.74820] -> [-63.16940, -17.73720]
- * 
- * Total Distance: 7.53 km (7,530 m)
+ * 100% extracted from OpenStreetMap road centerline nodes:
+ * 1. Casco Viejo & Catedral Metropolitana: [-63.18155, -17.78375]
+ * 2. Calle 24 de Septiembre y Cruce 1er Anillo: [-63.18210, -17.77620]
+ * 3. Avenida Monseñor Rivero (Boulevard gastronómico & camellón): [-63.18221, -17.77373]
+ * 4. Rotonda Segundo Anillo (Monumento Cristo Redentor): [-63.18240, -17.77058]
+ * 5. Corredor Norte / Avenida Banzer hacia 3er Anillo: [-63.17935, -17.76008]
+ * 6. 4to Anillo: [-63.17460, -17.74800]
+ * 7. 5to Anillo: [-63.17200, -17.73300]
+ * 8. 6to Anillo: [-63.17145, -17.71800]
+ * 9. 7mo Anillo: [-63.17188, -17.69980]
+ *
+ * Total Continuous Real Street Distance: ~9.5 km
+ * Route flows continuously NORTHWARD — zero U-turns
  */
 
-import extendedRouteData from '../../../scripts/extended-curved-route.json';
+import realOsmRouteData from '../../../scripts/real-osm-street-route.json';
 import cityFeatures from '../../../scripts/city-features.json';
 
 export interface NavWaypoint {
@@ -27,15 +28,15 @@ export interface NavWaypoint {
   chapter?: number;
 }
 
-export const SANTA_CRUZ_NAV_ROUTE: [number, number][] = extendedRouteData.coordinates as [number, number][];
-export const CUMULATIVE_DISTANCES: number[] = extendedRouteData.cumulativeDistances;
-export const ROUTE_BEARINGS: number[] = extendedRouteData.bearings;
-export const TOTAL_ROUTE_DISTANCE: number = extendedRouteData.totalDistanceMeters;
+export const SANTA_CRUZ_NAV_ROUTE: [number, number][] = realOsmRouteData.coordinates as [number, number][];
+export const CUMULATIVE_DISTANCES: number[] = realOsmRouteData.cumulativeDistances;
+export const ROUTE_BEARINGS: number[] = realOsmRouteData.bearings;
+export const TOTAL_ROUTE_DISTANCE: number = realOsmRouteData.totalDistanceMeters;
 
 export const NAV_ROUTE_GEOJSON: GeoJSON.Feature<GeoJSON.LineString> = {
   type: 'Feature',
   properties: {
-    name: 'Corredor Metropolitano URBO · Catedral a 5to Anillo',
+    name: 'Corredor Metropolitano Troncal URBO · Catedral a 7mo Anillo Norte',
     distanceMeters: TOTAL_ROUTE_DISTANCE,
   },
   geometry: {
@@ -44,8 +45,16 @@ export const NAV_ROUTE_GEOJSON: GeoJSON.Feature<GeoJSON.LineString> = {
   },
 };
 
+// Key landmark coordinates
+export const CATEDRAL_COORDS: [number, number] = [-63.18155, -17.78375];
+export const ESTUDIANTE_COORDS: [number, number] = [-63.18210, -17.77620];
+export const CRISTO_COORDS: [number, number] = [-63.18240, -17.77058];
+export const TERCER_ANILLO_COORDS: [number, number] = [-63.17935, -17.76008];
+export const CUARTO_ANILLO_COORDS: [number, number] = [-63.17460, -17.74800];
+
 // City Environment Features
 export const STREET_LAMPS_GEOJSON = cityFeatures.streetLamps as GeoJSON.FeatureCollection;
+export const URBAN_GREENERY_GEOJSON = cityFeatures.urbanGreenery as GeoJSON.FeatureCollection | undefined;
 export const PEDESTRIANS_DATA = cityFeatures.pedestrians;
 
 // Hex color interpolator
@@ -68,15 +77,15 @@ export interface DayNightVisuals {
   isDay: boolean;
   isSunset: boolean;
   isNight: boolean;
-  backgroundColor: string; // MapLibre 'background'
-  residentialColor: string; // MapLibre 'landuse_residential'
-  minorRoadColor: string; // MapLibre 'highway_minor'
-  majorRoadInnerColor: string; // MapLibre 'highway_major_inner'
-  majorRoadCasingColor: string; // MapLibre 'highway_major_casing'
-  buildingColor: string; // '3d-buildings' fill-extrusion
-  lightColor: string; // 3D directional light
+  backgroundColor: string;
+  residentialColor: string;
+  minorRoadColor: string;
+  majorRoadInnerColor: string;
+  majorRoadCasingColor: string;
+  buildingColor: string;
+  lightColor: string;
   lightIntensity: number;
-  sunPosition: [number, number, number]; // [radial, azimuthal, polar]
+  sunPosition: [number, number, number];
   streetLampOpacity: number;
   routeColor: string;
   routeGlowColor: string;
@@ -85,11 +94,7 @@ export interface DayNightVisuals {
 }
 
 /**
- * Computes Day to Night visual parameters based on scroll progress
- * 1. 0.00 - 0.28: MAÑANA (08:30 - 10:45) - Gris asfalto cálido, sin maqueta blanca ni niebla lechosa.
- * 2. 0.28 - 0.50: TARDE (13:00 - 15:45) - Contraste nítido, micro avanzando por calles y curvas.
- * 3. 0.50 - 0.76: ATARDECER (16:15 - 19:30) - Luz dorada cálida desde las 16:00, sombras largas, farolas encendiéndose.
- * 4. 0.76 - 1.00: NOCHE (20:15 - 22:30) - Navy profundo #070B14 desde las 20:00, alumbrado vivo, ruta cyan fluorescente.
+ * Day to Night visual parameters — 4-stage atmospheric transition
  */
 export function getDayNightVisuals(progress: number): DayNightVisuals {
   const clamped = Math.max(0, Math.min(1, progress));
@@ -115,16 +120,13 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
   let scrimBottom = 'linear-gradient(to top, rgba(11, 18, 32, 0.80) 0%, transparent 100%)';
 
   if (clamped < 0.28) {
-    // Stage 1: MAÑANA CÁLIDA Y REAL EN SANTA CRUZ (0% - 28%)
-    // Base de suelo gris cálido suave / cemento oscuro cálido. Sin blanco lavado ni overlays lechosos.
+    // Stage 1: MAÑANA (0% - 28%)
     const t = clamped / 0.28;
-    const hour = Math.floor(8 + t * 2.5);
-    const minute = Math.floor((t * 2.5 * 60) % 60);
+    const hour = Math.floor(8 + t * 3.0);
+    const minute = Math.floor((t * 3.0 * 60) % 60);
     const minStr = minute < 10 ? `0${minute}` : minute;
     timeOfDayLabel = `MAÑANA · 0${hour}:${minStr}`;
     isDay = true;
-    isSunset = false;
-    isNight = false;
 
     backgroundColor = lerpColor('#1E2838', '#192233', t);
     residentialColor = lerpColor('#182230', '#141C2A', t);
@@ -138,19 +140,14 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
     streetLampOpacity = 0.0;
     routeColor = '#00E5BE';
     routeGlowColor = '#38BDF8';
-    scrimTop = 'linear-gradient(to bottom, rgba(11, 18, 32, 0.70) 0%, rgba(11, 18, 32, 0.15) 60%, transparent 100%)';
-    scrimBottom = 'linear-gradient(to top, rgba(11, 18, 32, 0.80) 0%, transparent 100%)';
-  } else if (clamped < 0.50) {
-    // Stage 2: TARDE (28% - 50%) · 13:00 - 15:45
-    // Contraste equilibrado, sensación urbana viva, curvas del 1er y 2do Anillo
-    const t = (clamped - 0.28) / 0.22;
+  } else if (clamped < 0.52) {
+    // Stage 2: TARDE (28% - 52%)
+    const t = (clamped - 0.28) / 0.24;
     const hour = Math.floor(13 + t * 2.8);
     const minute = Math.floor((t * 2.8 * 60) % 60);
     const minStr = minute < 10 ? `0${minute}` : minute;
     timeOfDayLabel = `TARDE · ${hour}:${minStr}`;
     isDay = true;
-    isSunset = false;
-    isNight = false;
 
     backgroundColor = lerpColor('#192233', '#221D2F', t);
     residentialColor = lerpColor('#141C2A', '#1A1525', t);
@@ -167,16 +164,14 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
     scrimTop = 'linear-gradient(to bottom, rgba(11, 18, 32, 0.75) 0%, rgba(11, 18, 32, 0.15) 60%, transparent 100%)';
     scrimBottom = 'linear-gradient(to top, rgba(11, 18, 32, 0.85) 0%, transparent 100%)';
   } else if (clamped < 0.76) {
-    // Stage 3: ATARDECER DESDE LAS 16:00 (50% - 76%) · 16:15 - 19:30
-    // Luz dorada, cielo cálido, sombras alargadas, reflejos ámbar en pavimento
-    const t = (clamped - 0.50) / 0.26;
+    // Stage 3: ATARDECER (52% - 76%)
+    const t = (clamped - 0.52) / 0.24;
     const hour = Math.floor(16 + t * 3.3);
     const minute = Math.floor((t * 3.3 * 60) % 60);
     const minStr = minute < 10 ? `0${minute}` : minute;
     timeOfDayLabel = `ATARDECER · ${hour}:${minStr}`;
     isDay = false;
     isSunset = true;
-    isNight = false;
 
     backgroundColor = lerpColor('#221D2F', '#2A1E35', t);
     residentialColor = lerpColor('#1A1525', '#21172B', t);
@@ -193,15 +188,13 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
     scrimTop = 'linear-gradient(to bottom, rgba(28, 18, 38, 0.85) 0%, rgba(28, 18, 38, 0.20) 60%, transparent 100%)';
     scrimBottom = 'linear-gradient(to top, rgba(28, 18, 38, 0.90) 0%, transparent 100%)';
   } else {
-    // Stage 4: NOCHE PROFUNDA DESDE LAS 20:00 (76% - 100%) · 20:15 - 22:30
-    // Navy #070B14, farolas encendidas, ruta cyan fluorescente, punto GPS protagonista
+    // Stage 4: NOCHE (76% - 100%)
     const t = (clamped - 0.76) / 0.24;
     const hour = Math.floor(20 + t * 2.2);
     const minute = Math.floor((t * 2.2 * 60) % 60);
     const minStr = minute < 10 ? `0${minute}` : minute;
     timeOfDayLabel = `NOCHE · ${hour}:${minStr}`;
     isDay = false;
-    isSunset = false;
     isNight = true;
 
     backgroundColor = lerpColor('#2A1E35', '#070B14', t);
@@ -244,18 +237,20 @@ export function getDayNightVisuals(progress: number): DayNightVisuals {
 }
 
 /**
- * Interpolates [lng, lat], camera look-ahead center, bearing, pitch, zoom, chapter,
- * and day/night visual parameters based on accumulated distance along the 7.53 km route
+ * Interpolates navigation state along the route.
+ * Camera angles vary cinematically throughout the journey.
+ * Final 5% transitions to cenital (top-down) for storytelling closure.
  */
 export function getNavStateAtProgress(progress: number): {
-  beacon: [number, number]; // True GPS coordinate of the micro/beacon
-  center: [number, number]; // Look-ahead camera focus point with cinematic cornering
+  beacon: [number, number];
+  center: [number, number];
   bearing: number;
   pitch: number;
   zoom: number;
   chapter: number;
   traveledDistanceMeters: number;
   dayNight: DayNightVisuals;
+  isCenital: boolean;
 } {
   const coords = SANTA_CRUZ_NAV_ROUTE;
   const dists = CUMULATIVE_DISTANCES;
@@ -279,56 +274,72 @@ export function getNavStateAtProgress(progress: number): {
   const currentLng = c1[0] + (c2[0] - c1[0]) * frac;
   const currentLat = c1[1] + (c2[1] - c1[1]) * frac;
 
-  // Dynamic smoothed bearing from actual street turns (Junín 90° East, Beni 0° North, 1er Anillo Arc, Equipetrol, Banzer)
+  // Dynamic smoothed bearing
   const b1 = bearings[idx] ?? 0;
   const b2 = bearings[idx + 1] ?? b1;
-  // Circular interpolation for angles
   let diff = (b2 - b1 + 540) % 360 - 180;
   const currentBearing = (b1 + diff * frac + 360) % 360;
 
-  // Look-ahead camera focus along current heading tangent (Google Maps 3D navigation feel)
-  const forwardLookAhead = 0.0016;
-  const rad = (currentBearing * Math.PI) / 180;
-  const fwdLng = Math.sin(rad) * forwardLookAhead;
-  const fwdLat = Math.cos(rad) * forwardLookAhead;
-
-  // Dynamic pitch & zoom curves tuned for cinematic depth
+  // Cinematic camera curves with variety tuned to actual street geometry
   let pitch = 56;
   let zoom = 16.5;
   let chapter = 0;
+  let isCenital = false;
 
-  if (clamped < 0.15) {
+  if (clamped < 0.14) {
+    // Ch 0: Casco Viejo & Plaza 24 de Septiembre
     chapter = 0;
-    pitch = 56 + (clamped / 0.15) * 4;
+    pitch = 56 + (clamped / 0.14) * 4; // 56→60
     zoom = 16.6;
-  } else if (clamped < 0.36) {
+  } else if (clamped < 0.32) {
+    // Ch 1 / 2: Av. Monseñor Rivero & Rotonda Cristo Redentor (2do Anillo)
     chapter = 1;
-    pitch = 59;
-    zoom = 16.4;
-  } else if (clamped < 0.59) {
+    const t = (clamped - 0.14) / 0.18;
+    pitch = 60 - t * 10; // 60→50 (frames the Cristo Redentor statue)
+    zoom = 16.6 - t * 0.4; // 16.6→16.2
+  } else if (clamped < 0.56) {
+    // Ch 2: Av. Banzer hacia 3er Anillo / Equipetrol
     chapter = 2;
-    pitch = 57;
-    zoom = 16.2;
-  } else if (clamped < 0.82) {
+    const t = (clamped - 0.32) / 0.24;
+    pitch = 50 + t * 4; // 50→54
+    zoom = 16.2 - t * 0.5; // 16.2→15.7
+  } else if (clamped < 0.86) {
+    // Ch 3: Corredor Metropolitano 4to a 7mo Anillo
     chapter = 3;
-    pitch = 53;
-    zoom = 15.8;
+    const t = (clamped - 0.56) / 0.30;
+    pitch = 54 - t * 14; // 54→40 (begins rising)
+    zoom = 15.7 - t * 0.6; // 15.7→15.1
   } else {
+    // CENITAL CLOSURE (86% - 100%) — pure top-down metropolitan view
     chapter = 4;
-    pitch = 48;
-    zoom = 15.3;
+    isCenital = true;
+    const t = (clamped - 0.86) / 0.14; // 0→1 over final 14%
+    const smoothT = t * t * (3 - 2 * t); // smoothstep
+    pitch = 40 - smoothT * 40; // 40→0 (completely vertical cenital view)
+    zoom = 15.1 - smoothT * 2.3; // 15.1→12.8 (wide metropolitan vista)
   }
 
   const dayNight = getDayNightVisuals(clamped);
 
+  // When transitioning to cenital, smoothly orient bearing to 0 (North-up)
+  let targetBearing = currentBearing;
+  if (clamped >= 0.86) {
+    const t = (clamped - 0.86) / 0.14;
+    const smoothT = t * t * (3 - 2 * t);
+    // Smoothly rotate to North (0°)
+    let bDiff = ((0 - currentBearing + 540) % 360) - 180;
+    targetBearing = (currentBearing + bDiff * smoothT + 360) % 360;
+  }
+
   return {
     beacon: [currentLng, currentLat],
-    center: [currentLng + fwdLng, currentLat + fwdLat],
-    bearing: currentBearing,
+    center: [currentLng, currentLat],
+    bearing: targetBearing,
     pitch,
     zoom,
     chapter,
     traveledDistanceMeters: targetDist,
     dayNight,
+    isCenital,
   };
 }

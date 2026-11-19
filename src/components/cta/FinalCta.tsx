@@ -11,7 +11,8 @@ import {
   Radio,
   CheckCircle2,
   ShieldCheck,
-  Send
+  Send,
+  Zap
 } from 'lucide-react';
 import { UrboLogo } from '@/components/ui/UrboLogo';
 import { cn } from '@/lib/utils';
@@ -32,7 +33,6 @@ export const FinalCta: React.FC = () => {
 
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  // Setup single coordinated reversible GSAP timeline for lateral independent projections
   useEffect(() => {
     const stage = stageRef.current;
     const card = cardRef.current;
@@ -49,27 +49,27 @@ export const FinalCta: React.FC = () => {
       const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
 
       if (isDesktop) {
-        // Desktop 3D Spatial Lateral layout
+        // Desktop Spatial 3D positioning
         gsap.set(leftP, {
           opacity: 0,
-          x: 40,
-          scale: 0.88,
-          rotateY: 18,
+          x: 50,
+          scale: 0.90,
+          rotateY: 14,
           transformOrigin: '100% 50%',
           pointerEvents: 'none',
         });
         gsap.set(rightP, {
           opacity: 0,
-          x: -40,
-          scale: 0.88,
-          rotateY: -18,
+          x: -50,
+          scale: 0.90,
+          rotateY: -14,
           transformOrigin: '0% 50%',
           pointerEvents: 'none',
         });
         gsap.set(socialP, {
           opacity: 0,
-          y: -25,
-          scale: 0.88,
+          y: -30,
+          scale: 0.90,
           transformOrigin: '50% 0%',
           pointerEvents: 'none',
         });
@@ -80,8 +80,8 @@ export const FinalCta: React.FC = () => {
         // Mobile / Tablet stacked presentation
         gsap.set([leftP, rightP, socialP], {
           opacity: 0,
-          y: 25,
-          scale: 0.95,
+          y: 20,
+          scale: 0.96,
           pointerEvents: 'none',
           display: 'none',
         });
@@ -104,54 +104,54 @@ export const FinalCta: React.FC = () => {
       });
 
       if (isDesktop) {
-        // Step 1: Fire lateral and downward laser emitters
+        // Step 1: Emitter Beams
         if (leftB && rightB && socialB) {
           tl.to([leftB, rightB], {
             scaleX: 1,
             opacity: 1,
-            duration: 0.25,
+            duration: 0.28,
             ease: 'power3.out',
           }).to(socialB, {
             scaleY: 1,
             opacity: 1,
-            duration: 0.25,
+            duration: 0.28,
             ease: 'power3.out',
-          }, '-=0.15');
+          }, '-=0.18');
         }
 
-        // Step 2: Project Left Panel (Email)
+        // Step 2: Left Panel (Email)
         tl.to(leftP, {
           opacity: 1,
           x: 0,
           scale: 1,
-          rotateY: 6,
+          rotateY: 5,
           pointerEvents: 'auto',
-          duration: 0.45,
-          ease: 'back.out(1.15)',
+          duration: 0.50,
+          ease: 'power3.out',
         }, '-=0.15')
-        // Step 3: Project Right Panel (WhatsApp)
+        // Step 3: Right Panel (WhatsApp)
         .to(rightP, {
           opacity: 1,
           x: 0,
           scale: 1,
-          rotateY: -6,
+          rotateY: -5,
           pointerEvents: 'auto',
-          duration: 0.45,
-          ease: 'back.out(1.15)',
-        }, '-=0.35')
-        // Step 4: Project Social Satellite (Instagram)
+          duration: 0.50,
+          ease: 'power3.out',
+        }, '-=0.38')
+        // Step 4: Social Satellite (Instagram)
         .to(socialP, {
           opacity: 1,
           y: 0,
           scale: 1,
           pointerEvents: 'auto',
-          duration: 0.40,
-          ease: 'back.out(1.15)',
-        }, '-=0.30')
-        // Step 5: Specular sheen sweep across all holograms
+          duration: 0.45,
+          ease: 'power3.out',
+        }, '-=0.32')
+        // Step 5: Specular sheen sweep
         .fromTo('.holo-specular-sweep', 
           { x: '-100%', opacity: 0 },
-          { x: '250%', opacity: 0.45, duration: 0.65, ease: 'power1.inOut' },
+          { x: '250%', opacity: 0.35, duration: 0.70, ease: 'power2.inOut' },
           '-=0.15'
         );
       } else {
@@ -190,11 +190,11 @@ export const FinalCta: React.FC = () => {
   };
 
   return (
-    <section id="contacto" className="relative py-16 lg:py-20 overflow-x-clip bg-[#070B14]">
+    <section id="contacto" className="relative py-20 lg:py-28 overflow-x-clip bg-[#070B14]">
       {/* Anchor alias */}
       <span id="unirse" className="absolute -top-32" />
 
-      {/* Atmospheric ambient lighting */}
+      {/* Atmospheric lighting */}
       <div
         aria-hidden="true"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[600px] rounded-full bg-[#00C9A7]/10 blur-[200px] pointer-events-none"
@@ -207,7 +207,7 @@ export const FinalCta: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         
         {/* Section Headline */}
-        <div className="mb-10 sm:mb-14">
+        <div className="mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1426] border border-white/10 text-[#00E5BE] text-xs font-mono font-bold tracking-wider uppercase mb-5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] animate-pulse shadow-[0_0_8px_#00E5BE]" />
             <span>ALIANZAS, LÍNEAS & INVERSIÓN</span>
@@ -220,8 +220,8 @@ export const FinalCta: React.FC = () => {
             </span>
           </h2>
 
-          <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto font-sans">
-            Haz clic en <span className="text-[#00E5BE] font-semibold">Contáctanos</span> para proyectar los canales oficiales y entablar contacto directo con el equipo fundador.
+          <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-sans leading-relaxed">
+            Haz clic en <span className="text-[#00E5BE] font-semibold">Proyectar Canales</span> para desplegar los canales oficiales de contacto y entablar diálogo directo con el equipo directivo.
           </p>
         </div>
 
@@ -231,15 +231,15 @@ export const FinalCta: React.FC = () => {
         <div 
           ref={stageRef} 
           className="relative flex flex-col items-center justify-center max-w-[560px] mx-auto mb-16 lg:mb-28"
-          style={{ perspective: '1200px' }}
+          style={{ perspective: '1400px' }}
         >
 
           {/* =============================================================
-              1. LEFT LATERAL PROJECTION: OFFICIAL EMAIL (DESKTOP LATERAL / MOBILE STACK)
+              1. LEFT LATERAL PROJECTION: OFFICIAL EMAIL
               ============================================================= */}
           <div
             ref={leftPanelRef}
-            className="w-full max-w-sm lg:w-[325px] lg:absolute lg:right-[calc(100%+3.2rem)] lg:top-4 z-30 mb-4 lg:mb-0 rounded-3xl p-6 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/96 border-2 border-[#00C9A7]/50 backdrop-blur-2xl shadow-[0_0_40px_rgba(0,201,167,0.3),inset_0_0_20px_rgba(0,229,190,0.15)] text-left relative star-wars-hologram overflow-hidden"
+            className="w-full max-w-sm lg:w-[330px] lg:absolute lg:right-[calc(100%+3.5rem)] lg:top-4 z-30 mb-4 lg:mb-0 rounded-3xl p-6 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/98 border border-[#00C9A7]/40 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_35px_rgba(0,201,167,0.25)] text-left relative star-wars-hologram overflow-hidden"
           >
             {/* Specular sheen sweep */}
             <div className="holo-specular-sweep pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg]" />
@@ -249,7 +249,7 @@ export const FinalCta: React.FC = () => {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-ping" />
                 <span className="text-[11px] font-mono font-bold tracking-widest text-[#00E5BE] uppercase font-tech">
-                  CANAL ENCRIPTADO · 01
+                  CANAL INSTITUCIONAL · 01
                 </span>
               </div>
               <button
@@ -297,19 +297,19 @@ export const FinalCta: React.FC = () => {
             </div>
           </div>
 
-          {/* Left Laser Emitter Beam (Desktop) */}
+          {/* Left Laser Emitter Beam */}
           <div
             ref={leftBeamRef}
             aria-hidden="true"
-            className="hidden lg:block absolute right-full top-24 w-14 h-[2.5px] bg-gradient-to-l from-[#00E5BE] to-transparent shadow-[0_0_15px_#00E5BE] z-20 origin-right pointer-events-none"
+            className="hidden lg:block absolute right-full top-24 w-14 h-[2px] bg-gradient-to-l from-[#00E5BE] to-transparent shadow-[0_0_12px_#00E5BE] z-20 origin-right pointer-events-none"
           />
 
           {/* =============================================================
-              2. RIGHT LATERAL PROJECTION: WHATSAPP DIRECTO (DESKTOP LATERAL / MOBILE STACK)
+              2. RIGHT LATERAL PROJECTION: WHATSAPP DIRECTO
               ============================================================= */}
           <div
             ref={rightPanelRef}
-            className="w-full max-w-sm lg:w-[325px] lg:absolute lg:left-[calc(100%+3.2rem)] lg:top-4 z-30 mb-4 lg:mb-0 rounded-3xl p-6 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/96 border-2 border-[#38BDF8]/50 backdrop-blur-2xl shadow-[0_0_40px_rgba(56,189,248,0.3),inset_0_0_20px_rgba(56,189,248,0.15)] text-left relative star-wars-hologram overflow-hidden"
+            className="w-full max-w-sm lg:w-[330px] lg:absolute lg:left-[calc(100%+3.5rem)] lg:top-4 z-30 mb-4 lg:mb-0 rounded-3xl p-6 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/98 border border-[#38BDF8]/40 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_35px_rgba(56,189,248,0.25)] text-left relative star-wars-hologram overflow-hidden"
           >
             {/* Specular sheen sweep */}
             <div className="holo-specular-sweep pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg]" />
@@ -340,7 +340,7 @@ export const FinalCta: React.FC = () => {
               className="relative z-10 flex flex-col gap-3 group"
             >
               <div className="flex items-center justify-between">
-                <div className="w-11 h-11 rounded-2xl bg-[#00E5BE]/20 text-[#00E5BE] flex items-center justify-center border border-[#00E5BE]/40 shadow-[0_0_15px_rgba(0,229,190,0.3)] group-hover:scale-105 transition-transform">
+                <div className="w-11 h-11 rounded-2xl bg-[#38BDF8]/20 text-[#38BDF8] flex items-center justify-center border border-[#38BDF8]/40 shadow-[0_0_15px_rgba(56,189,248,0.3)] group-hover:scale-105 transition-transform">
                   <MessageCircle className="w-5 h-5" />
                 </div>
                 <div className="flex items-center gap-1 text-xs font-mono text-[#38BDF8] group-hover:underline">
@@ -351,7 +351,7 @@ export const FinalCta: React.FC = () => {
 
               <div>
                 <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold tracking-wider">
-                  WhatsApp Oficial
+                  WhatsApp Operativo
                 </span>
                 <span className="text-xs sm:text-sm font-bold text-white group-hover:text-[#38BDF8] transition-colors font-mono">
                   +591 78556677 · SCZ
@@ -369,15 +369,15 @@ export const FinalCta: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Laser Emitter Beam (Desktop) */}
+          {/* Right Laser Emitter Beam */}
           <div
             ref={rightBeamRef}
             aria-hidden="true"
-            className="hidden lg:block absolute left-full top-24 w-14 h-[2.5px] bg-gradient-to-r from-[#38BDF8] to-transparent shadow-[0_0_15px_#38BDF8] z-20 origin-left pointer-events-none"
+            className="hidden lg:block absolute left-full top-24 w-14 h-[2px] bg-gradient-to-r from-[#38BDF8] to-transparent shadow-[0_0_12px_#38BDF8] z-20 origin-left pointer-events-none"
           />
 
           {/* =============================================================
-              3. BASE URBO FLAGSHIP CARD (CENTRAL ANCHOR, PROPORTIONED & BALANCED)
+              3. BASE URBO FLAGSHIP CARD
               ============================================================= */}
           <div
             ref={cardRef}
@@ -414,7 +414,7 @@ export const FinalCta: React.FC = () => {
               </div>
             </div>
 
-            {/* Center: Protagonist Official Logo & Identity */}
+            {/* Center: Official Logo & Identity */}
             <div className="relative z-10 my-auto flex flex-col items-center justify-center py-6">
               <div className="relative group flex items-center justify-center">
                 <div className="absolute -inset-6 rounded-full bg-[#00C9A7]/25 blur-2xl group-hover:bg-[#00C9A7]/40 transition-all duration-500" />
@@ -435,11 +435,11 @@ export const FinalCta: React.FC = () => {
               </div>
             </div>
 
-            {/* Bottom Row: Location & Mandatory "Contáctanos" Trigger */}
+            {/* Bottom Row: Location & Hologram Trigger */}
             <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-white/10 text-xs font-mono text-slate-300 gap-3">
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-[#00E5BE]" />
-                <span className="text-[11px]">Casco Viejo a 4to Anillo (5.04 km)</span>
+                <span className="text-[11px]">Casco Viejo a 7mo Anillo (9.51 km)</span>
               </div>
 
               <button
@@ -448,17 +448,17 @@ export const FinalCta: React.FC = () => {
                 className="flex items-center gap-2 text-slate-950 font-bold transition-all bg-[#00C9A7] hover:bg-[#00E5BE] px-6 py-2.5 rounded-full shadow-[0_0_20px_rgba(0,201,167,0.5)] hover:shadow-[0_0_30px_rgba(0,229,190,0.8)] hover:scale-105 active:scale-95 cursor-pointer text-xs uppercase tracking-wider"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{isProjected ? 'Cerrar canales' : 'Contáctanos'}</span>
+                <span>{isProjected ? 'Ocultar Canales' : 'Proyectar Canales'}</span>
               </button>
             </div>
 
           </div>
 
-          {/* Downward Laser Emitter Beam to Social Satellite (Desktop) */}
+          {/* Downward Laser Emitter Beam */}
           <div
             ref={socialBeamRef}
             aria-hidden="true"
-            className="hidden lg:block absolute top-full left-1/2 -translate-x-1/2 w-[2.5px] h-9 bg-gradient-to-b from-[#00E5BE] to-transparent shadow-[0_0_15px_#00E5BE] z-20 origin-top pointer-events-none"
+            className="hidden lg:block absolute top-full left-1/2 -translate-x-1/2 w-[2px] h-9 bg-gradient-to-b from-[#00E5BE] to-transparent shadow-[0_0_12px_#00E5BE] z-20 origin-top pointer-events-none"
           />
 
           {/* =============================================================
@@ -466,7 +466,7 @@ export const FinalCta: React.FC = () => {
               ============================================================= */}
           <div
             ref={socialPanelRef}
-            className="w-full max-w-sm lg:w-[380px] lg:absolute lg:top-[calc(100%+2.2rem)] lg:left-1/2 lg:-translate-x-1/2 z-30 mt-4 lg:mt-0 rounded-3xl p-5 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/96 border-2 border-pink-500/40 backdrop-blur-2xl shadow-[0_0_40px_rgba(225,48,108,0.25),inset_0_0_20px_rgba(225,48,108,0.12)] text-left relative star-wars-hologram overflow-hidden"
+            className="w-full max-w-sm lg:w-[390px] lg:absolute lg:top-[calc(100%+2.4rem)] lg:left-1/2 lg:-translate-x-1/2 z-30 mt-4 lg:mt-0 rounded-3xl p-5 bg-gradient-to-b from-[#0F1C35]/96 via-[#0B1426]/96 to-[#070B14]/98 border border-pink-500/40 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_35px_rgba(225,48,108,0.22)] text-left relative star-wars-hologram overflow-hidden"
           >
             {/* Specular sheen sweep */}
             <div className="holo-specular-sweep pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg]" />

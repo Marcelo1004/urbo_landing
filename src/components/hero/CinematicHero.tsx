@@ -19,7 +19,7 @@ import {
 import { GlassBadge } from '@/components/ui/Glass';
 import { UrboLogo } from '@/components/ui/UrboLogo';
 import { UrboNavMap3D, UrboNavMap3DHandle } from './UrboNavMap3D';
-import { DayNightVisuals, getDayNightVisuals } from './SantaCruzNavData';
+import { DayNightVisuals, getDayNightVisuals, TOTAL_ROUTE_DISTANCE } from './SantaCruzNavData';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -37,11 +37,13 @@ export const CinematicHero: React.FC = () => {
   const [activeChapter, setActiveChapter] = useState(0);
   const [timeLabel, setTimeLabel] = useState('MAÑANA · 08:30');
   const [dayNightState, setDayNightState] = useState<DayNightVisuals>(() => getDayNightVisuals(0));
+  const [isCenitalMode, setIsCenitalMode] = useState(false);
 
-  // Handler for dynamic time updates from the 3D map engine (discrete, avoids unnecessary re-renders)
-  const handleTimeChange = (visuals: DayNightVisuals) => {
+  // Handler for dynamic time updates from the 3D map engine
+  const handleTimeChange = (visuals: DayNightVisuals, chapter: number, distMeters: number, isCenital: boolean) => {
     setTimeLabel((prev) => (prev !== visuals.timeOfDayLabel ? visuals.timeOfDayLabel : prev));
     setDayNightState((prev) => (prev.timeOfDayLabel !== visuals.timeOfDayLabel ? visuals : prev));
+    setIsCenitalMode((prev) => (prev !== isCenital ? isCenital : prev));
   };
 
   // Setup GSAP ScrollTrigger timeline to scrub the 3D scene & narrative chapters at 120 FPS
@@ -53,173 +55,86 @@ export const CinematicHero: React.FC = () => {
     if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: runway,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.4,
-        onUpdate: (self) => {
-          const p = self.progress;
-
-          // Direct imperative map scrub (zero React virtual DOM re-renders during high-speed scrolling)
-          mapHandleRef.current?.setProgress(p);
-
-          // Direct DOM updates for telemetry HUD
-          if (progressBarRef.current) {
-            progressBarRef.current.style.width = `${Math.round(p * 100)}%`;
-          }
-          if (progressTextRef.current) {
-            progressTextRef.current.textContent = `${Math.round(p * 100)}%`;
-          }
-          if (distanceTextRef.current) {
-            const km = ((p * 7240) / 1000).toFixed(2);
-            distanceTextRef.current.textContent = `DISTANCIA EN RUTA: ${km} KM / 7.24 KM · SCZ METROPOLITANO`;
-          }
-
-          // Discrete Chapter Milestones:
-          // 0: Introducción & Casco Viejo (0% - 15%)
-          // 1: Acceso a la Información / 1er Anillo (15% - 36%)
-          // 2: Conducción Segura / 2do Anillo (36% - 59%)
-          // 3: Validación Comunitaria / 3er Anillo (59% - 82%)
-          // 4: Visión de Escala Bolivia / 4to Anillo (82% - 100%)
-          let chap = 0;
-          if (p < 0.15) chap = 0;
-          else if (p < 0.36) chap = 1;
-          else if (p < 0.59) chap = 2;
-          else if (p < 0.82) chap = 3;
-          else chap = 4;
-
-          if (chap !== currentChapterRef.current) {
-            currentChapterRef.current = chap;
-            setActiveChapter(chap);
-          }
-        },
-      });
-
-      // Chapter 0 (Main Welcome Title): Soft fade and rise, completely hidden by 12%
-      gsap.fromTo(
-        '.hero-title-group',
-        { opacity: 1, y: 0, scale: 1 },
-        {
-          opacity: 0,
-          y: -70,
-          scale: 0.94,
-          ease: 'power1.in',
-          scrollTrigger: {
-            trigger: runway,
-            start: 'top top',
-            end: '12% top',
-            scrub: true,
-            onLeave: () => gsap.set('.hero-title-group', { display: 'none' }),
-            onEnterBack: () => gsap.set('.hero-title-group', { display: 'flex' }),
-          },
-        }
-      );
-
-      // Chapter 1 Reveal (LEFT): Acceso a la Información (15% - 35%)
-      gsap.fromTo(
-        '.chapter-card-1',
-        { autoAlpha: 0, x: -40, scale: 0.95 },
-        {
-          autoAlpha: 1,
-          x: 0,
-          scale: 1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: runway,
-            start: '15% top',
-            end: '24% top',
-            scrub: true,
-          },
-        }
-      );
-      gsap.to('.chapter-card-1', {
-        autoAlpha: 0,
-        y: -30,
-        ease: 'power2.in',
+      // Single synchronized Timeline scrubbed precisely from 0.00 to 1.00
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: runway,
-          start: '31% top',
-          end: '35% top',
-          scrub: true,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.3,
+          onUpdate: (self) => {
+            const p = self.progress;
+
+            // Direct imperative map scrub
+            mapHandleRef.current?.setProgress(p);
+
+            // Direct DOM updates for telemetry HUD
+            if (progressBarRef.current) {
+              progressBarRef.current.style.width = `${Math.round(p * 100)}%`;
+            }
+            if (progressTextRef.current) {
+              progressTextRef.current.textContent = `${Math.round(p * 100)}%`;
+            }
+            if (distanceTextRef.current) {
+              const km = ((p * TOTAL_ROUTE_DISTANCE) / 1000).toFixed(2);
+              distanceTextRef.current.textContent = `DISTANCIA EN RUTA: ${km} KM / 9.51 KM · SCZ METROPOLITANO`;
+            }
+
+            // Discrete Chapter Milestones:
+            let chap = 0;
+            if (p < 0.12) chap = 0;
+            else if (p < 0.30) chap = 1;
+            else if (p < 0.55) chap = 2;
+            else if (p < 0.84) chap = 3;
+            else chap = 4;
+
+            if (chap !== currentChapterRef.current) {
+              currentChapterRef.current = chap;
+              setActiveChapter(chap);
+            }
+          },
         },
       });
 
-      // Chapter 2 Reveal (RIGHT): Conducción Segura (38% - 58%)
-      gsap.fromTo(
-        '.chapter-card-2',
-        { autoAlpha: 0, x: 40, scale: 0.95 },
-        {
-          autoAlpha: 1,
-          x: 0,
-          scale: 1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: runway,
-            start: '38% top',
-            end: '47% top',
-            scrub: true,
-          },
-        }
-      );
-      gsap.to('.chapter-card-2', {
-        autoAlpha: 0,
-        y: -30,
-        ease: 'power2.in',
-        scrollTrigger: {
-          trigger: runway,
-          start: '54% top',
-          end: '58% top',
-          scrub: true,
-        },
+      // Initial state: hide chapter cards & cenital group
+      gsap.set(['.chapter-card-1', '.chapter-card-2', '.chapter-card-3', '.chapter-card-4'], { 
+        autoAlpha: 0, 
+        y: 30, 
+        scale: 0.95 
+      });
+      gsap.set('.cenital-closing-group', { 
+        autoAlpha: 0, 
+        y: 40, 
+        scale: 0.92 
       });
 
-      // Chapter 3 Reveal (LEFT): Validación en Calle (61% - 81%)
-      gsap.fromTo(
-        '.chapter-card-3',
-        { autoAlpha: 0, x: -40, scale: 0.95 },
-        {
-          autoAlpha: 1,
-          x: 0,
-          scale: 1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: runway,
-            start: '61% top',
-            end: '70% top',
-            scrub: true,
-          },
-        }
-      );
-      gsap.to('.chapter-card-3', {
-        autoAlpha: 0,
-        y: -30,
-        ease: 'power2.in',
-        scrollTrigger: {
-          trigger: runway,
-          start: '77% top',
-          end: '81% top',
-          scrub: true,
-        },
-      });
+      // Timeline Sequence mapped precisely across normalized time 0.00 to 1.00:
 
-      // Chapter 4 Reveal (RIGHT): Visión de Escala Bolivia (84% - 100%)
-      gsap.fromTo(
-        '.chapter-card-4',
-        { autoAlpha: 0, x: 40, scale: 0.95 },
-        {
-          autoAlpha: 1,
-          x: 0,
-          scale: 1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: runway,
-            start: '84% top',
-            end: '93% top',
-            scrub: true,
-          },
-        }
-      );
+      // 0.00 - 0.08: Welcome Title Fades Out
+      tl.to('.hero-title-group', { autoAlpha: 0, y: -60, scale: 0.94, duration: 0.08, ease: 'power1.in' }, 0.00);
+
+      // 0.06 - 0.16: Chapter 1 (Casco Viejo & 1er Anillo)
+      tl.to('.chapter-card-1', { autoAlpha: 1, y: 0, scale: 1, duration: 0.04, ease: 'power2.out' }, 0.06)
+        .to('.chapter-card-1', { autoAlpha: 0, y: -30, duration: 0.03, ease: 'power2.in' }, 0.15);
+
+      // 0.16 - 0.34: Chapter 2 (Monumento Cristo Redentor · 2do Anillo)
+      tl.to('.chapter-card-2', { autoAlpha: 1, y: 0, scale: 1, duration: 0.04, ease: 'power2.out' }, 0.16)
+        .to('.chapter-card-2', { autoAlpha: 0, y: -30, duration: 0.04, ease: 'power2.in' }, 0.34);
+
+      // 0.38 - 0.56: Chapter 3 (Validación Comunitaria · 3er Anillo)
+      tl.to('.chapter-card-3', { autoAlpha: 1, y: 0, scale: 1, duration: 0.04, ease: 'power2.out' }, 0.38)
+        .to('.chapter-card-3', { autoAlpha: 0, y: -30, duration: 0.04, ease: 'power2.in' }, 0.56);
+
+      // 0.60 - 0.78: Chapter 4 (Visión de Escala Bolivia · Anillos Norte)
+      tl.to('.chapter-card-4', { autoAlpha: 1, y: 0, scale: 1, duration: 0.04, ease: 'power2.out' }, 0.60)
+        .to('.chapter-card-4', { autoAlpha: 0, y: -30, duration: 0.04, ease: 'power2.in' }, 0.78);
+
+      // 0.82 - 0.88: Chapter 5 CENITAL STORYTELLING CLOSURE (Top-down view + URBO Logo)
+      tl.to('.cenital-closing-group', { autoAlpha: 1, y: 0, scale: 1, duration: 0.06, ease: 'power2.out' }, 0.82);
+
+      // Explicitly anchor timeline total duration to exactly 1.00
+      tl.set({}, {}, 1.00);
+
     }, runway);
 
     return () => ctx.revert();
@@ -244,13 +159,13 @@ export const CinematicHero: React.FC = () => {
           backgroundColor: dayNightState.backgroundColor,
         }}
       >
-        {/* MapLibre GL 3D Urban Navigation Canvas (Imperative Ref for 120 FPS Buttery Scroll) */}
+        {/* MapLibre GL 3D Urban Navigation Canvas */}
         <UrboNavMap3D
           ref={mapHandleRef}
           onTimeChange={handleTimeChange}
         />
 
-        {/* Dynamic Top Scrim (Transitions smoothly from morning atmosphere to dark navy) */}
+        {/* Dynamic Top Scrim */}
         <div
           className="absolute top-0 inset-x-0 h-44 pointer-events-none z-10 transition-all duration-700"
           style={{
@@ -268,9 +183,9 @@ export const CinematicHero: React.FC = () => {
           aria-hidden="true"
         />
 
-        {/* Clean Editorial Top Bar (Zero technical dashboard noise) */}
+        {/* Clean Editorial Top Bar */}
         <div className="relative z-20 pt-24 px-6 md:px-12 max-w-7xl mx-auto w-full flex justify-between items-start pointer-events-none">
-          {/* Subtle Location Identity */}
+          {/* Location Identity */}
           <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#070E1E]/92 backdrop-blur-md border border-white/10 text-xs font-mono text-slate-200 shadow-xl pointer-events-auto">
             <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-pulse" />
             <span className="text-white/90 font-medium tracking-wide">Santa Cruz de la Sierra</span>
@@ -291,7 +206,7 @@ export const CinematicHero: React.FC = () => {
           </div>
         </div>
 
-        {/* Dynamic Center Stage Overlays (Editorial Introduction & Strictly Lateral Chapters) */}
+        {/* Dynamic Center Stage Overlays */}
         <div className="relative z-20 flex-1 flex flex-col justify-center items-center px-4 md:px-8 text-center pointer-events-none">
           
           {/* Chapter 0: Editorial Welcome Headline (0% - 12%) */}
@@ -318,7 +233,7 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Chapter 1 Card (LEFT): Acceso a la Información & Reducción de Incertidumbre (15% - 35%) */}
+          {/* Chapter 1 Card (LEFT): Acceso a la Información (14% - 32%) */}
           <div className="chapter-card-1 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#060B18]/98 border border-white/20 text-left shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_25px_rgba(0,0,0,0.8)] pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#F4C430] flex items-center gap-1.5 font-bold">
@@ -339,20 +254,22 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Chapter 2 Card (RIGHT): Conducción Segura Manos Libres (38% - 58%) */}
+          {/* Chapter 2 Card (RIGHT): Conducción Segura / 2do Anillo & Monumento al Cristo (35% - 54%) */}
           <div className="chapter-card-2 absolute right-4 sm:right-8 md:right-12 lg:right-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#060B18]/98 border border-white/20 text-left shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_25px_rgba(0,0,0,0.8)] pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#00E5BE] flex items-center gap-1.5 font-bold">
                 <Radio className="w-3.5 h-3.5" />
                 <span>02 · CONDUCCIÓN SEGURA</span>
               </span>
-              <span className="text-xs text-[#38BDF8] font-mono font-bold">2do Anillo & Cristo</span>
+              <span className="inline-flex items-center gap-1 text-[11px] text-[#FBBF24] bg-[#FBBF24]/15 px-2.5 py-0.5 rounded-full border border-[#FBBF24]/30 font-mono font-bold">
+                <span>✦ Cristo Redentor · 2do Anillo</span>
+              </span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug drop-shadow-md">
               Telemetría manos libres que cuida la conducción.
             </h2>
             <p className="text-sm text-slate-100 leading-relaxed mb-4 font-sans">
-              El chofer no toca pantallas al volante. Una alerta por voz anuncia hitos clave a 300 metros, y la función <span className="text-[#00E5BE] font-semibold">Esperar Aquí</span> anticipa la demanda de pasajeros en ruta.
+              Al pasar el emblemático Cristo Redentor, la asistencia por voz anuncia intersecciones clave a 300 metros, y la función <span className="text-[#00E5BE] font-semibold">Esperar Aquí</span> anticipa la demanda de pasajeros en ruta.
             </p>
             <div className="inline-flex items-center gap-2 text-xs font-mono text-[#38BDF8] bg-[#38BDF8]/15 px-3 py-1.5 rounded-lg border border-[#38BDF8]/30 font-medium">
               <Volume2 className="w-3.5 h-3.5 animate-pulse" />
@@ -360,7 +277,7 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Chapter 3 Card (LEFT): Validación Comunitaria en Calle (61% - 81%) */}
+          {/* Chapter 3 Card (LEFT): Validación Comunitaria en Calle (58% - 74%) */}
           <div className="chapter-card-3 absolute left-4 sm:left-8 md:left-12 lg:left-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#060B18]/98 border border-white/20 text-left shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_25px_rgba(0,0,0,0.8)] pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#38BDF8] flex items-center gap-1.5 font-bold">
@@ -389,20 +306,20 @@ export const CinematicHero: React.FC = () => {
                 <span>Remitentes activos</span>
               </div>
               <div className="bg-white/5 p-2.5 rounded-xl border border-white/10">
-                <span className="text-white font-bold text-base block font-tech">7.5 KM</span>
+                <span className="text-white font-bold text-base block font-tech">9.5 KM</span>
                 <span>Corredor validado</span>
               </div>
             </div>
           </div>
 
-          {/* Chapter 4 Card (RIGHT): Visión de Escala Bolivia (84% - 100%) */}
+          {/* Chapter 4 Card (RIGHT): Visión de Escala Bolivia (77% - 89%) */}
           <div className="chapter-card-4 absolute right-4 sm:right-8 md:right-12 lg:right-16 bottom-20 md:bottom-28 max-w-sm sm:max-w-md w-full p-6 sm:p-7 rounded-3xl bg-[#060B18]/98 border border-white/20 text-left shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_25px_rgba(0,0,0,0.8)] pointer-events-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono text-[#00E5BE] flex items-center gap-1.5 font-bold">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>04 · VISIÓN DE ESCALA · BOLIVIA</span>
               </span>
-              <span className="text-xs text-[#38BDF8] font-mono font-bold">4to & 5to Anillo</span>
+              <span className="text-xs text-[#38BDF8] font-mono font-bold">4to a 7mo Anillo</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-snug drop-shadow-md">
               Una red viva de transporte para toda Bolivia.
@@ -427,6 +344,59 @@ export const CinematicHero: React.FC = () => {
             </div>
           </div>
 
+          {/* Chapter 5: CENITAL FINAL CLOSURE OVERLAY (82% - 100%) */}
+          <div className="cenital-closing-group absolute inset-x-4 max-w-xl mx-auto flex flex-col items-center justify-center pointer-events-auto select-none z-30">
+            <div className="p-8 sm:p-10 rounded-[36px] bg-[#060B18] border-2 border-[#00E5BE]/70 shadow-[0_25px_80px_rgba(0,0,0,0.98),0_0_60px_rgba(0,229,190,0.35)] flex flex-col items-center text-center relative overflow-hidden">
+              
+              {/* Ethereal aura */}
+              <div 
+                aria-hidden="true" 
+                className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-[#00E5BE]/25 blur-[90px] pointer-events-none" 
+              />
+
+              {/* URBO Logo with glowing pedestal */}
+              <div className="relative mb-5 flex items-center justify-center">
+                <div className="absolute -inset-4 rounded-full bg-[#00E5BE]/40 blur-xl animate-pulse" />
+                <UrboLogo size={84} className="relative drop-shadow-[0_0_30px_rgba(0,229,190,0.85)]" />
+              </div>
+
+              {/* Brand Title */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1426] border border-[#00E5BE]/50 text-[#00E5BE] text-xs font-mono font-bold tracking-widest uppercase mb-3.5 shadow-md">
+                <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-ping" />
+                <span>SANTA CRUZ DE LA SIERRA · VISTA METROPOLITANA</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-2.5 font-tech drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+                URBO.{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5BE] via-[#38BDF8] to-[#00E5BE]">
+                  La ciudad en tiempo real.
+                </span>
+              </h2>
+
+              <p className="text-sm sm:text-base text-slate-200 max-w-md font-sans leading-relaxed mb-7 drop-shadow-md">
+                Corredor troncal de 9.5 km mapeado y monitoreado. Transformando la experiencia urbana de Santa Cruz de la Sierra desde la raíz.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full justify-center">
+                <a
+                  href="#oportunidad"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#00C9A7] to-[#00E5BE] hover:from-[#00E5BE] hover:to-[#38BDF8] text-[#070B14] font-bold text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(0,201,167,0.5)] transition-all hover:scale-105 active:scale-95"
+                >
+                  <span>Conoce el Proyecto</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+                <a
+                  href="#instagram"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/15 text-white font-medium text-xs border border-white/20 transition-all hover:border-white/40"
+                >
+                  <span>Ver Comunidad</span>
+                  <ChevronDown className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         {/* HUD Bottom Status Bar */}
@@ -434,7 +404,7 @@ export const CinematicHero: React.FC = () => {
           <div className="flex items-center gap-2 bg-[#060B18]/95 px-4 py-2 rounded-full border border-white/20 shadow-xl">
             <span className="w-2 h-2 rounded-full bg-[#00E5BE] animate-pulse" />
             <span ref={distanceTextRef} className="tracking-wide font-tech text-white">
-              DISTANCIA EN RUTA: 0.00 KM / 7.53 KM · SCZ METROPOLITANO
+              DISTANCIA EN RUTA: 0.00 KM / 9.51 KM · SCZ METROPOLITANO
             </span>
           </div>
 
