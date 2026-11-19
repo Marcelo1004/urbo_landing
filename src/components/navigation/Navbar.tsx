@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
@@ -11,6 +11,7 @@ export const Navbar: React.FC = () => {
   const navRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
   const hasNavAnimated = useRef(false);
+  const [active, setActive] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +19,12 @@ export const Navbar: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const onVis = () => document.body.classList.toggle('page-hidden', document.hidden);
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
   }, []);
 
   // Mouse-follow light highlight on navbar
@@ -62,6 +69,15 @@ export const Navbar: React.FC = () => {
     { label: 'Roadmap', href: '#roadmap' },
   ];
 
+  useEffect(() => {
+    const ids = ['oportunidad','solucion','piloto','audiencias','instagram','roadmap','contacto'];
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) setActive('#' + e.target.id); });
+    }, { rootMargin: '-40% 0px -50% 0px' });
+    ids.forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+    return () => io.disconnect();
+  }, []);
+
   const handleLinkClick = () => {
     setMobileMenuOpen(false);
   };
@@ -75,8 +91,8 @@ export const Navbar: React.FC = () => {
           onMouseLeave={handleMouseLeave}
           aria-label="Navegación principal"
           className={cn(
-            'ms-liquid-glass ms-liquid-glass--strong glass-glow-mouse rounded-full flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 transition-all duration-300',
-            isScrolled ? 'shadow-2xl' : ''
+            'urbo-nav ms-liquid-glass ms-liquid-glass--strong glass-glow-mouse rounded-full flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 transition-all duration-300',
+            isScrolled ? 'shadow-2xl urbo-nav--scrolled' : ''
           )}
         >
           {/* Brand Logo (Enlarged ~40% with subtle floating and micro-interaction) */}
@@ -87,7 +103,7 @@ export const Navbar: React.FC = () => {
             aria-label="URBO - Tu micro en tiempo real"
           >
             {/* Logo Mark: 42px */}
-            <UrboLogo size={42} className="transition-transform duration-300 group-hover:scale-105" />
+            <UrboLogo size={42} className="urbo-logo-pulse transition-transform duration-300 group-hover:scale-105" />
             
             <div className="flex flex-col">
               <span className="font-tech text-lg sm:text-xl font-extrabold tracking-wider text-white leading-none group-hover:text-urbo-teal2 transition-colors">
@@ -105,10 +121,11 @@ export const Navbar: React.FC = () => {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="hover:text-white py-1 transition-colors duration-200 relative group"
+                  className={cn("hover:text-white py-1 transition-colors duration-200 relative group", active === link.href && "text-white")}
+                  aria-current={active === link.href ? "true" : undefined}
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-urbo-teal2 group-hover:w-full transition-all duration-200 rounded-full" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-urbo-teal2 group-hover:w-full transition-all duration-200 rounded-full" style={active === link.href ? { width: "100%" } : undefined} />
                 </a>
               </li>
             ))}
@@ -187,3 +204,5 @@ export const Navbar: React.FC = () => {
     </>
   );
 };
+
+

@@ -1,9 +1,13 @@
-import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import { Map, Marker, setWorkerUrl } from 'maplibre-gl';
+﻿import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import { Map, Marker, MercatorCoordinate, setWorkerUrl } from 'maplibre-gl';
+import type { CustomLayerInterface } from 'maplibre-gl';
+import * as THREE from 'three';
+import { createCatedralModel, createCristoRedentorModel } from './SantaCruzModels';
 import maplibreWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import {
   NAV_ROUTE_GEOJSON,
   CRISTO_COORDS,
+  CATEDRAL_COORDS,
   STREET_LAMPS_GEOJSON,
   PEDESTRIANS_DATA,
   getNavStateAtProgress,
@@ -14,6 +18,64 @@ if (typeof window !== 'undefined') {
   setWorkerUrl(maplibreWorker);
 }
 
+function createMonumentsLayer(lightRef: React.MutableRefObject<{ night: number }>): CustomLayerInterface {
+  let renderer: THREE.WebGLRenderer | null = null;
+  let scene: THREE.Scene | null = null;
+  let camera: THREE.Camera | null = null;
+  let ambient: THREE.AmbientLight;
+  let sun: THREE.DirectionalLight;
+  const place = (obj: THREE.Object3D, lngLat: [number, number], rotY: number, boost = 1) => {
+    const c = MercatorCoordinate.fromLngLat(lngLat, 0);
+    const s = c.meterInMercatorCoordinateUnits() * boost;
+    // model: Y up, +Z front. Mercator: z up, y south. rotateX(PI/2) maps Y->z, +Z->north.
+    const m = new THREE.Matrix4()
+      .makeTranslation(c.x, c.y, c.z)
+      .scale(new THREE.Vector3(s, -s, s))
+      .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+      .multiply(new THREE.Matrix4().makeRotationY(rotY));
+    obj.matrixAutoUpdate = false;
+    obj.matrix.copy(m);
+    obj.matrixWorldNeedsUpdate = true;
+  };
+  return {
+    id: 'urbo-monuments-3d',
+    type: 'custom',
+    renderingMode: '3d',
+    onAdd(map, gl) {
+      camera = new THREE.Camera();
+      scene = new THREE.Scene();
+      ambient = new THREE.AmbientLight(0xffffff, 1.2);
+      sun = new THREE.DirectionalLight(0xfff1d6, 2.2);
+      sun.position.set(40, 80, 60);
+      scene.add(ambient, sun);
+      const cat = createCatedralModel();
+      const cristo = createCristoRedentorModel();
+      [cat, cristo].forEach((m) => { const ls: THREE.Object3D[] = []; m.traverse((o) => { if ((o as any).isLight) ls.push(o); }); ls.forEach((l) => l.parent?.remove(l)); });
+      place(cat, CATEDRAL_COORDS, 0, 2.2);
+      place(cristo, CRISTO_COORDS, 0, 2.6);
+      scene.add(cat, cristo);
+      renderer = new THREE.WebGLRenderer({ canvas: map.getCanvas(), context: gl as WebGLRenderingContext, antialias: true });
+      renderer.autoClear = false;
+    },
+    render(_gl, options) {
+      if (!renderer || !scene || !camera) return;
+      const n = Math.max(0, Math.min(1, lightRef.current.night));
+      ambient.intensity = 0.75 - 0.4 * n;
+      ambient.color.setHex(n > 0.5 ? 0x8aa2d8 : 0xffffff);
+      sun.intensity = 1.5 - 1.0 * n;
+      sun.color.setHex(n > 0.75 ? 0x6f86c8 : n > 0.4 ? 0xffb070 : 0xfff1d6);
+      camera.projectionMatrix.fromArray(options.defaultProjectionData.mainMatrix as unknown as number[]);
+      renderer.resetState();
+      renderer.render(scene, camera);
+      renderer.resetState();
+    },
+    onRemove() {
+      scene?.traverse((o: any) => { o.geometry?.dispose?.(); });
+      renderer?.dispose();
+      renderer = null; scene = null; camera = null;
+    },
+  };
+}
 export interface UrboNavMap3DHandle {
   setProgress: (progress: number) => void;
 }
@@ -37,6 +99,7 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
   const cristoMarkerRef = useRef<Marker | null>(null);
   const pedestrianMarkersRef = useRef<Marker[]>([]);
 
+  const monumentLightRef = useRef<{ night: number }>({ night: 0 });
   const isMapLoadedRef = useRef(false);
   const isVisibleRef = useRef(true);
   const rafIdRef = useRef<number | null>(null);
@@ -152,6 +215,10 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         );
       }
 
+      // Hide OSM extrusions under the two monuments so the 3D models are not buried\n      const clearRing = (c: [number, number], r: number) => {\n        const dLat = r / 111320, dLng = r / (111320 * Math.cos((c[1] * Math.PI) / 180));\n        return { type: 'Polygon', coordinates: [[[c[0]-dLng,c[1]-dLat],[c[0]+dLng,c[1]-dLat],[c[0]+dLng,c[1]+dLat],[c[0]-dLng,c[1]+dLat],[c[0]-dLng,c[1]-dLat]]] };\n      };\n      try {\n        map.setFilter('3d-buildings', ['all', ['!', ['within', clearRing(CATEDRAL_COORDS, 38) as any]], ['!', ['within', clearRing(CRISTO_COORDS, 30) as any]]]);\n      } catch (e) { console.warn('monument clearing filter', e); }\n\n      // THREE.JS CUSTOM LAYER — real 3D monuments sharing MapLibre's WebGL context
+      const monumentLayer = createMonumentsLayer(monumentLightRef);
+      map.addLayer(monumentLayer);
+
       // NAVIGATION ROUTE LAYERS
       if (!map.getSource('nav-route-source')) {
         map.addSource('nav-route-source', {
@@ -253,121 +320,8 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
       const cristoEl = document.createElement('div');
       cristoEl.className = 'cristo-landmark pointer-events-none select-none';
       cristoEl.style.cssText = 'width:120px;height:140px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;z-index:10;';
-      cristoEl.innerHTML = `
-        <!-- Ground illuminated rotonda ring -->
-        <div style="
-          position:absolute;
-          bottom:18px;
-          left:50%;
-          transform:translateX(-50%);
-          width:70px;
-          height:70px;
-          border-radius:50%;
-          background:radial-gradient(circle, rgba(251,191,36,0.35) 0%, rgba(251,191,36,0.08) 65%, transparent 100%);
-          border:2px solid rgba(251,191,36,0.7);
-          box-shadow:0 0 25px rgba(251,191,36,0.6), inset 0 0 15px rgba(251,191,36,0.3);
-          pointer-events:none;
-        "></div>
-
-        <!-- 3D Statue with Open Arms (Iconic Monumento al Cristo Redentor) -->
-        <div style="
-          position:relative;
-          width:56px;
-          height:78px;
-          display:flex;
-          flex-direction:column;
-          align-items:center;
-          z-index:2;
-          filter:drop-shadow(0 0 10px rgba(251,191,36,0.8));
-        ">
-          <!-- Golden Halo above head -->
-          <div style="
-            width:16px;
-            height:16px;
-            border-radius:50%;
-            border:2px solid #FDE68A;
-            box-shadow:0 0 12px #FBBF24;
-            margin-bottom:-10px;
-            z-index:3;
-          "></div>
-
-          <!-- Head -->
-          <div style="
-            width:10px;
-            height:10px;
-            border-radius:50%;
-            background:#FBBF24;
-            box-shadow:0 0 10px #FBBF24;
-            z-index:2;
-          "></div>
-
-          <!-- Open Arms Bar & Torso -->
-          <div style="position:relative;width:52px;height:48px;display:flex;justify-content:center;">
-            <!-- Wide Open Arms (Iconic gesture) -->
-            <div style="
-              position:absolute;
-              top:4px;
-              width:52px;
-              height:6px;
-              background:linear-gradient(to right, #F59E0B, #FDE68A, #F59E0B);
-              border-radius:3px;
-              box-shadow:0 0 10px rgba(251,191,36,0.9);
-            "></div>
-
-            <!-- Robe / Body -->
-            <div style="
-              width:12px;
-              height:46px;
-              background:linear-gradient(to bottom, #FBBF24 0%, #D97706 100%);
-              border-radius:3px 3px 6px 6px;
-              box-shadow:0 0 12px rgba(251,191,36,0.5);
-              clip-path:polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
-            "></div>
-          </div>
-
-          <!-- Tiered Stone Pedestal -->
-          <div style="
-            width:26px;
-            height:14px;
-            background:linear-gradient(to top, #44403C, #78716C);
-            border:1px solid #A8A29E;
-            border-radius:2px 2px 0 0;
-            box-shadow:0 4px 8px rgba(0,0,0,0.8);
-          "></div>
-          <div style="
-            width:36px;
-            height:6px;
-            background:#292524;
-            border:1px solid #78716C;
-            border-radius:1px;
-          "></div>
-        </div>
-
-        <!-- Prominent Floating Label -->
-        <div style="
-          margin-top:6px;
-          padding:3px 8px;
-          background:rgba(6,11,24,0.96);
-          border:1.5px solid rgba(251,191,36,0.8);
-          border-radius:8px;
-          white-space:nowrap;
-          box-shadow:0 4px 15px rgba(0,0,0,0.9), 0 0 15px rgba(251,191,36,0.4);
-          z-index:4;
-        ">
-          <span style="
-            font-size:10px;
-            font-family:monospace;
-            font-weight:800;
-            color:#FDE68A;
-            letter-spacing:0.08em;
-            text-transform:uppercase;
-            display:flex;
-            align-items:center;
-            gap:4px;
-          ">✦ Cristo Redentor · 2do Anillo</span>
-        </div>
-      `;
-
+      cristoEl.style.cssText = 'width:max-content;position:relative;z-index:10;margin-bottom:70px;';
+      cristoEl.innerHTML = `<div style="padding:3px 8px;background:rgba(6,11,24,0.92);border:1px solid rgba(251,191,36,0.7);border-radius:8px;white-space:nowrap;"><span style="font-size:10px;font-family:monospace;font-weight:800;color:#FDE68A;letter-spacing:0.08em;text-transform:uppercase;">Cristo Redentor · 2do Anillo</span></div>`;
       cristoMarkerRef.current = new Marker({ element: cristoEl, anchor: 'bottom' })
         .setLngLat(CRISTO_COORDS)
         .addTo(map);
@@ -443,7 +397,7 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
 
       // Look-ahead offset
       const rad = (cameraBearingRef.current * Math.PI) / 180;
-      const forwardDist = navState.isCenital ? 0.0005 : 0.0014;
+      const forwardDist = navState.isCenital ? 0.0005 : 0.0008 + 0.0006 * Math.min(1, p / 0.12);
       const targetCenterLng = navState.beacon[0] + Math.sin(rad) * forwardDist;
       const targetCenterLat = navState.beacon[1] + Math.cos(rad) * forwardDist;
 
@@ -457,6 +411,7 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
         bearing: cameraBearingRef.current,
         pitch: cameraPitchRef.current,
         zoom: cameraZoomRef.current,
+        padding: { top: Math.round(240 * Math.max(0, 1 - p / 0.10)), bottom: 0, left: 0, right: 0 },
       });
 
       // Day-to-Night Atmosphere (finer threshold for smoother transitions)
@@ -471,6 +426,8 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
           }
         };
 
+        monumentLightRef.current.night = dn.dayNightProgress;
+        mapRef.current.triggerRepaint();
         sp('background', 'background-color', dn.backgroundColor);
         sp('landuse_residential', 'fill-color', dn.residentialColor);
         sp('landuse_park', 'fill-color', dn.residentialColor);
@@ -520,3 +477,9 @@ export const UrboNavMap3D = forwardRef<UrboNavMap3DHandle, UrboNavMap3DProps>(({
 UrboNavMap3D.displayName = 'UrboNavMap3D';
 
 export default UrboNavMap3D;
+
+
+
+
+
+

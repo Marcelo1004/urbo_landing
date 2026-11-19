@@ -1,4 +1,4 @@
-/**
+﻿/**
  * URBO 3D Real Street Coordinates & Navigation Engine
  * Santa Cruz de la Sierra:
  * 100% extracted from OpenStreetMap road centerline nodes:
@@ -290,13 +290,14 @@ export function getNavStateAtProgress(progress: number): {
     // Ch 0: Casco Viejo & Plaza 24 de Septiembre
     chapter = 0;
     pitch = 56 + (clamped / 0.14) * 4; // 56→60
-    zoom = 16.6;
+    zoom = 17.7 - (clamped / 0.14) * 0.9; // 17.7→16.8 (Catedral protagonist, then descend)
   } else if (clamped < 0.32) {
     // Ch 1 / 2: Av. Monseñor Rivero & Rotonda Cristo Redentor (2do Anillo)
     chapter = 1;
     const t = (clamped - 0.14) / 0.18;
     pitch = 60 - t * 10; // 60→50 (frames the Cristo Redentor statue)
-    zoom = 16.6 - t * 0.4; // 16.6→16.2
+    const cz = (clamped - 0.17) / 0.035;
+    zoom = 16.8 - t * 0.6 + 0.9 * Math.exp(-cz * cz); // push-in on Cristo Redentor
   } else if (clamped < 0.56) {
     // Ch 2: Av. Banzer hacia 3er Anillo / Equipetrol
     chapter = 2;
@@ -343,3 +344,4 @@ export function getNavStateAtProgress(progress: number): {
     isCenital,
   };
 }
+
